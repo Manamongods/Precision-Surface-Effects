@@ -2,7 +2,7 @@
 
 Allows you to find audioClips in Unity depending on what a spherecast hits.
 
-Uses: https://github.com/SubjectNerd-Unity/ReorderableInspector for some reorderability
+Uses: https://github.com/garettbass/UnityExtensions.ArrayDrawer for some reorderability
 
 The test scene requires MicroSplat's Examples
 
@@ -67,10 +67,6 @@ This can be changed:
     - Then you will need to specify the terrain indices manually
     
 - Material names need to be proper (only include the relevant keyword, not another SurfaceType's keyword. Otherwise it might find the wrong SurfaceType)
-
-- If you want to reorder the SurfaceTypes, 
-    you need to uncomment: `//[Reorderable]` that is above `public SurfaceType[] surfaceTypes = new SurfaceType[] { new SurfaceType() };`
-    Because the ReorderableInspector-master doesn't work for nested reorderables
 
 ## Follow me on Twitter
 

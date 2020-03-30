@@ -25,7 +25,7 @@ SOFTWARE.
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using SubjectNerd.Utilities;
+using UnityExtensions;
 
 [CreateAssetMenu(menuName = "FootstepSounds")]
 public class FootstepSounds : ScriptableObject
@@ -38,9 +38,9 @@ public class FootstepSounds : ScriptableObject
 
     [Tooltip("If it can't find one")]
     public int defaultSurfaceType = 0;
-    //[Reorderable]
+    [ReorderableList()]
     public SurfaceType[] surfaceTypes = new SurfaceType[] { new SurfaceType() };
-    [Reorderable]
+    [ReorderableList()]
     public string[] soundSetNames = new string[] { "Human", "Heavy" };
 
 
@@ -238,7 +238,7 @@ public class FootstepSounds : ScriptableObject
         public string[] materialKeywords = new string[] { "Grass", "Leaves", "Hay", "Flower" };
 
         [Header("Sounds")]
-        [Reorderable]
+        [ReorderableList()]
         public SoundSet[] soundSets = new SoundSet[] { new SoundSet(), new SoundSet() };
 
 
@@ -255,8 +255,8 @@ public class FootstepSounds : ScriptableObject
         {
             //Fields
 #if UNITY_EDITOR
-            [HideInInspector]
-            public string header = "";
+            //[HideInInspector]
+            public string autoHeader = "";
 #endif
 
             [Header("Volume")]
@@ -333,7 +333,7 @@ public class FootstepSounds : ScriptableObject
 
             for (int ii = 0; ii < st.soundSets.Length; ii++)
             {
-                st.soundSets[ii].header = soundSetNames[ii];
+                st.soundSets[ii].autoHeader = soundSetNames[ii];
             }
         }
     }
