@@ -225,12 +225,10 @@ public class FootstepSounds : ScriptableObject
     public class SurfaceType
     {
         //Fields
-#if UNITY_EDITOR
         public string header = "Grassy Sound";
 
         [Header("Terrains")]
         public Texture2D[] terrainAlbedos;
-#endif
 
         [HideInInspector]
         public int[] terrainIndices;
