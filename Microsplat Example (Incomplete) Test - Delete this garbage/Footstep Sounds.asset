@@ -71,8 +71,16 @@ MonoBehaviour:
       pitch: 1
       pitchVariation: 0.2
       clipVariants:
+      - probabilityWeight: 5
+        clip: {fileID: 8300000, guid: 7e06b4ddba04bdd4282fabf3bac913f1, type: 3}
+        volumeMultiplier: 1
+        pitchMultiplier: 1
       - probabilityWeight: 1
-        clip: {fileID: 0}
+        clip: {fileID: 8300000, guid: 35eaf9bc12ac83d4cbb64e0b7b559154, type: 3}
+        volumeMultiplier: 1
+        pitchMultiplier: 1
+      - probabilityWeight: 1
+        clip: {fileID: 8300000, guid: 77711f677035ce640998fd0811305b5f, type: 3}
         volumeMultiplier: 1
         pitchMultiplier: 1
     - autoHeader: Heavy
@@ -82,11 +90,11 @@ MonoBehaviour:
       pitchVariation: 0.102
       clipVariants:
       - probabilityWeight: 2
-        clip: {fileID: 0}
+        clip: {fileID: 8300000, guid: e271dd0dd4db34c4399362eedc9eb814, type: 3}
         volumeMultiplier: 1
         pitchMultiplier: 0.68
       - probabilityWeight: 2.86
-        clip: {fileID: 0}
+        clip: {fileID: 8300000, guid: c728d5ae1fc69a34cacebe7ab17b6d00, type: 3}
         volumeMultiplier: 1
         pitchMultiplier: 1.58
   soundSetNames:
