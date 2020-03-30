@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#if UNITY_EDITOR
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -71,3 +72,4 @@ public class FootSoundTester : MonoBehaviour
         //if (Physics.SphereCast(pos, 0.01f, downDir, out RaycastHit rh))
             //Debug.DrawLine(pos, rh.point);
 */
+#endif
