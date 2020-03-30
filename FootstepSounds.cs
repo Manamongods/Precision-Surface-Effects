@@ -24,6 +24,7 @@ SOFTWARE.
 
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityExtensions;
 
@@ -270,7 +271,17 @@ public class FootstepSounds : ScriptableObject
             public float pitchVariation = 0.2f;
 
             [Header("Clips")]
-            public AudioClip[] clipVariants = new AudioClip[0];
+            public Clip[] clipVariants = new Clip[1] { new Clip() };
+
+
+            //Datatypes
+            [System.Serializable]
+            public class Clip
+            {
+                [Min(0)]
+                public float probabilityWeight = 1;
+                public AudioClip clip;
+            }
 
 
             //Methods
@@ -299,10 +310,21 @@ public class FootstepSounds : ScriptableObject
 
             public AudioClip GetRandomClip()
             {
-                if (clipVariants.Length == 0)
-                    return null;
+                float totalWeight = 0;
+                for (int i = 0; i < clipVariants.Length; i++)
+                    totalWeight += clipVariants[i].probabilityWeight;
 
-                return clipVariants[Random.Range(0, clipVariants.Length)];
+                float rand = Random.value * totalWeight;
+                float finder = 0f;
+                for (int i = 0; i < clipVariants.Length; i++)
+                {
+                    var cv = clipVariants[i];
+                    finder += cv.probabilityWeight;
+                    if(finder > rand)
+                        return cv.clip;
+                }
+
+                return null;
             }
         }
     }
@@ -333,7 +355,16 @@ public class FootstepSounds : ScriptableObject
 
             for (int ii = 0; ii < st.soundSets.Length; ii++)
             {
-                st.soundSets[ii].autoHeader = soundSetNames[ii];
+                var ss = st.soundSets[ii];
+                ss.autoHeader = soundSetNames[ii];
+
+                for (int iii = 0; iii < ss.clipVariants.Length; iii++)
+                {
+                    var cv = ss.clipVariants[iii];
+
+                    if (cv.probabilityWeight == 0)
+                        cv.probabilityWeight = 1;
+                }
             }
         }
     }
@@ -370,4 +401,42 @@ if (mesh.isReadable)
 }
 
                     //Found:
+
+
+
+
+
+#if UNITY_EDITOR
+            [UnityEditor.CustomPropertyDrawer(typeof(Clip))]
+            public class ClipDrawer : UnityEditor.PropertyDrawer
+            {
+                public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+                {
+                    return UnityEditor.EditorGUIUtility.singleLineHeight;
+                }
+
+                public override void OnGUI(Rect rect, SerializedProperty property, GUIContent label)
+                {
+                    var pw = property.FindPropertyRelative("probabilityWeight");
+                    var c = property.FindPropertyRelative("clip");
+
+                    var r = rect;
+                    r.width *= 0.5f;
+                    UnityEditor.EditorGUI.PropertyField(r, property, false);
+
+                    r = rect;
+                    r.width *= 0.5f;
+                    UnityEditor.EditorGUI.PropertyField(r, pw);
+
+                    r.x += r.width;
+                    UnityEditor.EditorGUI.PropertyField(r, c, null as GUIContent);
+                }
+
+                private void OnEnable()
+                {
+
+                }
+            }
+
+#endif
 */
