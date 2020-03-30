@@ -6,7 +6,6 @@ Uses: https://github.com/SubjectNerd-Unity/ReorderableInspector for some reorder
 
 ## Usage
 
-
 ### Steps
 Create a FootstepSounds asset in Unity's project window (by right clicking -> Create -> FootstepSounds)
 
@@ -42,9 +41,14 @@ You can cache the `SurfaceType` from `GetSurfaceType`, to update it less frequen
 If a SurfaceType can't be found (if none of the SurfaceTypes include the Terrain index, or if none of the SurfaceTypes' keywords are included in the check string (the Material name or Marker reference)) the `defaultSurfaceType` is sent.
 
 ### Sound Sets
-SoundSets are used for different sized creatures, although you don't need to use multiple. The default for `GetSoundSet(soundSetID)` is the first one (0 id). The `soundSetID` can be found with `FindSoundSetID(name)`, where the string will be searched for in `soundSetNames`.
+SoundSets are used for different sized creatures, although you don't need to use multiple. 
+
+The `soundSetID` can be found with `FindSoundSetID(name)`, where the string will be searched for in `soundSetNames`.
+The default for `GetSoundSet(soundSetID)` is the first one (0 id). 
+
 You'll need to be diligent in reordering every `SoundSet` individually, as well as ensure that each `SoundSet` is included in each `SurfaceType`. 
 
+### Randomized Volume/Pitch
 You can get a randomized volume and pitch. `SurfaceType`'s `SoundSet`s have individual control over the amount, for example Concrete shouldn't be as randomized as e.g. Mud.
 
 ## Limitations
