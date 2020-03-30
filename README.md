@@ -17,7 +17,7 @@ Delete the folder "Microsplat Example (Incomplete) Test - Delete this garbage" a
 
 You can do SurfaceType.PlayOneShot(AudioSource source)
 
-You'll just need to reference the FootstepSounds asset, and then do `footstepSounds.GetSurfaceType(pos, Vector3.down).PlayOneShot(audioSource);`
+You'll just need to reference the FootstepSounds asset, and then do `footstepSounds.GetSurfaceType(pos, Vector3.down).GetSoundSet().PlayOneShot(audioSource);`
 
 ### Terrain
 If the spherecast hits a TerrainCollider, it will use MicroSplat's Config file to find the indices to test against by using the Albedo (Diffuse) textures of the splats
