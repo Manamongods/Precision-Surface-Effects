@@ -59,10 +59,10 @@ You can get a randomized volume and pitch. `SurfaceType`'s `SoundSet`s have indi
 
 - Only works for MicroSplat. 
 This can be changed:
-    * remove `textureArrayConfig` 
-    * remove `[HideInInspector]` from above `public int[] terrainIndices;`
-    * remove the `InitConfig` function
-    * remove `terrainAlbedos`, as that will no longer be used
+    - remove `textureArrayConfig` 
+    - remove `[HideInInspector]` from above `public int[] terrainIndices;`
+    - remove the `InitConfig` function
+    - remove `terrainAlbedos`, as that will no longer be used
 Then you will need to specify the terrain indices manually
     
 - Material names need to be proper (only include the relevant keyword, not another SurfaceType's keyword. Otherwise it might find the wrong SurfaceType)
