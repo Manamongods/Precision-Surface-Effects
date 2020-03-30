@@ -50,7 +50,10 @@ SoundSets are used for different sized creatures, although you don't need to use
 The `soundSetID` can be found with `FindSoundSetID(name)`, where the string will be searched for in `soundSetNames`.
 The default for `GetSoundSet(soundSetID)` is the first one (0 id). 
 
-You'll need to be diligent in reordering every `SoundSet` individually, as well as ensure that each `SoundSet` is included in each `SurfaceType`. 
+You'll need to be diligent in reordering every `SoundSet` individually, as well as ensure that each `SoundSet` is included in each `SurfaceType`.
+
+### Clip Variants
+You can give the different clips different probabilityWeights. They are normalized, so if you give one clip 12, another 6, and another 2, since their sum is: 12 + 6 + 2 = 20, their actual probabilities are:, (12 / 20), (6 / 20), and (2 / 20). 
 
 ### Randomized Volume/Pitch
 You can get a randomized volume and pitch. `SurfaceType`'s `SoundSet`s have individual control over the amount, for example Concrete shouldn't be as randomized as e.g. Mud.
