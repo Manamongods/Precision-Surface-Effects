@@ -25,7 +25,7 @@ A collider has to be a non-convex MeshCollider to discern between the MeshRender
 This can be a problem if the first material is not the one you want to test against.
 That's when you can use the component `SurfaceTypeMarker.cs` to override the test string.
 
-The collider has to be on the same GameObject as the MeshRenderer
+The collider has to be on the same GameObject as the MeshRenderer. If it is not, then use a `SurfaceTypeMarker`.
 
 The material's name can include the keyword with any capitalization:
     Grass
