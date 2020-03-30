@@ -320,7 +320,7 @@ public class FootstepSounds : ScriptableObject
                 {
                     var cv = clipVariants[i];
                     finder += cv.probabilityWeight;
-                    if(finder > rand)
+                    if(finder >= rand - 0.000000001f) //I just do that just in case of rounding errors
                         return cv.clip;
                 }
 
