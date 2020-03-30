@@ -9,11 +9,11 @@ The component `FootSoundTester.cs` can be used to test it out.
 
 If the spherecast hits a TerrainCollider, it will use MicroSplat's Config file to find the indices to test against by using the Albedo (Diffuse) textures of the splats
 
-If the collider is not a TerrainCollider, it will test if the name of the material/s includes one of the keywords.
+If the collider is not a TerrainCollider, it will test if the name of the MeshRenderer's material/s includes one of the keywords.
 
 A collider has to be a non-convex MeshCollider to discern between the MeshRenderer's (submesh) materials. Otherwise it will default to the first material.
 This can be a problem if the first material is not the one you want to test against.
-That's when you can use SurfaceTypeMarker to override the test string.
+That's when you can use the component `SurfaceTypeMarker.cs` to override the test string.
 
 The collider has to be on the same GameObject as the MeshRenderer
 
@@ -36,7 +36,7 @@ You can cache the `SurfaceType` from `GetSurfaceType`, to update it less frequen
 
 If a SurfaceType can't be found (if none of the SurfaceTypes include the Terrain index, or if none of the SurfaceTypes' keywords are included in the check string (the Material name or Marker reference)) the `defaultSurfaceType` is sent.
 
-SoundSets are used for different size creatures, although you don't need to use multiple. The default for `GetSoundSet(soundSetID)` is the first one. The `soundSetID` can be found with `FindSoundSetID(name)`, where the string will be searched for in `soundSetNames`.
+SoundSets are used for different sized creatures, although you don't need to use multiple. The default for `GetSoundSet(soundSetID)` is the first one (0 id). The `soundSetID` can be found with `FindSoundSetID(name)`, where the string will be searched for in `soundSetNames`.
 You'll need to be diligent in reordering every `SoundSet` individually, as well as ensure that each `SoundSet` is included in each `SurfaceType`. 
 
 ## Limitations
@@ -51,6 +51,9 @@ Then you will need to specify the terrain indices manually
     
 - Material names need to be proper (only include the relevant keyword, not another SurfaceType's keyword. Otherwise it might find the wrong SurfaceType)
 
+- If you want to reorder the SurfaceTypes, 
+    you need to uncomment: `//[Reorderable]` that is above `public SurfaceType[] surfaceTypes = new SurfaceType[] { new SurfaceType() };`
+    Because the ReorderableInspector-master doesn't work for nested reorderables
 
 ## Follow me on Twitter
 
