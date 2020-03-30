@@ -281,34 +281,49 @@ public class FootstepSounds : ScriptableObject
                 [Min(0)]
                 public float probabilityWeight = 1;
                 public AudioClip clip;
+
+                public float volumeMultiplier = 1;
+                public float pitchMultiplier = 1;
             }
 
 
             //Methods
             public void PlayOneShot(AudioSource audioSource, float volumeMultiplier = 1, float pitchMultiplier = 1)
             {
+                var c = GetRandomClip(out float volume, out float pitch);
+                
                 //if(!source.isPlaying)
-                    audioSource.pitch = GetPitch() * pitchMultiplier;
-                audioSource.PlayOneShot(GetRandomClip(), GetVolume() * volumeMultiplier);
+                    audioSource.pitch = pitch * pitchMultiplier;
+
+                audioSource.PlayOneShot(c, volume * volumeMultiplier);
             }
 
             public AudioClip GetRandomClip(out float volume, out float pitch)
             {
                 volume = GetVolume();
                 pitch = GetPitch();
-                return GetRandomClip();
+
+                var c = GetRandomClip();
+                if(c != null)
+                {
+                    volume *= c.volumeMultiplier;
+                    pitch *= c.pitchMultiplier;
+
+                    return c.clip;
+                }
+
+                return null;
             }
 
-            public float GetVolume()
+            private float GetVolume()
             {
                 return volume * (1 + (Random.value - 0.5f) * volumeVariation);
             }
-            public float GetPitch()
+            private float GetPitch()
             {
                 return pitch * (1 + (Random.value - 0.5f) * pitchVariation);
             }
-
-            public AudioClip GetRandomClip()
+            private Clip GetRandomClip()
             {
                 float totalWeight = 0;
                 for (int i = 0; i < clipVariants.Length; i++)
@@ -320,8 +335,8 @@ public class FootstepSounds : ScriptableObject
                 {
                     var cv = clipVariants[i];
                     finder += cv.probabilityWeight;
-                    if(finder >= rand - 0.000000001f) //I just do that just in case of rounding errors
-                        return cv.clip;
+                    if (finder >= rand - 0.000000001f) //I just do that just in case of rounding errors
+                        return cv;
                 }
 
                 return null;
@@ -357,14 +372,6 @@ public class FootstepSounds : ScriptableObject
             {
                 var ss = st.soundSets[ii];
                 ss.autoHeader = soundSetNames[ii];
-
-                for (int iii = 0; iii < ss.clipVariants.Length; iii++)
-                {
-                    var cv = ss.clipVariants[iii];
-
-                    if (cv.probabilityWeight == 0)
-                        cv.probabilityWeight = 1;
-                }
             }
         }
     }
@@ -372,6 +379,15 @@ public class FootstepSounds : ScriptableObject
 }
 
 /*
+ * 
+                for (int iii = 0; iii < ss.clipVariants.Length; iii++)
+                {
+                    var cv = ss.clipVariants[iii];
+
+                    if (cv.probabilityWeight == 0)
+                        cv.probabilityWeight = 1;
+                }
+
 private static readonly List<int> subMeshTriangles = new List<int>(); //to avoid some amount of constant reallocation
 
 if (mesh.isReadable)
