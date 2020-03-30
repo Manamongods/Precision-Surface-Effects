@@ -20,12 +20,14 @@ MonoBehaviour:
     terrainIndices: 
     materialKeywords: []
     soundSets:
-    - header: Player
+    - autoHeader: Player
       volume: 1
       volumeVariation: 0.2
       pitch: 1
       pitchVariation: 0.2
-      clipVariants: []
+      clipVariants:
+      - probabilityWeight: 1
+        clip: {fileID: 0}
   - header: Grassy Sound
     terrainAlbedos:
     - {fileID: 2800000, guid: 66fb879d08c8d4a8d9217a396637cd02, type: 3}
@@ -37,13 +39,14 @@ MonoBehaviour:
     - Hay
     - Flower
     soundSets:
-    - header: Player
+    - autoHeader: Player
       volume: 1
       volumeVariation: 0.2
       pitch: 1
       pitchVariation: 0.2
       clipVariants:
-      - {fileID: 0}
+      - probabilityWeight: 1
+        clip: {fileID: 0}
   - header: Rocky Sound
     terrainAlbedos:
     - {fileID: 2800000, guid: b2e5c511fff7f41559554175e2005252, type: 3}
@@ -54,13 +57,14 @@ MonoBehaviour:
     - Rock
     - Tile
     soundSets:
-    - header: Player
+    - autoHeader: Player
       volume: 1
       volumeVariation: 0.2
       pitch: 1
       pitchVariation: 0.2
       clipVariants:
-      - {fileID: 0}
+      - probabilityWeight: 1
+        clip: {fileID: 0}
   soundSetNames:
   - Player
   - Heavy
