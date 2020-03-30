@@ -59,6 +59,7 @@ You can get a randomized volume and pitch. `SurfaceType`'s `SoundSet`s have indi
 
 - Only works for MicroSplat. 
 This can be changed:
+
     remove `textureArrayConfig` 
     remove `[HideInInspector]` from above `public int[] terrainIndices;`
     remove the `InitConfig` function
