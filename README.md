@@ -4,6 +4,8 @@ Allows you to find audioClips in Unity depending on what a spherecast hits.
 
 Uses: https://github.com/SubjectNerd-Unity/ReorderableInspector for some reorderability
 
+The test scene requires MicroSplat's Examples
+
 ## Usage
 
 ### Steps
