@@ -2,6 +2,8 @@
 
 Allows you to find audioClips in Unity depending on what a spherecast hits.
 
+Uses: https://github.com/SubjectNerd-Unity/ReorderableInspector for some reorderability
+
 ## Usage
 
 The component `FootSoundTester.cs` can be used to test it out.
