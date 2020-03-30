@@ -63,7 +63,8 @@ This can be changed:
     - remove `[HideInInspector]` from above `public int[] terrainIndices;`
     - remove the `InitConfig` function
     - remove `terrainAlbedos`, as that will no longer be used
-Then you will need to specify the terrain indices manually
+    
+    - Then you will need to specify the terrain indices manually
     
 - Material names need to be proper (only include the relevant keyword, not another SurfaceType's keyword. Otherwise it might find the wrong SurfaceType)
 
