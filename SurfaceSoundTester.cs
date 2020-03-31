@@ -61,7 +61,7 @@ public class SurfaceSoundTester : MonoBehaviour
 
         var pos = transform.position;
 
-        var st = sounds.GetSurfaceType(pos, downDir);
+        var st = sounds.GetSphereCastSurfaceType(pos, downDir);
         header = st.header;
         clip = st.GetSoundSet(soundSetID).GetRandomClip(out volume, out pitch);
     }

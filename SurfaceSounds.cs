@@ -57,7 +57,7 @@ public class SurfaceSounds : ScriptableObject
     }
 
 
-    public SurfaceType GetSurfaceType(Vector3 worldPosition, Vector3 downDirection, float spherecastRadius = 0.01f, int layerMask = -1, float maxDistance = Mathf.Infinity)
+    public SurfaceType GetSphereCastSurfaceType(Vector3 worldPosition, Vector3 downDirection, float spherecastRadius = 0.01f, int layerMask = -1, float maxDistance = Mathf.Infinity)
     {
         if (Physics.SphereCast(worldPosition, spherecastRadius, downDirection, out RaycastHit rh, maxDistance, layerMask, QueryTriggerInteraction.Ignore))
         {
@@ -69,6 +69,11 @@ public class SurfaceSounds : ScriptableObject
         }
 
         return GetSurfaceType(null, worldPosition);
+    }
+
+    public SurfaceType GetCollisionSurfaceType(Collision collision)
+    {
+        return GetSurfaceType(collision.collider, collision.GetContact(0).point);
     }
 
     public SurfaceType GetSurfaceType(Collider collider, Vector3 worldPosition, int triangleIndex = -1)
