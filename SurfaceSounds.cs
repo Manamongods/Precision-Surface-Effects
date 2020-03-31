@@ -98,6 +98,28 @@ public class SurfaceSounds : ScriptableObject
         return GetSurfaceType(collision.collider, collision.GetContact(0).point);
     }
 
+    public SurfaceType GetStringSurfaceType(string checkName, out SurfaceType st)
+    {
+        if (String.Is checkName != null)
+        {
+            checkName = checkName.ToLowerInvariant();
+
+            for (int i = 0; i < surfaceTypes.Length; i++)
+            {
+                st = surfaceTypes[i];
+
+                for (int ii = 0; ii < st.materialKeywords.Length; ii++)
+                {
+                    if (checkName.Contains(st.materialKeywords[ii].ToLowerInvariant())) //check if the material name contains the keyword
+                        return true;
+                }
+            }
+        }
+
+        st = null;
+        return false;
+    }
+
     //You can make these public if you want access:
     private SurfaceType GetSurfaceType(Collider collider, Vector3 worldPosition, int triangleIndex = -1)
     {
@@ -139,6 +161,7 @@ public class SurfaceSounds : ScriptableObject
     }
     private bool GetNonTerrainSurfaceType(Collider collider, Vector3 worldPosition, out SurfaceType st, int triangleIndex = -1)
     {
+        //Finds CheckName
         string checkName = null;
 
         var marker = collider.GetComponent<SurfaceTypeMarker>();
@@ -154,9 +177,11 @@ public class SurfaceSounds : ScriptableObject
             {
                 var materials = mr.sharedMaterials;
 
-                checkName = materials[0].name; //Defaults to the first material. For most colliders it can't be discerned which specific material it is
+                //Defaults to the first material. For most colliders it can't be discerned which specific material it is
+                checkName = materials[0].name; 
 
-                if (triangleIndex != -1 && collider is MeshCollider mc && !mc.convex) //The collider is a non-convex meshCollider. We can find the triangle index.
+                //The collider is a non-convex meshCollider. We can find the triangle index.
+                if (triangleIndex != -1 && collider is MeshCollider mc && !mc.convex) 
                 {
                     var mesh = collider.GetComponent<MeshFilter>().sharedMesh;
 
@@ -176,22 +201,11 @@ public class SurfaceSounds : ScriptableObject
             }
         }
 
-        if (checkName != null)
-        {
-            checkName = checkName.ToLowerInvariant();
+        //Searches using CheckName
+        if (GetStringSurfaceType(checkName, out st))
+            return true;
 
-            for (int i = 0; i < surfaceTypes.Length; i++)
-            {
-                st = surfaceTypes[i];
-
-                for (int ii = 0; ii < st.materialKeywords.Length; ii++)
-                {
-                    if (checkName.Contains(st.materialKeywords[ii].ToLowerInvariant())) //check if the material name contains the keyword
-                        return true;
-                }
-            }
-        }
-
+        //Found nothing
         st = null;
         return false;
     }
@@ -326,6 +340,9 @@ public class SurfaceSounds : ScriptableObject
             [Header("Clips")]
             public Clip[] clipVariants = new Clip[1] { new Clip() };
 
+            [Space(20)]
+            public AudioClip loopSound; //This can be used for friction/rolling sounds, or just ignore it
+
 
             //Datatypes
             [System.Serializable]
@@ -345,10 +362,13 @@ public class SurfaceSounds : ScriptableObject
             {
                 var c = GetRandomClip(out float volume, out float pitch);
 
-                //if(!source.isPlaying)
-                audioSource.pitch = pitch * pitchMultiplier;
+                if (c != null)
+                {
+                    //if(!source.isPlaying)
+                    audioSource.pitch = pitch * pitchMultiplier;
 
-                audioSource.PlayOneShot(c, volume * volumeMultiplier);
+                    audioSource.PlayOneShot(c, volume * volumeMultiplier);
+                }
             }
 
             public AudioClip GetRandomClip(out float volume, out float pitch)
