@@ -1,6 +1,6 @@
 # Microsplat Surface Sounds
 
-Allows you to find audioClips in Unity depending on what a spherecast or raycast hits. You could alternatively find it using `GetCollisionSurfaceType(Collision collision)`, but since Collisions don't know the triangleIndex it can't discern between submeshes.
+Allows you to find audioClips in Unity depending on what a spherecast or raycast hits, aka footstep sounds. You could alternatively find it using `GetCollisionSurfaceType(Collision collision)`, but since Collisions don't know any MeshCollider's triangleIndex it can't discern between submeshes.
 
 Uses: https://github.com/garettbass/UnityExtensions.ArrayDrawer for some reorderability
 
@@ -43,7 +43,7 @@ Keywords shouldn't contains another SurfaceType's keyword
 If you want to change the MicroSplat config during runtime, you need to use `SurfaceSounds.InitConfig(JBooth.MicroSplat.TextureArrayConfig textureArrayConfig)`
 
 ### Performance
-You can cache the `SurfaceType` from `GetSurfaceType`, to update it less frequently. However, the performance should be ok, and the player should definitely be up to date.
+You can cache the `SurfaceType` from `GetSurfaceType`, to update it less frequently. However, the performance should be ok, and the player should definitely be up to date (found every time you want to play a footstep sound, not every frame).
 
 ### Default Surface Type
 If a SurfaceType can't be found (if none of the SurfaceTypes include the Terrain index, or if none of the SurfaceTypes' keywords are included in the check string (the Material name or Marker reference)) the `defaultSurfaceType` is sent.
