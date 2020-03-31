@@ -65,7 +65,7 @@ public class SurfaceSounds : ScriptableObject
     }
 
 
-    public SurfaceType GetSphereCastSurfaceType(Vector3 worldPosition, Vector3 downDirection, float spherecastRadius = 0.01f, float maxDistance = Mathf.Infinity, int layerMask = -1)
+    public SurfaceType GetSphereCastSurfaceType(Vector3 worldPosition, Vector3 downDirection, float spherecastRadius = 1, float maxDistance = Mathf.Infinity, int layerMask = -1)
     {
         if (Physics.SphereCast(worldPosition, spherecastRadius, downDirection, out RaycastHit rh, maxDistance, layerMask, QueryTriggerInteraction.Ignore))
         {
