@@ -33,11 +33,11 @@ public class CollisionSounds : SurfaceSoundsUser
 
         [Header("Volume")]
         public float baseVolume = 0;
-        public float volumeByForce;
+        public float volumeByForce = 0.1f;
 
         [Header("Pitch")]
         public float basePitch = 1;
-        public float pitchBySpeed;
+        public float pitchBySpeed = 0.1f;
 
 
         //Methods
@@ -69,6 +69,9 @@ public class CollisionSounds : SurfaceSoundsUser
         //Methods
         public void Update(float volumeMultiplier, float force, float speed)
         {
+            if (ssClip == null)
+                return;
+
             float targetPitch = ssClip.pitchMultiplier * Pitch(speed);
 
             if (audioSource.clip != ssClip.clip)
@@ -115,10 +118,15 @@ public class CollisionSounds : SurfaceSoundsUser
 
     //Lifecycle
 #if UNITY_EDITOR
+    private void Prepare(AudioSource source, bool loop)
+    {
+        source.loop = loop;
+        source.playOnAwake = false;
+    }
     private void OnValidate()
     {
-        impactSound.audioSource.loop = false;
-        frictionSound.audioSource.loop = true;
+        Prepare(impactSound.audioSource, false);
+        Prepare(frictionSound.audioSource, true);
     }
 #endif
 
@@ -143,8 +151,8 @@ public class CollisionSounds : SurfaceSoundsUser
         var force = collision.impulse.magnitude / Time.deltaTime;
         var speed = collision.relativeVelocity.magnitude;
 
-        force += force;
-        speed += force * speed; //weights speed, so that it can find a weighted average pitch for all the potential OnCollisionStays
+        this.force += force;
+        this.speed += force * speed; //weights speed, so that it can find a weighted average pitch for all the potential OnCollisionStays
 
         frictionSound.ssClip = GetSoundSet(collision).loopSound;
     }

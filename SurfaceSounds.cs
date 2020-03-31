@@ -311,7 +311,7 @@ public class SurfaceSounds : ScriptableObject
             [Header("Friction/Rolling if wanted")]
             [Tooltip("This can be used for friction/rolling sounds, or just ignore it")]
             [Space(20)]
-            public Clip loopSound; //(no randomization should be used for this clip)
+            public Clip loopSound = new Clip(); //(no randomization should be used for this clip)
 
 
             //Datatypes
