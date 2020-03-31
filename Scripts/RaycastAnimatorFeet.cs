@@ -31,8 +31,8 @@ public class RaycastAnimatorFeet : MonoBehaviour
 
         [Header("Raycasting")]
         public Transform foot;
-        public Vector3 footOffset = Vector3.zero;
-        public Vector3 footDownDirection = Vector3.down;
+        public Vector3 raycastOffset = Vector3.zero;
+        public Vector3 raycastDirection = Vector3.down;
     }
 
 
@@ -42,8 +42,8 @@ public class RaycastAnimatorFeet : MonoBehaviour
     {
         var foot = feet[footID];
 
-        var pos = foot.foot.TransformPoint(foot.footOffset);
-        var dir = foot.foot.TransformDirection(foot.footDownDirection);
+        var pos = foot.foot.TransformPoint(foot.raycastOffset);
+        var dir = foot.foot.TransformDirection(foot.raycastDirection);
         var st = surfaceSounds.GetRaycastSurfaceType(pos, dir, maxDistance: maxDistance, layerMask: layerMask);
 
         st.GetSoundSet(soundSetID).PlayOneShot(foot.audioSource);           
