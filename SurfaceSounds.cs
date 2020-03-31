@@ -56,6 +56,7 @@ public class SurfaceSounds : ScriptableObject
         throw new System.Exception("No sound set with name: " + name);
     }
 
+
     public SurfaceType GetSurfaceType(Vector3 worldPosition, Vector3 downDirection, float spherecastRadius = 0.01f, int layerMask = -1, float maxDistance = Mathf.Infinity)
     {
         if (Physics.SphereCast(worldPosition, spherecastRadius, downDirection, out RaycastHit rh, maxDistance, layerMask, QueryTriggerInteraction.Ignore))
@@ -64,82 +65,107 @@ public class SurfaceSounds : ScriptableObject
             Debug.DrawLine(worldPosition, rh.point);
 #endif
 
-            if (rh.collider is TerrainCollider tc) //it is a terrain collider
+            return GetSurfaceType(rh.collider, worldPosition, rh.triangleIndex);
+        }
+
+        return GetSurfaceType(null, worldPosition);
+    }
+
+    public SurfaceType GetSurfaceType(Collider collider, Vector3 worldPosition, int triangleIndex = -1)
+    {
+        if (collider != null)
+        {
+            if (collider is TerrainCollider tc) //it is a terrain collider
             {
-                var terrain = tc.GetComponent<Terrain>();
-
-                var terrainIndex = GetMainTexture(terrain, worldPosition);
-
-                for (int i = 0; i < surfaceTypes.Length; i++)
-                {
-                    var st = surfaceTypes[i];
-
-                    for (int ii = 0; ii < st.terrainIndices.Length; ii++)
-                    {
-                        if (terrainIndex == st.terrainIndices[ii])
-                        {
-                            return st;
-                        }
-                    }
-                }
+                if (GetTerrainSurfaceType(tc.GetComponent<Terrain>(), worldPosition, out SurfaceType st))
+                    return st;
             }
             else
             {
-                string checkName = null;
+                if (GetNonTerrainSurfaceType(collider, worldPosition, out SurfaceType st, triangleIndex))
+                    return st;
+            }
+        }
 
-                var marker = rh.collider.GetComponent<SurfaceTypeMarker>();
-                if (marker != null)
+        return surfaceTypes[defaultSurfaceType];
+    }
+    public bool GetTerrainSurfaceType(Terrain terrain, Vector3 worldPosition, out SurfaceType st)
+    {
+        var terrainIndex = GetMainTexture(terrain, worldPosition);
+
+        for (int i = 0; i < surfaceTypes.Length; i++)
+        {
+            st = surfaceTypes[i];
+
+            for (int ii = 0; ii < st.terrainIndices.Length; ii++)
+            {
+                if (terrainIndex == st.terrainIndices[ii])
                 {
-                    checkName = marker.reference;
+                    return true;
                 }
-                else
+            }
+        }
+
+        st = null;
+        return false;
+    }
+    public bool GetNonTerrainSurfaceType(Collider collider, Vector3 worldPosition, out SurfaceType st, int triangleIndex = -1)
+    {
+        string checkName = null;
+
+        var marker = collider.GetComponent<SurfaceTypeMarker>();
+        if (marker != null)
+        {
+            checkName = marker.reference;
+        }
+        else
+        {
+            var mr = collider.GetComponent<MeshRenderer>();
+
+            if (mr != null)
+            {
+                var materials = mr.sharedMaterials;
+
+                checkName = materials[0].name; //defaults to the first material. For most colliders it can't be discerned which specific material it is
+
+                if (triangleIndex != -1 && collider is MeshCollider mc && !mc.convex) //The collider is a non-convex meshCollider. We can find the triangle index.
                 {
-                    var mr = rh.collider.GetComponent<MeshRenderer>();
-                    if (mr != null)
+                    var mesh = collider.GetComponent<MeshFilter>().sharedMesh;
+
+                    var triIndex = triangleIndex * 3;
+
+                    for (int submeshID = mesh.subMeshCount - 1; submeshID >= 0; submeshID--)
                     {
-                        var materials = mr.sharedMaterials;
+                        int start = mesh.GetSubMesh(submeshID).indexStart;
 
-                        checkName = materials[0].name; //defaults to the first material. For most colliders it can't be discerned which specific material it is
-
-                        if (rh.collider is MeshCollider mc && !mc.convex) //The collider is a non-convex meshCollider. We can find the triangle index.
+                        if (triIndex >= start)
                         {
-                            var mesh = rh.collider.GetComponent<MeshFilter>().sharedMesh;
-
-                            var triIndex = rh.triangleIndex * 3;
-
-                            for (int submeshID = mesh.subMeshCount - 1; submeshID >= 0; submeshID--)
-                            {
-                                int start = mesh.GetSubMesh(submeshID).indexStart;
-
-                                if (triIndex >= start)
-                                {
-                                    checkName = materials[submeshID].name; //the triangle hit is within this submesh
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (checkName != null)
-                {
-                    checkName = checkName.ToLowerInvariant();
-
-                    for (int i = 0; i < surfaceTypes.Length; i++)
-                    {
-                        var st = surfaceTypes[i];
-
-                        for (int ii = 0; ii < st.materialKeywords.Length; ii++)
-                        {
-                            if (checkName.Contains(st.materialKeywords[ii].ToLowerInvariant())) //check if the material name contains the keyword
-                                return st;
+                            checkName = materials[submeshID].name; //the triangle hit is within this submesh
+                            break;
                         }
                     }
                 }
             }
         }
 
-        return surfaceTypes[defaultSurfaceType];
+        if (checkName != null)
+        {
+            checkName = checkName.ToLowerInvariant();
+
+            for (int i = 0; i < surfaceTypes.Length; i++)
+            {
+                st = surfaceTypes[i];
+
+                for (int ii = 0; ii < st.materialKeywords.Length; ii++)
+                {
+                    if (checkName.Contains(st.materialKeywords[ii].ToLowerInvariant())) //check if the material name contains the keyword
+                        return true;
+                }
+            }
+        }
+
+        st = null;
+        return false;
     }
 
     public void InitConfig(JBooth.MicroSplat.TextureArrayConfig textureArrayConfig)
@@ -168,6 +194,7 @@ public class SurfaceSounds : ScriptableObject
             st.terrainIndices = validIndices.ToArray();
         }
     }
+
 
     //From: https://answers.unity.com/questions/456973/getting-the-texture-of-a-certain-point-on-terrain.html
     private float[] GetTextureMix(Terrain terrain, Vector3 WorldPos)
@@ -246,7 +273,7 @@ public class SurfaceSounds : ScriptableObject
         {
             return soundSets[id];
         }
-        
+
 
         //Datatypes
         [System.Serializable]
@@ -289,9 +316,9 @@ public class SurfaceSounds : ScriptableObject
             public void PlayOneShot(AudioSource audioSource, float volumeMultiplier = 1, float pitchMultiplier = 1)
             {
                 var c = GetRandomClip(out float volume, out float pitch);
-                
+
                 //if(!source.isPlaying)
-                    audioSource.pitch = pitch * pitchMultiplier;
+                audioSource.pitch = pitch * pitchMultiplier;
 
                 audioSource.PlayOneShot(c, volume * volumeMultiplier);
             }
@@ -302,7 +329,7 @@ public class SurfaceSounds : ScriptableObject
                 pitch = GetPitch();
 
                 var c = GetRandomClip();
-                if(c != null)
+                if (c != null)
                 {
                     volume *= c.volumeMultiplier;
                     pitch *= c.pitchMultiplier;
