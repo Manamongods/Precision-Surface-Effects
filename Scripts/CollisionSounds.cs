@@ -90,8 +90,8 @@ public class CollisionSounds : SurfaceSoundsUser
             else
             {
                 //Smoothly fades the pitch and volume
-                Lerp(ref currentVolume, ssClip.volumeMultiplier * volumeMultiplier * Volume(force), volumeLerpRate);
-                audioSource.volume = currentVolume;
+                Lerp(ref currentVolume, ssClip.volumeMultiplier * Volume(force), volumeLerpRate);
+                audioSource.volume = volumeMultiplier * currentVolume;
                 Lerp(ref currentPitch, targetPitch, pitchLerpRate);
                 audioSource.pitch = currentPitch;
 

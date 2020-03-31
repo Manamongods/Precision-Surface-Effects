@@ -162,41 +162,38 @@ public class SurfaceSounds : ScriptableObject
 
         var marker = collider.GetComponent<SurfaceTypeMarker>();
         if (marker != null)
-        {
             checkName = marker.reference;
-        }
-        else
-        {
-            var mr = collider.GetComponent<MeshRenderer>();
 
-            if (mr != null)
+        var mr = collider.GetComponent<MeshRenderer>();
+        if (mr != null)
+        {
+            //Defaults to the first material. For most colliders it can't be discerned which specific material it is
+            if (checkName == null) //It is overrided by SurfaceTypeMarker
+                checkName = mr.sharedMaterial.name;
+
+            //The collider is a non-convex meshCollider. We can find the triangle index.
+            if (triangleIndex != -1 && collider is MeshCollider mc && !mc.convex)
             {
                 var materials = mr.sharedMaterials;
 
-                //Defaults to the first material. For most colliders it can't be discerned which specific material it is
-                checkName = materials[0].name; 
+                var mesh = collider.GetComponent<MeshFilter>().sharedMesh;
 
-                //The collider is a non-convex meshCollider. We can find the triangle index.
-                if (triangleIndex != -1 && collider is MeshCollider mc && !mc.convex) 
+                var triIndex = triangleIndex * 3;
+
+                for (int submeshID = mesh.subMeshCount - 1; submeshID >= 0; submeshID--)
                 {
-                    var mesh = collider.GetComponent<MeshFilter>().sharedMesh;
+                    int start = mesh.GetSubMesh(submeshID).indexStart;
 
-                    var triIndex = triangleIndex * 3;
-
-                    for (int submeshID = mesh.subMeshCount - 1; submeshID >= 0; submeshID--)
+                    if (triIndex >= start)
                     {
-                        int start = mesh.GetSubMesh(submeshID).indexStart;
-
-                        if (triIndex >= start)
-                        {
-                            //The triangle hit is within this submesh
-                            checkName = materials[submeshID].name; 
-                            break;
-                        }
+                        //The triangle hit is within this submesh
+                        checkName = materials[submeshID].name; //This is not overrided by SurfaceTypeMarker (which is useful because Collision sounds should have control over the default)
+                        break;
                     }
                 }
             }
         }
+
 
         //Searches using CheckName
         if (TryGetStringSurfaceType(checkName, out st))
