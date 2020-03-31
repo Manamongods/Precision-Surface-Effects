@@ -28,7 +28,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
-public class FootSoundTester : MonoBehaviour
+public class SurfaceSoundTester : MonoBehaviour
 {
     //Fields
     [Header("Result")]
@@ -41,7 +41,7 @@ public class FootSoundTester : MonoBehaviour
 
     [Header("Input")]
     [Space(50)]
-    public FootstepSounds sounds;
+    public SurfaceSounds sounds;
     public int soundSetID = 0;
     public bool downIsGravity;
 

@@ -6,7 +6,7 @@ using UnityEngine;
 public class Tester2 : MonoBehaviour
 {
     public UnityEngine.UI.Text text;
-    public FootSoundTester ts;
+    public SurfaceSoundTester ts;
 
     private void Update()
     {

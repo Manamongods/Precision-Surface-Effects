@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8de655e55134ea4458afbf3a4e8e4f11, type: 3}
-  m_Name: Footstep Sounds
+  m_Name: Surface Sounds
   m_EditorClassIdentifier: 
   textureArrayConfig: {fileID: 11400000, guid: a708a7a73fb534bf0ac7cc83a706c5b8, type: 2}
   defaultSurfaceType: 0

@@ -29,7 +29,7 @@ using UnityEngine;
 using UnityExtensions;
 
 [CreateAssetMenu(menuName = "FootstepSounds")]
-public class FootstepSounds : ScriptableObject
+public class SurfaceSounds : ScriptableObject
 {
     //Fields
 #if UNITY_EDITOR
