@@ -15,7 +15,9 @@ The component `SurfaceSoundTester.cs` can be used to test it out.
 
 Delete the folder "Microsplat Example (Incomplete) Test - Delete this garbage" after you have tried it out (if you want to try it out). It is complete garbage apart from being a mediocre demonstration
 
-The easiest thing is to reference the SurfaceSounds asset, and then do `surfaceSounds.GetSphereCastSurfaceType(pos, Vector3.down).GetSoundSet().PlayOneShot(audioSource);`
+The easiest thing is to reference the SurfaceSounds asset, and then do `surfaceSounds.GetRaycastSurfaceType(pos, Vector3.down).GetSoundSet().PlayOneShot(audioSource);`
+
+You could use `GetRaycastSurfaceType`, but games often have entities magically floating with one or fewer feet on a ledge, and in that case the raycast would pass all the way to the bottom of the cliff. That's when it is good to use `GetSphereCastSurfaceType` with a larger radius.
 
 ### Terrain
 If the spherecast hits a TerrainCollider, it tests against the indices (which were found using MicroSplat's Config file and Albedo (Diffuse) textures you specify).
