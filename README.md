@@ -17,6 +17,7 @@ Delete the folder "Microsplat Example (Incomplete) Test - Delete this garbage" a
 
 You can use these for Animation Events:
 `SphereCastAnimatorFeet.cs`
+or
 `RaycastAnimatorFeet.cs`
 
 Or if you're coding it yourself, the easiest thing is to reference the SurfaceSounds asset, and then do `surfaceSounds.GetRaycastSurfaceType(pos, Vector3.down).GetSoundSet().PlayOneShot(audioSource);`
