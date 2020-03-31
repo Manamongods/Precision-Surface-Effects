@@ -84,13 +84,13 @@ public class SurfaceSoundTester : MonoBehaviour
     {
         if (spherecast)
         {
-            Gizmos.DrawSphere(transform.position, spherecastRadius);
+            Gizmos.DrawWireSphere(transform.position, spherecastRadius);
 
             var pos = transform.position;
             var dir = GetDownDir();
             if (Physics.SphereCast(pos, spherecastRadius, dir, out RaycastHit rh))
             {
-                Gizmos.DrawSphere(pos + dir * rh.distance, spherecastRadius); //rh.point
+                Gizmos.DrawWireSphere(pos + dir * rh.distance, spherecastRadius); //rh.point
             }
         }
     }
