@@ -9,8 +9,8 @@ public class CollisionSounds : SurfaceSoundsUser
     //Fields
     public float volumeMultiplier = 1;
 
-    public Sound impactSound;
-    public FrictionSound frictionSound;
+    public Sound impactSound = new Sound();
+    public FrictionSound frictionSound = new FrictionSound();
 
     private float force, speed;
 
@@ -78,7 +78,7 @@ public class CollisionSounds : SurfaceSoundsUser
                 if (!Audible(volume))
                 {
                     audioSource.clip = ssClip.clip;
-                    audioSource.pitch = targetPitch; //Immediately changes the pitch
+                    pitch = targetPitch; //Immediately changes the pitch
                 }
 
                 //Fades the volume to change the clip
@@ -150,12 +150,10 @@ public class CollisionSounds : SurfaceSoundsUser
         frictionSound.ssClip = GetSoundSet(collision).loopSound;
     }
 
-    
-
     private void Update()
     {
         float speed = 0;
-        if (force > 0) //avoiding a divide by zero
+        if (force > 0) //prevents a divide by zero
             speed = this.speed / force;
 
         frictionSound.Update(volumeMultiplier, force, speed);
