@@ -37,11 +37,19 @@ public class SurfaceSounds : ScriptableObject
     public JBooth.MicroSplat.TextureArrayConfig textureArrayConfig;
 #endif
 
+    [Space(50)]
     [Tooltip("If it can't find one")]
     public int defaultSurfaceType = 0;
+#if UNITY_EDITOR
+    public string autoDefaultSurfaceTypeHeader;
+#endif
+
+    [Space(50)]
     [ReorderableList()]
     public SurfaceType[] surfaceTypes = new SurfaceType[] { new SurfaceType() };
     [ReorderableList()]
+
+    [Space(50)]
     public string[] soundSetNames = new string[] { "Human", "Heavy" };
 
 
@@ -396,6 +404,7 @@ public class SurfaceSounds : ScriptableObject
     private void OnValidate()
     {
         defaultSurfaceType = Mathf.Clamp(defaultSurfaceType, 0, surfaceTypes.Length - 1);
+        autoDefaultSurfaceTypeHeader= surfaceTypes[defaultSurfaceType].header;
 
         InitConfig(textureArrayConfig);
 
