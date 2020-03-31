@@ -83,13 +83,13 @@ public class SurfaceSounds : ScriptableObject
 
         return GetSurfaceType(null, worldPosition);
     }
-
     public SurfaceType GetCollisionSurfaceType(Collision collision)
     {
         return GetSurfaceType(collision.collider, collision.GetContact(0).point);
     }
 
-    public SurfaceType GetSurfaceType(Collider collider, Vector3 worldPosition, int triangleIndex = -1)
+    //You can make these public if you want access:
+    private SurfaceType GetSurfaceType(Collider collider, Vector3 worldPosition, int triangleIndex = -1)
     {
         if (collider != null)
         {
@@ -107,7 +107,7 @@ public class SurfaceSounds : ScriptableObject
 
         return surfaceTypes[defaultSurfaceType];
     }
-    public bool GetTerrainSurfaceType(Terrain terrain, Vector3 worldPosition, out SurfaceType st)
+    private bool GetTerrainSurfaceType(Terrain terrain, Vector3 worldPosition, out SurfaceType st)
     {
         var terrainIndex = GetMainTexture(terrain, worldPosition);
 
@@ -127,7 +127,7 @@ public class SurfaceSounds : ScriptableObject
         st = null;
         return false;
     }
-    public bool GetNonTerrainSurfaceType(Collider collider, Vector3 worldPosition, out SurfaceType st, int triangleIndex = -1)
+    private bool GetNonTerrainSurfaceType(Collider collider, Vector3 worldPosition, out SurfaceType st, int triangleIndex = -1)
     {
         string checkName = null;
 
