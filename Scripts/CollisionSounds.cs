@@ -61,10 +61,9 @@ public class CollisionSounds : SurfaceSoundsUser
         public float volumeLerpRate = 10;
         public float pitchLerpRate = 10;
 
-        private float volume;
-        private float pitch;
-
         internal SurfaceSounds.SurfaceType.SoundSet.Clip ssClip;
+        private float currentVolume;
+        private float currentPitch;
 
         
         //Methods
@@ -75,33 +74,33 @@ public class CollisionSounds : SurfaceSoundsUser
             if (audioSource.clip != ssClip.clip)
             {
                 //Changes the clip if silent
-                if (!Audible(volume))
+                if (!Audible(currentVolume))
                 {
                     audioSource.clip = ssClip.clip;
-                    pitch = targetPitch; //Immediately changes the pitch
+                    currentPitch = targetPitch; //Immediately changes the pitch
                 }
 
                 //Fades the volume to change the clip
-                LerpTo(ref volume, 0, clipChangeLerpRate);
-                audioSource.volume = volume;
+                Lerp(ref currentVolume, 0, clipChangeLerpRate);
+                audioSource.volume = currentVolume;
             }
             else
             {
                 //Smoothly fades the pitch and volume
-                LerpTo(ref volume, ssClip.volumeMultiplier * volumeMultiplier * Volume(force), volumeLerpRate);
-                audioSource.volume = volume;
-                LerpTo(ref pitch, targetPitch, pitchLerpRate);
-                audioSource.pitch = pitch;
+                Lerp(ref currentVolume, ssClip.volumeMultiplier * volumeMultiplier * Volume(force), volumeLerpRate);
+                audioSource.volume = currentVolume;
+                Lerp(ref currentPitch, targetPitch, pitchLerpRate);
+                audioSource.pitch = currentPitch;
 
                 //Ensures the AudioSource is only playing if the volume is high enough
-                bool audible = Audible(volume);
+                bool audible = Audible(currentVolume);
                 if (audible && !audioSource.isPlaying)
                     audioSource.Play();
                 if (!audible && audioSource.isPlaying)
                     audioSource.Pause(); //perhaps Stop()?
             }
         }
-        private static void LerpTo(ref float value, float target, float rate)
+        private static void Lerp(ref float value, float target, float rate)
         {
             float maxChange = Time.deltaTime * rate;
             value += Mathf.Clamp(target - value, -maxChange, maxChange);
