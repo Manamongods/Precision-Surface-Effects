@@ -1,4 +1,4 @@
-# Microsplat Surface Sounds
+# Microsplat Surface/Footstep Sounds
 
 Allows you to find audioClips in Unity depending on what a spherecast or raycast hits. You could alternatively find it using `GetCollisionSurfaceType(Collision collision)`, but since Collisions don't know the triangleIndex it can't discern between submeshes.
 
