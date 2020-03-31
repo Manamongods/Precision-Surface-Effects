@@ -137,7 +137,7 @@ public class SurfaceSounds : ScriptableObject
     private bool TryGetTerrainSurfaceType(Terrain terrain, Vector3 worldPosition, out SurfaceType st)
     {
         var terrainIndex = GetMainTexture(terrain, worldPosition);
-        var terrainTexture = terrain.terrainData.terrainLayers[terrainIndex].diffuseTexture;
+        var terrainTexture = terrain.terrainData.terrainLayers[terrainIndex].diffuseTexture; //This might be terrible performance??
 
         for (int i = 0; i < surfaceTypes.Length; i++)
         {
