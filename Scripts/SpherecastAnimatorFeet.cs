@@ -16,7 +16,7 @@ public class SphereCastAnimatorFeet : MonoBehaviour
     public Foot[] feet = new Foot[2];
 
     [Header("Sphere Cast")]
-    public LayerMask layerMask;
+    public LayerMask layerMask = -1;
     public float maxDistance = Mathf.Infinity;
     public Transform origin;
     public float radius = 1;

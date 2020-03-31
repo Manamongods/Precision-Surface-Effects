@@ -16,7 +16,7 @@ public class RaycastAnimatorFeet : MonoBehaviour
     public Foot[] feet = new Foot[2];
 
     [Header("Raycasting")]
-    public LayerMask layerMask;
+    public LayerMask layerMask = -1;
     public float maxDistance = Mathf.Infinity;
     public Transform directionOverride;
 
@@ -33,6 +33,7 @@ public class RaycastAnimatorFeet : MonoBehaviour
         [Header("Raycasting")]
         public Transform foot;
         public Vector3 raycastOffset = Vector3.zero;
+        [Tooltip("Unless it's overrided")]
         public Vector3 raycastDirection = Vector3.down;
     }
 
@@ -55,6 +56,7 @@ public class RaycastAnimatorFeet : MonoBehaviour
 
         st.GetSoundSet(soundSetID).PlayOneShot(foot.audioSource);           
     }
+
 
 
     //Lifecycle
