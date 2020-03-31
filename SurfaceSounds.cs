@@ -100,7 +100,7 @@ public class SurfaceSounds : ScriptableObject
 
     public SurfaceType GetStringSurfaceType(string checkName, out SurfaceType st)
     {
-        if (String.Is checkName != null)
+        if (!System.String.IsNullOrEmpty(checkName))
         {
             checkName = checkName.ToLowerInvariant();
 
