@@ -28,7 +28,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityExtensions;
 
-[CreateAssetMenu(menuName = "FootstepSounds")]
+[CreateAssetMenu(menuName = "SurfaceSounds")]
 public class SurfaceSounds : ScriptableObject
 {
     //Fields
