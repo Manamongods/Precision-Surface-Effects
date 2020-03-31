@@ -98,7 +98,7 @@ public class SurfaceSounds : ScriptableObject
         return GetSurfaceType(collision.collider, collision.GetContact(0).point);
     }
 
-    public SurfaceType GetStringSurfaceType(string checkName, out SurfaceType st)
+    public bool GetStringSurfaceType(string checkName, out SurfaceType st)
     {
         if (!System.String.IsNullOrEmpty(checkName))
         {
