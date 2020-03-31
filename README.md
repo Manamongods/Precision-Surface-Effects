@@ -1,6 +1,6 @@
 # Microsplat Surface Sounds
 
-Allows you to find audioClips in Unity depending on what a spherecast hits.
+Allows you to find audioClips in Unity depending on what a spherecast hits. You could alternatively find it using `GetCollisionSurfaceType(Collision collision)`, but since Collisions don't know the triangleIndex it can't discern between submeshes.
 
 Uses: https://github.com/garettbass/UnityExtensions.ArrayDrawer for some reorderability
 
@@ -15,7 +15,7 @@ The component `SurfaceSoundTester.cs` can be used to test it out.
 
 Delete the folder "Microsplat Example (Incomplete) Test - Delete this garbage" after you have tried it out (if you want to try it out). It is complete garbage apart from being a mediocre demonstration
 
-The easiest thing is to reference the SurfaceSounds asset, and then do `surfaceSounds.GetSurfaceType(pos, Vector3.down).GetSoundSet().PlayOneShot(audioSource);`
+The easiest thing is to reference the SurfaceSounds asset, and then do `surfaceSounds.GetSphereCastSurfaceType(pos, Vector3.down).GetSoundSet().PlayOneShot(audioSource);`
 
 ### Terrain
 If the spherecast hits a TerrainCollider, it will use MicroSplat's Config file to find the indices to test against by using the Albedo (Diffuse) textures of the splats
