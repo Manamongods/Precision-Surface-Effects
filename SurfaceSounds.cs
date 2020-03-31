@@ -32,11 +32,6 @@ using UnityExtensions;
 public class SurfaceSounds : ScriptableObject
 {
     //Fields
-#if UNITY_EDITOR
-    [Tooltip("The default, if you don't want to re-init during runtime")]
-    public JBooth.MicroSplat.TextureArrayConfig textureArrayConfig;
-#endif
-
     [Space(50)]
     [Tooltip("If it can't find one")]
     public int defaultSurfaceType = 0;
@@ -142,14 +137,15 @@ public class SurfaceSounds : ScriptableObject
     private bool TryGetTerrainSurfaceType(Terrain terrain, Vector3 worldPosition, out SurfaceType st)
     {
         var terrainIndex = GetMainTexture(terrain, worldPosition);
+        var terrainTexture = terrain.terrainData.terrainLayers[terrainIndex].diffuseTexture;
 
         for (int i = 0; i < surfaceTypes.Length; i++)
         {
             st = surfaceTypes[i];
 
-            for (int ii = 0; ii < st.terrainIndices.Length; ii++)
+            for (int ii = 0; ii < st.terrainAlbedos.Length; ii++)
             {
-                if (terrainIndex == st.terrainIndices[ii])
+                if (terrainTexture == st.terrainAlbedos[ii])
                 {
                     return true;
                 }
@@ -210,34 +206,7 @@ public class SurfaceSounds : ScriptableObject
         st = null;
         return false;
     }
-
-    public void InitConfig(JBooth.MicroSplat.TextureArrayConfig textureArrayConfig)
-    {
-        var sources = textureArrayConfig.sourceTextures;
-        for (int stID = 0; stID < surfaceTypes.Length; stID++)
-        {
-            var st = surfaceTypes[stID];
-
-            List<int> validIndices = new List<int>();
-
-            for (int albedoID = 0; albedoID < st.terrainAlbedos.Length; albedoID++)
-            {
-                var albedo = st.terrainAlbedos[albedoID];
-
-                for (int index = 0; index < sources.Count; index++)
-                {
-                    if (albedo == sources[index].diffuse)
-                    {
-                        validIndices.Add(index);
-                        break;
-                    }
-                }
-            }
-
-            st.terrainIndices = validIndices.ToArray();
-        }
-    }
-
+    
 
     //From: https://answers.unity.com/questions/456973/getting-the-texture-of-a-certain-point-on-terrain.html
     private float[] GetTextureMix(Terrain terrain, Vector3 WorldPos)
@@ -300,9 +269,6 @@ public class SurfaceSounds : ScriptableObject
 
         [Header("Terrains")]
         public Texture2D[] terrainAlbedos;
-
-        [HideInInspector]
-        public int[] terrainIndices;
 
         [Header("Mesh Renderers")]
         public string[] materialKeywords = new string[] { "Grass", "Leaves", "Hay", "Flower" };
@@ -429,9 +395,6 @@ public class SurfaceSounds : ScriptableObject
     {
         defaultSurfaceType = Mathf.Clamp(defaultSurfaceType, 0, surfaceTypes.Length - 1);
         autoDefaultSurfaceTypeHeader = surfaceTypes[defaultSurfaceType].groupName;
-
-
-        InitConfig(textureArrayConfig);
 
 
         //Grows the SoundSetNames to the maximum count
