@@ -18,7 +18,7 @@ Delete the folder "Microsplat Example (Incomplete) Test - Delete this garbage" a
 The easiest thing is to reference the SurfaceSounds asset, and then do `surfaceSounds.GetSphereCastSurfaceType(pos, Vector3.down).GetSoundSet().PlayOneShot(audioSource);`
 
 ### Terrain
-If the spherecast hits a TerrainCollider, it will use MicroSplat's Config file to find the indices to test against by using the Albedo (Diffuse) textures of the splats
+If the spherecast hits a TerrainCollider, it tests against the indices found using MicroSplat's Config file, by using the Albedo (Diffuse) textures of the splats
 
 ### MeshRenderers
 If the collider is not a TerrainCollider, it will test if the name of the MeshRenderer's material/s includes one of the keywords.
