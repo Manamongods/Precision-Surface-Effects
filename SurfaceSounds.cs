@@ -57,9 +57,22 @@ public class SurfaceSounds : ScriptableObject
     }
 
 
-    public SurfaceType GetSphereCastSurfaceType(Vector3 worldPosition, Vector3 downDirection, float spherecastRadius = 0.01f, int layerMask = -1, float maxDistance = Mathf.Infinity)
+    public SurfaceType GetSphereCastSurfaceType(Vector3 worldPosition, Vector3 downDirection, float spherecastRadius = 0.01f, float maxDistance = Mathf.Infinity, int layerMask = -1)
     {
         if (Physics.SphereCast(worldPosition, spherecastRadius, downDirection, out RaycastHit rh, maxDistance, layerMask, QueryTriggerInteraction.Ignore))
+        {
+#if UNITY_EDITOR
+            Debug.DrawLine(worldPosition, rh.point);
+#endif
+
+            return GetSurfaceType(rh.collider, worldPosition, rh.triangleIndex);
+        }
+
+        return GetSurfaceType(null, worldPosition);
+    }
+    public SurfaceType GetRaycastSurfaceType(Vector3 worldPosition, Vector3 downDirection, float maxDistance = Mathf.Infinity, int layerMask = -1)
+    {
+        if (Physics.Raycast(worldPosition, downDirection, out RaycastHit rh, maxDistance, layerMask, QueryTriggerInteraction.Ignore))
         {
 #if UNITY_EDITOR
             Debug.DrawLine(worldPosition, rh.point);
