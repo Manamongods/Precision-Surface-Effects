@@ -126,7 +126,7 @@ public class SurfaceSounds : ScriptableObject
             {
                 var materials = mr.sharedMaterials;
 
-                checkName = materials[0].name; //defaults to the first material. For most colliders it can't be discerned which specific material it is
+                checkName = materials[0].name; //Defaults to the first material. For most colliders it can't be discerned which specific material it is
 
                 if (triangleIndex != -1 && collider is MeshCollider mc && !mc.convex) //The collider is a non-convex meshCollider. We can find the triangle index.
                 {
