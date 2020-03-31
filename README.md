@@ -1,10 +1,10 @@
-# Microsplat Surface Sounds
+# Unity Surface Sounds
 
 Allows you to find audioClips in Unity depending on what a spherecast or raycast hits, aka footstep sounds. You could alternatively find it using `GetCollisionSurfaceType(Collision collision)`, but since Collisions don't know any MeshCollider's triangleIndex it can't discern between submeshes.
 
 Uses: https://github.com/garettbass/UnityExtensions.ArrayDrawer for some reorderability
 
-The test scene requires MicroSplat's Examples
+The test scene requires MicroSplat's Examples. But the test scene is also garbage btw.
 
 ## Usage
 
@@ -25,7 +25,7 @@ Or if you're coding it yourself, the easiest thing is to reference the SurfaceSo
 You could use `GetRaycastSurfaceType`, but games often have entities magically floating with one or fewer feet on a ledge, and in that case the raycast would pass all the way to the bottom of the cliff. That's when it is good to use `GetSphereCastSurfaceType` with a larger radius.
 
 ### Terrain
-If the spherecast hits a TerrainCollider, it tests against the indices (which were found using MicroSplat's Config file and Albedo (Diffuse) textures you specify).
+If the spherecast hits a TerrainCollider it compares with the Albedo (Diffuse) textures you specify.
 
 ### MeshRenderers
 If the collider is not a TerrainCollider, it will test if the name of the MeshRenderer's material/s includes one of the keywords.
@@ -43,9 +43,6 @@ The material's name can include the keyword with any capitalization:
     GrAsS
     
 Keywords shouldn't contains another SurfaceType's keyword
-
-### Config
-If you want to change the MicroSplat config during runtime, you need to use `SurfaceSounds.InitConfig(JBooth.MicroSplat.TextureArrayConfig textureArrayConfig)`
 
 ### Performance
 You can cache the `SurfaceType` from `GetSurfaceType`, to update it less frequently. However, the performance should be ok, and the player should definitely be up to date (found every time you want to play a footstep sound, not every frame).
@@ -69,15 +66,6 @@ You can get a randomized volume and pitch. `SurfaceType`'s `SoundSet`s have indi
 
 ## Limitations
 
-- Only works for MicroSplat. 
-This can be changed:
-    - remove `textureArrayConfig` 
-    - remove `[HideInInspector]` from above `public int[] terrainIndices;`
-    - remove the `InitConfig` function
-    - remove `terrainAlbedos`, as that will no longer be used
-    
-    - Then you will need to specify the terrain indices manually
-    
 - Material names need to be proper (only include the relevant keyword, not another SurfaceType's keyword. Otherwise it might find the wrong SurfaceType)
 
 ## Follow me on Twitter
