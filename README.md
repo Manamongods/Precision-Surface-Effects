@@ -4,7 +4,7 @@ Allows you to find audioClips in Unity depending on what a spherecast or raycast
 
 Uses: https://github.com/garettbass/UnityExtensions.ArrayDrawer for some reorderability
 
-The test scene requires MicroSplat's Examples. But the test scene is also garbage btw.
+The test scene requires MicroSplat's Examples. But the test scene is very unimportant so you should just delete all that test stuff.
 
 ## Usage
 
