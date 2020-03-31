@@ -7,19 +7,52 @@ using UnityEngine;
 public class CollisionSounds : SurfaceSoundsUser
 {
     //Fields
-    public float volumeMultiplier = 1;
+#if UNITY_EDITOR
+    [Space(30)]
+    public string currentSurfaceTypeDebug;
+#endif
 
+    [Space(30)]
+    public float volumeMultiplier = 1;
+    [Tooltip("Non-convex MeshCollider submeshes")]
+    public bool findMeshColliderSubmesh = true;
+
+    [Space(15)]
     public Sound impactSound = new Sound();
+    public float impactCooldown = 0.1f;
+    [Space(15)]
     public FrictionSound frictionSound = new FrictionSound();
+    public float minFrictionForce = 1;
+    public float maxFrictionForce = 100;
 
     private float force, speed;
+    private float impactCooldownT;
 
 
 
     //Methods
-    private SurfaceSounds.SurfaceType.SoundSet GetSoundSet(Collision c)
+    private SurfaceSounds.SurfaceType GetSurfaceType(Collision c)
     {
-        return surfaceSounds.GetCollisionSurfaceType(c).GetSoundSet(soundSetID);
+        if(findMeshColliderSubmesh && c.collider is MeshCollider mc && !mc.convex)
+        {
+            var contact = c.GetContact(0);
+            var pos = contact.point;
+            var norm = contact.normal; //this better be normalized!
+
+            float searchThickness = 0.001f + Mathf.Abs(contact.separation);
+
+            if (mc.Raycast(new Ray(pos + norm * searchThickness, -norm), out RaycastHit rh, Mathf.Infinity)) //searchThickness * 2
+            {
+#if UNITY_EDITOR
+                float debugSize = 3;
+                Debug.DrawLine(pos + norm * debugSize, pos - norm * debugSize, Color.white, 0);
+#endif
+
+                return surfaceSounds.GetSurfaceType(c.collider, pos, rh.triangleIndex);
+            }
+        }
+
+        return surfaceSounds.GetCollisionSurfaceType(c);
     }
 
 
@@ -32,8 +65,7 @@ public class CollisionSounds : SurfaceSoundsUser
         public AudioSource audioSource;
 
         [Header("Volume")]
-        public float baseVolume = 0;
-        public float volumeByForce = 0.1f;
+        public float volumeByForce = 0.1f; //public float baseVolume = 0;
 
         [Header("Pitch")]
         public float basePitch = 1;
@@ -43,7 +75,7 @@ public class CollisionSounds : SurfaceSoundsUser
         //Methods
         public float Volume(float force)
         {
-            return baseVolume + volumeByForce * force;
+            return volumeByForce * force; //baseVolume + 
         }
 
         public float Pitch(float speed)
@@ -57,13 +89,33 @@ public class CollisionSounds : SurfaceSoundsUser
     {
         //Fields
         [Header("Rates")]
-        public float clipChangeLerpRate = 100;
-        public float volumeLerpRate = 10;
-        public float pitchLerpRate = 10;
+        public float clipChangeSmoothTime = .01f;
+        [Tooltip("This is used in smoothing the volume and pitch")]
+        public SmoothTimes smoothTimes = SmoothTimes.Default(); //make it be smoothtime instead?
 
         internal SurfaceSounds.SurfaceType.SoundSet.Clip ssClip;
         private float currentVolume;
         private float currentPitch;
+        private float velocity;
+        private float pVelocity;
+
+
+        //Datatypes
+        [System.Serializable]
+        public struct SmoothTimes
+        {
+            public float up;
+            public float down;
+
+            public static SmoothTimes Default()
+            {
+                return new SmoothTimes()
+                {
+                    up = .1f,
+                    down = 1
+                };
+            }
+        }
 
         
         //Methods
@@ -81,32 +133,63 @@ public class CollisionSounds : SurfaceSoundsUser
                 {
                     audioSource.clip = ssClip.clip;
                     currentPitch = targetPitch; //Immediately changes the pitch
+                    velocity = 0;
+                    pVelocity = 0;
                 }
 
                 //Fades the volume to change the clip
-                Lerp(ref currentVolume, 0, clipChangeLerpRate);
+                SmoothDamp(ref currentVolume, 0, ref velocity, new SmoothTimes() { down = clipChangeSmoothTime });
                 audioSource.volume = currentVolume;
             }
-            else
+            else 
             {
-                //Smoothly fades the pitch and volume
-                Lerp(ref currentVolume, ssClip.volumeMultiplier * Volume(force), volumeLerpRate);
-                audioSource.volume = volumeMultiplier * currentVolume;
-                Lerp(ref currentPitch, targetPitch, pitchLerpRate);
-                audioSource.pitch = currentPitch;
+                if (audioSource.clip == null)
+                {
+                    if (audioSource.isPlaying)
+                        audioSource.Stop();
+                }
+                else
+                {
+                    //Smoothly fades the pitch and volume
+                    float lerpedAmount = SmoothDamp(ref currentVolume, ssClip.volumeMultiplier * Volume(force), ref velocity, smoothTimes);
+                    audioSource.volume = volumeMultiplier * currentVolume;
 
-                //Ensures the AudioSource is only playing if the volume is high enough
-                bool audible = Audible(currentVolume);
-                if (audible && !audioSource.isPlaying)
-                    audioSource.Play();
-                if (!audible && audioSource.isPlaying)
-                    audioSource.Pause(); //perhaps Stop()?
+                    if (speed != 0)
+                        SmoothDamp(ref currentPitch, targetPitch, ref pVelocity, smoothTimes); // Mathf.LerpUnclamped(currentPitch, targetPitch, lerpedAmount);
+                    audioSource.pitch = currentPitch;
+
+
+                    //Ensures the AudioSource is only playing if the volume is high enough
+                    bool audible = Audible(currentVolume);
+                    if (audible && !audioSource.isPlaying)
+                        audioSource.Play();
+                    if (!audible && audioSource.isPlaying)
+                        audioSource.Pause(); //perhaps Stop()?
+                }
             }
         }
-        private static void Lerp(ref float value, float target, float rate)
+        private static float SmoothDamp(ref float value, float target, ref float velocity, SmoothTimes rates)
         {
-            float maxChange = Time.deltaTime * rate;
-            value += Mathf.Clamp(target - value, -maxChange, maxChange);
+            float smoothTime;
+            if (target > value)
+                smoothTime = rates.up;
+            else
+                smoothTime = rates.down;
+
+            float maxChange = Time.deltaTime * smoothTime;
+
+            var wantedChange = target - value;
+            //var clampedChange = Mathf.Clamp(wantedChange, -maxChange, maxChange);
+            //value += clampedChange;
+
+            var before = value;
+            value = Mathf.SmoothDamp(value, target, ref velocity, smoothTime);
+            float clampedChange = value - before;
+
+            if (wantedChange == 0)
+                return 1;
+            else
+                return clampedChange / wantedChange; //returns the amount it has lerped, basically what the t would be in a Mathf.Lerp(value, target, t);
         }
         private static bool Audible(float vol)
         {
@@ -125,6 +208,8 @@ public class CollisionSounds : SurfaceSoundsUser
     }
     private void OnValidate()
     {
+        currentSurfaceTypeDebug = "";
+
         Prepare(impactSound.audioSource, false);
         Prepare(frictionSound.audioSource, true);
     }
@@ -132,33 +217,55 @@ public class CollisionSounds : SurfaceSoundsUser
 
     private void FixedUpdate()
     {
-        //Clears these accumulations
+        //Clears the accumulations
         force = 0;
         speed = 0;
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        //Impact Sound
-        var vol = volumeMultiplier * impactSound.Volume(collision.impulse.magnitude); //Here "force" is actually an impulse
-        var pitch = impactSound.Pitch(collision.relativeVelocity.magnitude);
+        if (impactCooldownT <= 0)
+        {
+            impactCooldownT = impactCooldown;
 
-        GetSoundSet(collision).PlayOneShot(impactSound.audioSource, vol, pitch);
+            //Impact Sound
+            var vol = volumeMultiplier * impactSound.Volume(collision.impulse.magnitude); //Here "force" is actually an impulse
+            var pitch = impactSound.Pitch(collision.relativeVelocity.magnitude);
+
+            var st = GetSurfaceType(collision);
+#if UNITY_EDITOR
+            currentSurfaceTypeDebug = st.groupName;
+#endif
+            st.GetSoundSet(soundSetID).PlayOneShot(impactSound.audioSource, vol, pitch);
+        }
     }
     private void OnCollisionStay(Collision collision)
     {
+        //var norm = collision.GetContact(0).normal;
+
+        //Debug.DrawRay(collision.GetContact(0).point, collision.impulse.normalized * 3);
+
         //Friction Sound
-        var force = collision.impulse.magnitude / Time.deltaTime;
+        //var force = Vector3.ProjectOnPlane(collision.impulse, norm).magnitude / Time.deltaTime; //Finds tangent force
+        //var impulse = collision.impulse;
+        //var force = (1 - Vector3.Dot(impulse.normalized, norm)) * impulse.magnitude / Time.deltaTime; //Finds tangent force
+        var force = Mathf.Max(0, Mathf.Min(maxFrictionForce, collision.impulse.magnitude / Time.deltaTime) - minFrictionForce);
         var speed = collision.relativeVelocity.magnitude;
 
         this.force += force;
         this.speed += force * speed; //weights speed, so that it can find a weighted average pitch for all the potential OnCollisionStays
 
-        frictionSound.ssClip = GetSoundSet(collision).loopSound;
+        var st = GetSurfaceType(collision);
+#if UNITY_EDITOR
+        currentSurfaceTypeDebug = st.groupName;
+#endif
+        frictionSound.ssClip = st.GetSoundSet(soundSetID).loopSound;
     }
 
     private void Update()
     {
+        impactCooldownT -= Time.deltaTime;
+
         float speed = 0;
         if (force > 0) //prevents a divide by zero
             speed = this.speed / force;

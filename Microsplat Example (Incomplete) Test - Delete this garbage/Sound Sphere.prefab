@@ -129,22 +129,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   surfaceSounds: {fileID: 11400000, guid: f3cb9fc9ce88df748a41be798853fbc5, type: 2}
   soundSetName: Player
+  currentSurfaceTypeDebug: 
   volumeMultiplier: 0.3
+  findMeshColliderSubmesh: 1
   impactSound:
     audioSource: {fileID: 7768311541134257654}
-    baseVolume: 0
     volumeByForce: 0.1
     basePitch: 1
     pitchBySpeed: 0.01
+  impactCooldown: 0.1
   frictionSound:
     audioSource: {fileID: 7768311542087541603}
-    baseVolume: 0
-    volumeByForce: 0.1
-    basePitch: 1
-    pitchBySpeed: 0.01
-    clipChangeLerpRate: 10
-    volumeLerpRate: 3
-    pitchLerpRate: 3
+    volumeByForce: 0.01
+    basePitch: 0.5
+    pitchBySpeed: 0.035
+    clipChangeSmoothTime: 0.001
+    smoothTimes:
+      up: 0.05
+      down: 0.15
+  minFrictionForce: 1
+  maxFrictionForce: 100
 --- !u!1 &7768311541134257655
 GameObject:
   m_ObjectHideFlags: 0

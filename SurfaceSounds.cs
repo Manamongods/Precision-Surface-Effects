@@ -115,8 +115,7 @@ public class SurfaceSounds : ScriptableObject
         return false;
     }
 
-    //You can make these public if you want access:
-    private SurfaceType GetSurfaceType(Collider collider, Vector3 worldPosition, int triangleIndex = -1)
+    public SurfaceType GetSurfaceType(Collider collider, Vector3 worldPosition, int triangleIndex = -1)
     {
         if (collider != null)
         {
@@ -134,6 +133,8 @@ public class SurfaceSounds : ScriptableObject
 
         return surfaceTypes[defaultSurfaceType];
     }
+    
+    //You can make these public if you want access:
     private bool TryGetTerrainSurfaceType(Terrain terrain, Vector3 worldPosition, out SurfaceType st)
     {
         var terrainIndex = GetMainTexture(terrain, worldPosition);
