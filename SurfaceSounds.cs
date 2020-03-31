@@ -295,7 +295,8 @@ public class SurfaceSounds : ScriptableObject
     public class SurfaceType
     {
         //Fields
-        public string header = "Grassy Sound";
+        [Header("______________________________________________________")]
+        public string groupName = "Grassy Sound";
 
         [Header("Terrains")]
         public Texture2D[] terrainAlbedos;
@@ -427,7 +428,7 @@ public class SurfaceSounds : ScriptableObject
     private void OnValidate()
     {
         defaultSurfaceType = Mathf.Clamp(defaultSurfaceType, 0, surfaceTypes.Length - 1);
-        autoDefaultSurfaceTypeHeader = surfaceTypes[defaultSurfaceType].header;
+        autoDefaultSurfaceTypeHeader = surfaceTypes[defaultSurfaceType].groupName;
 
 
         InitConfig(textureArrayConfig);

@@ -76,7 +76,7 @@ public class SurfaceSoundTester : MonoBehaviour
         else
             st = sounds.GetRaycastSurfaceType(pos, downDir);
 
-        header = st.header;
+        header = st.groupName;
         clip = st.GetSoundSet(soundSetID).GetRandomClip(out volume, out pitch);
     }
 

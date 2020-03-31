@@ -16,7 +16,7 @@ MonoBehaviour:
   defaultSurfaceType: 0
   autoDefaultSurfaceTypeHeader: None
   surfaceTypes:
-  - header: None
+  - groupName: None
     terrainAlbedos: []
     terrainIndices: 
     materialKeywords: []
@@ -32,7 +32,7 @@ MonoBehaviour:
         volumeMultiplier: 1
         pitchMultiplier: 1
       loopSound: {fileID: 0}
-  - header: Grassy Sound
+  - groupName: Grassy Sound
     terrainAlbedos:
     - {fileID: 2800000, guid: 66fb879d08c8d4a8d9217a396637cd02, type: 3}
     - {fileID: 2800000, guid: a4a9376fca9114840bb973b6693e7ff5, type: 3}
@@ -58,7 +58,7 @@ MonoBehaviour:
         volumeMultiplier: 1.14
         pitchMultiplier: 1
       loopSound: {fileID: 0}
-  - header: Rocky Sound
+  - groupName: Rocky Sound
     terrainAlbedos:
     - {fileID: 2800000, guid: b2e5c511fff7f41559554175e2005252, type: 3}
     - {fileID: 2800000, guid: 1d6b5702e2d7947a6aca898081729d0f, type: 3}
