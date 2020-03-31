@@ -45,6 +45,18 @@ public class SurfaceSoundTester : MonoBehaviour
     public int soundSetID = 0;
     public bool downIsGravity;
 
+    public bool spherecast;
+    public float spherecastRadius = 5;
+
+
+    //Methods
+    private Vector3 GetDownDir()
+    {
+        if (downIsGravity)
+            return Physics.gravity;
+        else
+            return -transform.up;
+    }
 
 
     //Lifecycle
@@ -53,23 +65,39 @@ public class SurfaceSoundTester : MonoBehaviour
         soundSetID = Mathf.Clamp(soundSetID, 0, sounds.soundSetNames.Length - 1);
         soundSetName = sounds.soundSetNames[soundSetID];
 
-        Vector3 downDir;
-        if (downIsGravity)
-            downDir = Physics.gravity;
-        else
-            downDir = -transform.up;
+        GetDownDir();
 
         var pos = transform.position;
+        var downDir = GetDownDir();
 
-        var st = sounds.GetSphereCastSurfaceType(pos, downDir);
+        SurfaceSounds.SurfaceType st;
+        if (spherecast)
+            st = sounds.GetSphereCastSurfaceType(pos, downDir, spherecastRadius);
+        else
+            st = sounds.GetRaycastSurfaceType(pos, downDir);
+
         header = st.header;
         clip = st.GetSoundSet(soundSetID).GetRandomClip(out volume, out pitch);
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (spherecast)
+        {
+            Gizmos.DrawSphere(transform.position, spherecastRadius);
+
+            var pos = transform.position;
+            var dir = GetDownDir();
+            if (Physics.SphereCast(pos, spherecastRadius, dir, out RaycastHit rh))
+            {
+                Gizmos.DrawSphere(pos + dir * rh.distance, spherecastRadius); //rh.point
+            }
+        }
     }
 }
 
 /*
 * 
-        //if (Physics.SphereCast(pos, 0.01f, downDir, out RaycastHit rh))
-            //Debug.DrawLine(pos, rh.point);
+        
 */
 #endif

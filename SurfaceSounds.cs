@@ -62,7 +62,9 @@ public class SurfaceSounds : ScriptableObject
         if (Physics.SphereCast(worldPosition, spherecastRadius, downDirection, out RaycastHit rh, maxDistance, layerMask, QueryTriggerInteraction.Ignore))
         {
 #if UNITY_EDITOR
-            Debug.DrawLine(worldPosition, rh.point);
+            var bottomCenter = worldPosition + downDirection * rh.distance;
+            Debug.DrawLine(worldPosition, bottomCenter);
+            Debug.DrawLine(bottomCenter, rh.point);
 #endif
 
             return GetSurfaceType(rh.collider, worldPosition, rh.triangleIndex);
