@@ -98,7 +98,7 @@ public class SurfaceSounds : ScriptableObject
         return GetSurfaceType(collision.collider, collision.GetContact(0).point);
     }
 
-    public bool GetStringSurfaceType(string checkName, out SurfaceType st)
+    public bool TryGetStringSurfaceType(string checkName, out SurfaceType st)
     {
         if (!System.String.IsNullOrEmpty(checkName))
         {
@@ -127,19 +127,19 @@ public class SurfaceSounds : ScriptableObject
         {
             if (collider is TerrainCollider tc) //it is a terrain collider
             {
-                if (GetTerrainSurfaceType(tc.GetComponent<Terrain>(), worldPosition, out SurfaceType st))
+                if (TryGetTerrainSurfaceType(tc.GetComponent<Terrain>(), worldPosition, out SurfaceType st))
                     return st;
             }
             else
             {
-                if (GetNonTerrainSurfaceType(collider, worldPosition, out SurfaceType st, triangleIndex))
+                if (TryGetNonTerrainSurfaceType(collider, worldPosition, out SurfaceType st, triangleIndex))
                     return st;
             }
         }
 
         return surfaceTypes[defaultSurfaceType];
     }
-    private bool GetTerrainSurfaceType(Terrain terrain, Vector3 worldPosition, out SurfaceType st)
+    private bool TryGetTerrainSurfaceType(Terrain terrain, Vector3 worldPosition, out SurfaceType st)
     {
         var terrainIndex = GetMainTexture(terrain, worldPosition);
 
@@ -159,7 +159,7 @@ public class SurfaceSounds : ScriptableObject
         st = null;
         return false;
     }
-    private bool GetNonTerrainSurfaceType(Collider collider, Vector3 worldPosition, out SurfaceType st, int triangleIndex = -1)
+    private bool TryGetNonTerrainSurfaceType(Collider collider, Vector3 worldPosition, out SurfaceType st, int triangleIndex = -1)
     {
         //Finds CheckName
         string checkName = null;
@@ -193,7 +193,8 @@ public class SurfaceSounds : ScriptableObject
 
                         if (triIndex >= start)
                         {
-                            checkName = materials[submeshID].name; //the triangle hit is within this submesh
+                            //The triangle hit is within this submesh
+                            checkName = materials[submeshID].name; 
                             break;
                         }
                     }
@@ -202,7 +203,7 @@ public class SurfaceSounds : ScriptableObject
         }
 
         //Searches using CheckName
-        if (GetStringSurfaceType(checkName, out st))
+        if (TryGetStringSurfaceType(checkName, out st))
             return true;
 
         //Found nothing
@@ -341,7 +342,8 @@ public class SurfaceSounds : ScriptableObject
             public Clip[] clipVariants = new Clip[1] { new Clip() };
 
             [Space(20)]
-            public AudioClip loopSound; //This can be used for friction/rolling sounds, or just ignore it
+            [Tooltip("This can be used for friction/rolling sounds, or just ignore it")]
+            public AudioClip loopSound; //(no randomization should be used for this clip)
 
 
             //Datatypes
@@ -349,7 +351,7 @@ public class SurfaceSounds : ScriptableObject
             public class Clip
             {
                 [Min(0)]
-                public float probabilityWeight = 1;
+                public float probabilityWeight = 1; //normalized for clipVariants
                 public AudioClip clip;
 
                 public float volumeMultiplier = 1;
@@ -408,7 +410,7 @@ public class SurfaceSounds : ScriptableObject
                 {
                     var cv = clipVariants[i];
                     finder += cv.probabilityWeight;
-                    if (finder >= rand - 0.000000001f) //I just do that just in case of rounding errors
+                    if (finder >= rand - 0.000000001f) //I just do that just in case of rounding errors (idk)
                         return cv;
                 }
 
@@ -424,12 +426,13 @@ public class SurfaceSounds : ScriptableObject
     private void OnValidate()
     {
         defaultSurfaceType = Mathf.Clamp(defaultSurfaceType, 0, surfaceTypes.Length - 1);
-        autoDefaultSurfaceTypeHeader= surfaceTypes[defaultSurfaceType].header;
+        autoDefaultSurfaceTypeHeader = surfaceTypes[defaultSurfaceType].header;
+
 
         InitConfig(textureArrayConfig);
 
 
-        //Grows the SoundSetNames to maximum count
+        //Grows the SoundSetNames to the maximum count
         int maxSoundSetCount = 0;
         for (int i = 0; i < surfaceTypes.Length; i++)
             maxSoundSetCount = Mathf.Max(maxSoundSetCount, surfaceTypes[i].soundSets.Length);
@@ -437,7 +440,7 @@ public class SurfaceSounds : ScriptableObject
             System.Array.Resize(ref soundSetNames, maxSoundSetCount);
 
 
-        //Applies the names to the inspector
+        //Applies the names to the inspector autoHeaders
         for (int i = 0; i < surfaceTypes.Length; i++)
         {
             var st = surfaceTypes[i];
