@@ -1,4 +1,4 @@
-# Microsplat Footstep Sounds
+# Microsplat Surface Sounds
 
 Allows you to find audioClips in Unity depending on what a spherecast hits.
 
@@ -9,13 +9,13 @@ The test scene requires MicroSplat's Examples
 ## Usage
 
 ### Steps
-Create a FootstepSounds asset in Unity's project window (by right clicking -> Create -> FootstepSounds)
+Create a FootstepSounds asset in Unity's project window (by right clicking -> Create -> SurfaceSounds)
 
-The component `FootSoundTester.cs` can be used to test it out.
+The component `SurfaceSoundTester.cs` can be used to test it out.
 
 Delete the folder "Microsplat Example (Incomplete) Test - Delete this garbage" after you have tried it out (if you want to try it out). It is complete garbage apart from being a mediocre demonstration
 
-The easiest thing is to reference the FootstepSounds asset, and then do `footstepSounds.GetSurfaceType(pos, Vector3.down).GetSoundSet().PlayOneShot(audioSource);`
+The easiest thing is to reference the FootstepSounds asset, and then do `surfaceSounds.GetSurfaceType(pos, Vector3.down).GetSoundSet().PlayOneShot(audioSource);`
 
 ### Terrain
 If the spherecast hits a TerrainCollider, it will use MicroSplat's Config file to find the indices to test against by using the Albedo (Diffuse) textures of the splats
