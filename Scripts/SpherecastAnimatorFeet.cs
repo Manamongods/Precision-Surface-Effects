@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//You use PlayFootSound as an animation event
+//You use PlayFootSound(int id) as an animation event
 
 //This is untested though
 

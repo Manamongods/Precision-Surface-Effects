@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//You use PlayFootSound as an animation event
+//You use PlayFootSound(int id) as an animation event
 
 //This is untested though
 
@@ -18,6 +18,7 @@ public class RaycastAnimatorFeet : MonoBehaviour
     [Header("Raycasting")]
     public LayerMask layerMask;
     public float maxDistance = Mathf.Infinity;
+    public Transform directionOverride;
 
     private int soundSetID;
 
@@ -43,7 +44,13 @@ public class RaycastAnimatorFeet : MonoBehaviour
         var foot = feet[footID];
 
         var pos = foot.foot.TransformPoint(foot.raycastOffset);
-        var dir = foot.foot.TransformDirection(foot.raycastDirection);
+
+        Vector3 dir;
+        if(directionOverride != null)
+            dir = -directionOverride.up;
+        else
+            dir = foot.foot.TransformDirection(foot.raycastDirection);
+
         var st = surfaceSounds.GetRaycastSurfaceType(pos, dir, maxDistance: maxDistance, layerMask: layerMask);
 
         st.GetSoundSet(soundSetID).PlayOneShot(foot.audioSource);           
