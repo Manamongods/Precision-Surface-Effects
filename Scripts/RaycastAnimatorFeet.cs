@@ -18,6 +18,7 @@ public class RaycastAnimatorFeet : MonoBehaviour
     [Header("Raycasting")]
     public LayerMask layerMask = -1;
     public float maxDistance = Mathf.Infinity;
+    [Tooltip("This is optional")]
     public Transform directionOverride;
 
     private int soundSetID;
@@ -62,6 +63,7 @@ public class RaycastAnimatorFeet : MonoBehaviour
     //Lifecycle
     private void Start()
     {
-        soundSetID = surfaceSounds.FindSoundSetID(soundSetName);
+        if(soundSetName != "")
+            soundSetID = surfaceSounds.FindSoundSetID(soundSetName);
     }
 }

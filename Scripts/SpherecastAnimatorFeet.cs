@@ -50,6 +50,7 @@ public class SphereCastAnimatorFeet : MonoBehaviour
     //Lifecycle
     private void Start()
     {
-        soundSetID = surfaceSounds.FindSoundSetID(soundSetName);
+        if(soundSetName != "")
+            soundSetID = surfaceSounds.FindSoundSetID(soundSetName);
     }
 }
