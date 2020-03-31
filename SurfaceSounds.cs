@@ -306,24 +306,29 @@ public class SurfaceSounds : ScriptableObject
             public float pitchVariation = 0.2f;
 
             [Header("Clips")]
-            public Clip[] clipVariants = new Clip[1] { new Clip() };
+            public ShotClip[] clipVariants = new ShotClip[1] { new ShotClip() };
 
             [Header("Friction/Rolling if wanted")]
             [Tooltip("This can be used for friction/rolling sounds, or just ignore it")]
             [Space(20)]
-            public AudioClip loopSound; //(no randomization should be used for this clip)
+            public Clip loopSound; //(no randomization should be used for this clip)
 
 
             //Datatypes
             [System.Serializable]
             public class Clip
             {
-                [Min(0)]
-                public float probabilityWeight = 1; //normalized for clipVariants
                 public AudioClip clip;
 
                 public float volumeMultiplier = 1;
                 public float pitchMultiplier = 1;
+            }
+
+            [System.Serializable]
+            public class ShotClip : Clip
+            {
+                [Min(0)]
+                public float probabilityWeight = 1; //normalized for clipVariants
             }
 
 

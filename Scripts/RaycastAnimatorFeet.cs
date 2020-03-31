@@ -6,12 +6,9 @@ using UnityEngine;
 
 //This is untested though
 
-public class RaycastAnimatorFeet : MonoBehaviour
+public class RaycastAnimatorFeet : SurfaceSoundsUser
 {
     //Fields
-    public SurfaceSounds surfaceSounds;
-    public string soundSetName = "Player";
-
     [Space(20)]
     public Foot[] feet = new Foot[2];
 
@@ -20,9 +17,6 @@ public class RaycastAnimatorFeet : MonoBehaviour
     public float maxDistance = Mathf.Infinity;
     [Tooltip("This is optional")]
     public Transform directionOverride;
-
-    private int soundSetID;
-
 
 
     //Datatypes
@@ -37,7 +31,6 @@ public class RaycastAnimatorFeet : MonoBehaviour
         [Tooltip("Unless it's overrided")]
         public Vector3 raycastDirection = Vector3.down;
     }
-
 
 
     //Methods
@@ -56,14 +49,5 @@ public class RaycastAnimatorFeet : MonoBehaviour
         var st = surfaceSounds.GetRaycastSurfaceType(pos, dir, maxDistance: maxDistance, layerMask: layerMask);
 
         st.GetSoundSet(soundSetID).PlayOneShot(foot.audioSource);           
-    }
-
-
-
-    //Lifecycle
-    private void Start()
-    {
-        if(soundSetName != "")
-            soundSetID = surfaceSounds.FindSoundSetID(soundSetName);
     }
 }
