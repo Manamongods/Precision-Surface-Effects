@@ -9,13 +9,13 @@ The test scene requires MicroSplat's Examples
 ## Usage
 
 ### Steps
-Create a FootstepSounds asset in Unity's project window (by right clicking -> Create -> SurfaceSounds)
+Create a SurfaceSounds asset in Unity's project window (by right clicking -> Create -> SurfaceSounds)
 
 The component `SurfaceSoundTester.cs` can be used to test it out.
 
 Delete the folder "Microsplat Example (Incomplete) Test - Delete this garbage" after you have tried it out (if you want to try it out). It is complete garbage apart from being a mediocre demonstration
 
-The easiest thing is to reference the FootstepSounds asset, and then do `surfaceSounds.GetSurfaceType(pos, Vector3.down).GetSoundSet().PlayOneShot(audioSource);`
+The easiest thing is to reference the SurfaceSounds asset, and then do `surfaceSounds.GetSurfaceType(pos, Vector3.down).GetSoundSet().PlayOneShot(audioSource);`
 
 ### Terrain
 If the spherecast hits a TerrainCollider, it will use MicroSplat's Config file to find the indices to test against by using the Albedo (Diffuse) textures of the splats
@@ -38,7 +38,7 @@ The material's name can include the keyword with any capitalization:
 Keywords shouldn't contains another SurfaceType's keyword
 
 ### Config
-If you want to change the MicroSplat config during runtime, you need to use `FootstepSounds.InitConfig(JBooth.MicroSplat.TextureArrayConfig textureArrayConfig)`
+If you want to change the MicroSplat config during runtime, you need to use `SurfaceSounds.InitConfig(JBooth.MicroSplat.TextureArrayConfig textureArrayConfig)`
 
 ### Performance
 You can cache the `SurfaceType` from `GetSurfaceType`, to update it less frequently. However, the performance should be ok, and the player should definitely be up to date.
