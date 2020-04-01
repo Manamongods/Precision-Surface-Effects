@@ -9,12 +9,14 @@ The test scene requires MicroSplat's Examples. But the test scene is very unimpo
 ## Usage
 
 ### Steps
-Create a SurfaceTypes asset in Unity's project window (by right clicking -> Create -> SurfaceTypes)
+Create a SurfaceTypes asset in Unity's project window (by right clicking -> Create -> SurfaceSounds/Surface Types)
 Create a SurfaceSoundSet asset
+
+Assign the SurfaceTypes to the SurfaceSoundSet asset
 
 The component `SurfaceSoundTester.cs` can be used to test it out.
 
-Delete the folder "Microsplat Example (Incomplete) Test - Delete this garbage" after you have tried it out (if you want to try it out). It is complete garbage apart from being a mediocre demonstration
+Delete the folder "%Microsplat Demo - Trash%" after you have tried it out (if you want to try it out). It is complete garbage apart from being a mediocre demonstration
 
 You can use these for Animation Events:
 `SphereCastAnimatorFeet.cs`
