@@ -30,7 +30,7 @@ using UnityExtensions;
 
 namespace SurfaceSounds
 {
-    [CreateAssetMenu(menuName = "SurfaceTypes")]
+    [CreateAssetMenu(menuName = "Surface Sounds/Surface Types")]
     public class SurfaceTypes : ScriptableObject
     {
         //Fields

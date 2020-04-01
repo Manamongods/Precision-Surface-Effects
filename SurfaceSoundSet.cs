@@ -5,7 +5,7 @@ using UnityExtensions;
 
 namespace SurfaceSounds
 {
-    [CreateAssetMenu(menuName = "SurfaceSoundSet")]
+    [CreateAssetMenu(menuName = "Surface Sounds/Surface Sound Set")]
     public class SurfaceSoundSet : ScriptableObject
     {
         //Fields
