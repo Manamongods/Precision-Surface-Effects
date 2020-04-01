@@ -205,8 +205,10 @@ public class CollisionSounds : SurfaceSoundsUser
         source.loop = loop;
         source.playOnAwake = false;
     }
-    private void OnValidate()
+    protected override void OnValidate()
     {
+        base.OnValidate();
+
         currentSurfaceTypeDebug = "";
 
         Prepare(impactSound.audioSource, false);

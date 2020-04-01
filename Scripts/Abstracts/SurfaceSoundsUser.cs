@@ -11,10 +11,6 @@ public abstract class SurfaceSoundsUser : MonoBehaviour
 
 
     //Lifecycle
-    protected virtual void Start()
-    {
-    }
-
     protected virtual void OnValidate()
     {
         try
