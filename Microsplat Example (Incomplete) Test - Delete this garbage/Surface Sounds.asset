@@ -19,7 +19,7 @@ MonoBehaviour:
     terrainAlbedos: []
     materialKeywords: []
     soundSets:
-    - autoHeader: Player
+    - autoHeader: Ball/Whatever Impact Sounds
       volume: 1
       volumeVariation: 0.2
       pitch: 1
@@ -43,7 +43,7 @@ MonoBehaviour:
     - Hay
     - Flower
     soundSets:
-    - autoHeader: Player
+    - autoHeader: Ball/Whatever Impact Sounds
       volume: 1
       volumeVariation: 0.2
       pitch: 1
@@ -70,7 +70,7 @@ MonoBehaviour:
     - Rock
     - Tile
     soundSets:
-    - autoHeader: Player
+    - autoHeader: Ball/Whatever Impact Sounds
       volume: 1
       volumeVariation: 0.37
       pitch: 1
@@ -89,4 +89,6 @@ MonoBehaviour:
         volumeMultiplier: 1
         pitchMultiplier: 1
   soundSetNames:
+  - Ball/Whatever Impact Sounds
   - Player
+  - Heavy Monster

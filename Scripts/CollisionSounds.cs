@@ -13,7 +13,7 @@ public class CollisionSounds : SurfaceSoundsUser
 #endif
 
     [Space(30)]
-    public float volumeMultiplier = 1;
+    public float volumeMultiplier = 0.3f;
     [Tooltip("Non-convex MeshCollider submeshes")]
     public bool findMeshColliderSubmesh = true;
 
@@ -68,8 +68,8 @@ public class CollisionSounds : SurfaceSoundsUser
         public float volumeByForce = 0.1f; //public float baseVolume = 0;
 
         [Header("Pitch")]
-        public float basePitch = 1;
-        public float pitchBySpeed = 0.1f;
+        public float basePitch = 0.5f;
+        public float pitchBySpeed = 0.035f;
 
 
         //Methods
@@ -89,7 +89,7 @@ public class CollisionSounds : SurfaceSoundsUser
     {
         //Fields
         [Header("Rates")]
-        public float clipChangeSmoothTime = .01f;
+        public float clipChangeSmoothTime = 0.001f;
         [Tooltip("This is used in smoothing the volume and pitch")]
         public SmoothTimes smoothTimes = SmoothTimes.Default(); //make it be smoothtime instead?
 
