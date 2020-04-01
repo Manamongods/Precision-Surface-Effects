@@ -25,6 +25,7 @@ public class CollisionSounds : MonoBehaviour
     public FrictionSound frictionSound = new FrictionSound();
     public float minFrictionForce = 1;
     public float maxFrictionForce = 100;
+    [Tooltip("When the friction soundType changes, this can be used to play impactSound")]
     public FrictionTypeChangeImpact frictionTypeChangeImpact = new FrictionTypeChangeImpact();
 
     private float force, speed;

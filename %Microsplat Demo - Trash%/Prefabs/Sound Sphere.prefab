@@ -134,14 +134,14 @@ MonoBehaviour:
   impactSound:
     audioSource: {fileID: 7768311541134257654}
     volumeByForce: 0.1
-    basePitch: 1
+    basePitch: 0.5
     pitchBySpeed: 0.01
-  impactCooldown: 0.1
+  impactCooldown: 0.2
   frictionSound:
     audioSource: {fileID: 7768311542087541603}
     volumeByForce: 0.01
-    basePitch: 0.5
-    pitchBySpeed: 0.035
+    basePitch: 1
+    pitchBySpeed: 0.05
     clipChangeSmoothTime: 0.001
     smoothTimes:
       up: 0.05
@@ -151,7 +151,7 @@ MonoBehaviour:
   frictionTypeChangeImpact:
     probability: 1
     volumeMultiplier: 0.25
-    pitchMultiplier: 1
+    pitchMultiplier: 0.5
 --- !u!1 &7768311541134257655
 GameObject:
   m_ObjectHideFlags: 0
