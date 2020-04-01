@@ -24,7 +24,10 @@ SOFTWARE.
 
 using UnityEngine;
 
-public class SurfaceTypeMarker : MonoBehaviour
+namespace SurfaceSounds
 {
-    public string reference = "Grass";
+    public class SurfaceTypeMarker : MonoBehaviour
+    {
+        public string reference = "Grass";
+    }
 }

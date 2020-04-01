@@ -28,247 +28,250 @@ using UnityEditor;
 using UnityEngine;
 using UnityExtensions;
 
-[CreateAssetMenu(menuName = "SurfaceTypes")]
-public class SurfaceTypes : ScriptableObject
+namespace SurfaceSounds
 {
-    //Fields
-    [Space(20)]
-    [Tooltip("If it can't find one")]
-    public int defaultSurfaceType = 0;
-#if UNITY_EDITOR
-    public string autoDefaultSurfaceTypeHeader;
-#endif
-
-    [Space(20)]
-    [ReorderableList()]
-    public SurfaceType[] surfaceTypes = new SurfaceType[] { new SurfaceType() };
-
-
-
-    //Methods
-    public int GetSphereCastSurfaceTypeID(Vector3 worldPosition, Vector3 downDirection, float radius = 1, float maxDistance = Mathf.Infinity, int layerMask = -1)
+    [CreateAssetMenu(menuName = "SurfaceTypes")]
+    public class SurfaceTypes : ScriptableObject
     {
-        if (Physics.SphereCast(worldPosition, radius, downDirection, out RaycastHit rh, maxDistance, layerMask, QueryTriggerInteraction.Ignore))
-        {
+        //Fields
+        [Space(20)]
+        [Tooltip("If it can't find one")]
+        public int defaultSurfaceType = 0;
 #if UNITY_EDITOR
-            var bottomCenter = worldPosition + downDirection * rh.distance;
-            Debug.DrawLine(worldPosition, bottomCenter);
-            Debug.DrawLine(bottomCenter, rh.point);
+        public string autoDefaultSurfaceTypeHeader;
 #endif
 
-            return GetSurfaceType(rh.collider, worldPosition, rh.triangleIndex);
+        [Space(20)]
+        [ReorderableList()]
+        public SurfaceType[] surfaceTypes = new SurfaceType[] { new SurfaceType() };
+
+
+
+        //Methods
+        public int GetSphereCastSurfaceTypeID(Vector3 worldPosition, Vector3 downDirection, float radius = 1, float maxDistance = Mathf.Infinity, int layerMask = -1)
+        {
+            if (Physics.SphereCast(worldPosition, radius, downDirection, out RaycastHit rh, maxDistance, layerMask, QueryTriggerInteraction.Ignore))
+            {
+#if UNITY_EDITOR
+                var bottomCenter = worldPosition + downDirection * rh.distance;
+                Debug.DrawLine(worldPosition, bottomCenter);
+                Debug.DrawLine(bottomCenter, rh.point);
+#endif
+
+                return GetSurfaceType(rh.collider, worldPosition, rh.triangleIndex);
+            }
+
+            return GetSurfaceType(null, worldPosition);
+        }
+        public int GetRaycastSurfaceTypeID(Vector3 worldPosition, Vector3 downDirection, float maxDistance = Mathf.Infinity, int layerMask = -1)
+        {
+            if (Physics.Raycast(worldPosition, downDirection, out RaycastHit rh, maxDistance, layerMask, QueryTriggerInteraction.Ignore))
+            {
+#if UNITY_EDITOR
+                Debug.DrawLine(worldPosition, rh.point);
+#endif
+
+                return GetSurfaceType(rh.collider, worldPosition, rh.triangleIndex);
+            }
+
+            return GetSurfaceType(null, worldPosition);
+        }
+        public int GetCollisionSurfaceTypeID(Collision collision)
+        {
+            return GetSurfaceType(collision.collider, collision.GetContact(0).point);
         }
 
-        return GetSurfaceType(null, worldPosition);
-    }
-    public int GetRaycastSurfaceTypeID(Vector3 worldPosition, Vector3 downDirection, float maxDistance = Mathf.Infinity, int layerMask = -1)
-    {
-        if (Physics.Raycast(worldPosition, downDirection, out RaycastHit rh, maxDistance, layerMask, QueryTriggerInteraction.Ignore))
+        public bool TryGetStringSurfaceType(string checkName, out int stID)
         {
-#if UNITY_EDITOR
-            Debug.DrawLine(worldPosition, rh.point);
-#endif
+            if (!System.String.IsNullOrEmpty(checkName))
+            {
+                checkName = checkName.ToLowerInvariant();
 
-            return GetSurfaceType(rh.collider, worldPosition, rh.triangleIndex);
+                for (int i = 0; i < surfaceTypes.Length; i++)
+                {
+                    stID = i;
+                    var st = surfaceTypes[i];
+
+                    for (int ii = 0; ii < st.materialKeywords.Length; ii++)
+                    {
+                        if (checkName.Contains(st.materialKeywords[ii].ToLowerInvariant())) //check if the material name contains the keyword
+                            return true;
+                    }
+                }
+            }
+
+            stID = -1;
+            return false;
         }
 
-        return GetSurfaceType(null, worldPosition);
-    }
-    public int GetCollisionSurfaceTypeID(Collision collision)
-    {
-        return GetSurfaceType(collision.collider, collision.GetContact(0).point);
-    }
-
-    public bool TryGetStringSurfaceType(string checkName, out int stID)
-    {
-        if (!System.String.IsNullOrEmpty(checkName))
+        public int GetSurfaceType(Collider collider, Vector3 worldPosition, int triangleIndex = -1)
         {
-            checkName = checkName.ToLowerInvariant();
+            if (collider != null)
+            {
+                if (collider is TerrainCollider tc) //it is a terrain collider
+                {
+                    if (TryGetTerrainSurfaceType(tc.GetComponent<Terrain>(), worldPosition, out int stID))
+                        return stID;
+                }
+                else
+                {
+                    if (TryGetNonTerrainSurfaceType(collider, worldPosition, out int stID, triangleIndex))
+                        return stID;
+                }
+            }
+
+            return defaultSurfaceType;
+        }
+
+        //You can make these public if you want access:
+        private bool TryGetTerrainSurfaceType(Terrain terrain, Vector3 worldPosition, out int stID)
+        {
+            var terrainIndex = GetMainTexture(terrain, worldPosition);
+            var terrainTextureName = terrain.terrainData.terrainLayers[terrainIndex].diffuseTexture.name; //This might be terrible performance??
 
             for (int i = 0; i < surfaceTypes.Length; i++)
             {
                 stID = i;
                 var st = surfaceTypes[i];
 
-                for (int ii = 0; ii < st.materialKeywords.Length; ii++)
+                for (int ii = 0; ii < st.terrainAlbedos.Length; ii++)
                 {
-                    if (checkName.Contains(st.materialKeywords[ii].ToLowerInvariant())) //check if the material name contains the keyword
-                        return true;
-                }
-            }
-        }
-
-        stID = -1;
-        return false;
-    }
-
-    public int GetSurfaceType(Collider collider, Vector3 worldPosition, int triangleIndex = -1)
-    {
-        if (collider != null)
-        {
-            if (collider is TerrainCollider tc) //it is a terrain collider
-            {
-                if (TryGetTerrainSurfaceType(tc.GetComponent<Terrain>(), worldPosition, out int stID))
-                    return stID;
-            }
-            else
-            {
-                if (TryGetNonTerrainSurfaceType(collider, worldPosition, out int stID, triangleIndex))
-                    return stID;
-            }
-        }
-
-        return defaultSurfaceType;
-    }
-    
-    //You can make these public if you want access:
-    private bool TryGetTerrainSurfaceType(Terrain terrain, Vector3 worldPosition, out int stID)
-    {
-        var terrainIndex = GetMainTexture(terrain, worldPosition);
-        var terrainTextureName = terrain.terrainData.terrainLayers[terrainIndex].diffuseTexture.name; //This might be terrible performance??
-
-        for (int i = 0; i < surfaceTypes.Length; i++)
-        {
-            stID = i;
-            var st = surfaceTypes[i];
-
-            for (int ii = 0; ii < st.terrainAlbedos.Length; ii++)
-            {
-                if (terrainTextureName == st.terrainAlbedos[ii].name)
-                {
-                    return true;
-                }
-            }
-        }
-
-        stID = -1;
-        return false;
-    }
-    private bool TryGetNonTerrainSurfaceType(Collider collider, Vector3 worldPosition, out int stID, int triangleIndex = -1)
-    {
-        //Finds CheckName
-        string checkName = null;
-
-        var marker = collider.GetComponent<SurfaceTypeMarker>();
-        if (marker != null)
-            checkName = marker.reference;
-
-        var mr = collider.GetComponent<MeshRenderer>();
-        if (mr != null)
-        {
-            //Defaults to the first material. For most colliders it can't be discerned which specific material it is
-            if (checkName == null) //It is overrided by SurfaceTypeMarker
-                checkName = mr.sharedMaterial.name;
-
-            //The collider is a non-convex meshCollider. We can find the triangle index.
-            if (triangleIndex != -1 && collider is MeshCollider mc && !mc.convex)
-            {
-                var materials = mr.sharedMaterials;
-
-                var mesh = collider.GetComponent<MeshFilter>().sharedMesh;
-
-                var triIndex = triangleIndex * 3;
-
-                for (int submeshID = mesh.subMeshCount - 1; submeshID >= 0; submeshID--)
-                {
-                    int start = mesh.GetSubMesh(submeshID).indexStart;
-
-                    if (triIndex >= start)
+                    if (terrainTextureName == st.terrainAlbedos[ii].name)
                     {
-                        //The triangle hit is within this submesh
-                        checkName = materials[submeshID].name; //This is not overrided by SurfaceTypeMarker (which is useful because Collision sounds should have control over the default)
-                        break;
+                        return true;
                     }
                 }
             }
+
+            stID = -1;
+            return false;
         }
-
-
-        //Searches using CheckName
-        if (TryGetStringSurfaceType(checkName, out stID))
-            return true;
-
-        //Found nothing
-        stID = -1;
-        return false;
-    }
-    
-
-    //From: https://answers.unity.com/questions/456973/getting-the-texture-of-a-certain-point-on-terrain.html
-    private float[] GetTextureMix(Terrain terrain, Vector3 WorldPos)
-    {
-        var terrainData = terrain.terrainData; //terrain = Terrain.activeTerrain;
-        var terrainPos = terrain.transform.position;
-
-        // returns an array containing the relative mix of textures
-        // on the main terrain at this world position.
-
-        // The number of values in the array will equal the number
-        // of textures added to the terrain.
-
-        // calculate which splat map cell the worldPos falls within (ignoring y)
-        int mapX = (int)(((WorldPos.x - terrainPos.x) / terrainData.size.x) * terrainData.alphamapWidth);
-        int mapZ = (int)(((WorldPos.z - terrainPos.z) / terrainData.size.z) * terrainData.alphamapHeight);
-
-        // get the splat data for this cell as a 1x1xN 3d array (where N = number of textures)
-        float[,,] splatmapData = terrainData.GetAlphamaps(mapX, mapZ, 1, 1);
-
-        // extract the 3D array data to a 1D array:
-        float[] cellMix = new float[splatmapData.GetUpperBound(2) + 1];
-
-        for (int n = 0; n < cellMix.Length; n++)
+        private bool TryGetNonTerrainSurfaceType(Collider collider, Vector3 worldPosition, out int stID, int triangleIndex = -1)
         {
-            cellMix[n] = splatmapData[0, 0, n];
-        }
-        return cellMix;
-    }
-    private int GetMainTexture(Terrain terrain, Vector3 WorldPos)
-    {
-        // returns the zero-based index of the most dominant texture
-        // on the main terrain at this world position.
-        float[] mix = GetTextureMix(terrain, WorldPos);
+            //Finds CheckName
+            string checkName = null;
 
-        float maxMix = 0;
-        int maxIndex = 0;
+            var marker = collider.GetComponent<SurfaceTypeMarker>();
+            if (marker != null)
+                checkName = marker.reference;
 
-        // loop through each mix value and find the maximum
-        for (int n = 0; n < mix.Length; n++)
-        {
-            if (mix[n] > maxMix)
+            var mr = collider.GetComponent<MeshRenderer>();
+            if (mr != null)
             {
-                maxIndex = n;
-                maxMix = mix[n];
+                //Defaults to the first material. For most colliders it can't be discerned which specific material it is
+                if (checkName == null) //It is overrided by SurfaceTypeMarker
+                    checkName = mr.sharedMaterial.name;
+
+                //The collider is a non-convex meshCollider. We can find the triangle index.
+                if (triangleIndex != -1 && collider is MeshCollider mc && !mc.convex)
+                {
+                    var materials = mr.sharedMaterials;
+
+                    var mesh = collider.GetComponent<MeshFilter>().sharedMesh;
+
+                    var triIndex = triangleIndex * 3;
+
+                    for (int submeshID = mesh.subMeshCount - 1; submeshID >= 0; submeshID--)
+                    {
+                        int start = mesh.GetSubMesh(submeshID).indexStart;
+
+                        if (triIndex >= start)
+                        {
+                            //The triangle hit is within this submesh
+                            checkName = materials[submeshID].name; //This is not overrided by SurfaceTypeMarker (which is useful because Collision sounds should have control over the default)
+                            break;
+                        }
+                    }
+                }
             }
+
+
+            //Searches using CheckName
+            if (TryGetStringSurfaceType(checkName, out stID))
+                return true;
+
+            //Found nothing
+            stID = -1;
+            return false;
         }
-        return maxIndex;
-    }
+
+
+        //From: https://answers.unity.com/questions/456973/getting-the-texture-of-a-certain-point-on-terrain.html
+        private float[] GetTextureMix(Terrain terrain, Vector3 WorldPos)
+        {
+            var terrainData = terrain.terrainData; //terrain = Terrain.activeTerrain;
+            var terrainPos = terrain.transform.position;
+
+            // returns an array containing the relative mix of textures
+            // on the main terrain at this world position.
+
+            // The number of values in the array will equal the number
+            // of textures added to the terrain.
+
+            // calculate which splat map cell the worldPos falls within (ignoring y)
+            int mapX = (int)(((WorldPos.x - terrainPos.x) / terrainData.size.x) * terrainData.alphamapWidth);
+            int mapZ = (int)(((WorldPos.z - terrainPos.z) / terrainData.size.z) * terrainData.alphamapHeight);
+
+            // get the splat data for this cell as a 1x1xN 3d array (where N = number of textures)
+            float[,,] splatmapData = terrainData.GetAlphamaps(mapX, mapZ, 1, 1);
+
+            // extract the 3D array data to a 1D array:
+            float[] cellMix = new float[splatmapData.GetUpperBound(2) + 1];
+
+            for (int n = 0; n < cellMix.Length; n++)
+            {
+                cellMix[n] = splatmapData[0, 0, n];
+            }
+            return cellMix;
+        }
+        private int GetMainTexture(Terrain terrain, Vector3 WorldPos)
+        {
+            // returns the zero-based index of the most dominant texture
+            // on the main terrain at this world position.
+            float[] mix = GetTextureMix(terrain, WorldPos);
+
+            float maxMix = 0;
+            int maxIndex = 0;
+
+            // loop through each mix value and find the maximum
+            for (int n = 0; n < mix.Length; n++)
+            {
+                if (mix[n] > maxMix)
+                {
+                    maxIndex = n;
+                    maxMix = mix[n];
+                }
+            }
+            return maxIndex;
+        }
 
 
 
-    //Datatypes
-    [System.Serializable]
-    public class SurfaceType
-    {
-        //Fields
-        public string groupName = "Grassy Sound";
+        //Datatypes
+        [System.Serializable]
+        public class SurfaceType
+        {
+            //Fields
+            public string groupName = "Grassy Sound";
 
-        [Header("Terrains")]
-        public Texture2D[] terrainAlbedos;
+            [Header("Terrains")]
+            public Texture2D[] terrainAlbedos;
 
-        [Header("Mesh Renderers")]
-        public string[] materialKeywords = new string[] { "Grass", "Leaves", "Hay", "Flower" };
-    }
+            [Header("Mesh Renderers")]
+            public string[] materialKeywords = new string[] { "Grass", "Leaves", "Hay", "Flower" };
+        }
 
 
 
-    //Lifecycle
+        //Lifecycle
 #if UNITY_EDITOR
-    private void OnValidate()
-    {
-        defaultSurfaceType = Mathf.Clamp(defaultSurfaceType, 0, surfaceTypes.Length - 1);
-        autoDefaultSurfaceTypeHeader = surfaceTypes[defaultSurfaceType].groupName;
-    }
+        private void OnValidate()
+        {
+            defaultSurfaceType = Mathf.Clamp(defaultSurfaceType, 0, surfaceTypes.Length - 1);
+            autoDefaultSurfaceTypeHeader = surfaceTypes[defaultSurfaceType].groupName;
+        }
 #endif
+    }
 }
 
 /*

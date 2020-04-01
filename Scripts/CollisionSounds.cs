@@ -1,8 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-//Untested
+using SurfaceSounds;
 
 public class CollisionSounds : MonoBehaviour
 {

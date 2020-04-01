@@ -26,6 +26,7 @@ SOFTWARE.
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using SurfaceSounds;
 
 [ExecuteInEditMode]
 public class SurfaceSoundTester : MonoBehaviour
