@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Surface Types
   m_EditorClassIdentifier: 
   defaultSurfaceType: 0
-  autoDefaultSurfaceTypeHeader: None
+  autoDefaultSurfaceTypeGroupName: None
   surfaceTypes:
   - groupName: None
     terrainAlbedos: []

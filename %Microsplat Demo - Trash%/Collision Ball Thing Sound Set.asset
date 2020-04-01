@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3daba9dcf2f2e3b418addc7ef6a1b7d1, type: 3}
-  m_Name: Collision Ball Sound Set
+  m_Name: Collision Ball Thing Sound Set
   m_EditorClassIdentifier: 
-  surfaceTypes: {fileID: 11400000, guid: f3cb9fc9ce88df748a41be798853fbc5, type: 2}
-  surfaceTypeSounds:
+  types: {fileID: 11400000, guid: f3cb9fc9ce88df748a41be798853fbc5, type: 2}
+  sounds:
   - autoGroupName: None
     volume: 1
     volumeVariation: 0.2
@@ -38,7 +38,7 @@ MonoBehaviour:
       volumeMultiplier: 1
       pitchMultiplier: 1
       probabilityWeight: 1
-    - clip: {fileID: 8300000, guid: 77711f677035ce640998fd0811305b5f, type: 3}
+    - clip: {fileID: 8300000, guid: c728d5ae1fc69a34cacebe7ab17b6d00, type: 3}
       volumeMultiplier: 1
       pitchMultiplier: 1
       probabilityWeight: 1
@@ -56,7 +56,7 @@ MonoBehaviour:
       volumeMultiplier: 1
       pitchMultiplier: 1
       probabilityWeight: 1
-    - clip: {fileID: 8300000, guid: 694a53fae45622f4c8d2269c4d647399, type: 3}
+    - clip: {fileID: 8300000, guid: 037d5049bd713dd448f545820951fe1d, type: 3}
       volumeMultiplier: 1
       pitchMultiplier: 1
       probabilityWeight: 1

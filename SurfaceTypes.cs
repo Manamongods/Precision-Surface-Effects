@@ -38,7 +38,7 @@ namespace SurfaceSounds
         [Tooltip("If it can't find one")]
         public int defaultSurfaceType = 0;
 #if UNITY_EDITOR
-        public string autoDefaultSurfaceTypeHeader;
+        public string autoDefaultSurfaceTypeGroupName;
 #endif
 
         [Space(20)]
@@ -268,7 +268,7 @@ namespace SurfaceSounds
         private void OnValidate()
         {
             defaultSurfaceType = Mathf.Clamp(defaultSurfaceType, 0, surfaceTypes.Length - 1);
-            autoDefaultSurfaceTypeHeader = surfaceTypes[defaultSurfaceType].groupName;
+            autoDefaultSurfaceTypeGroupName = surfaceTypes[defaultSurfaceType].groupName;
         }
 #endif
     }
