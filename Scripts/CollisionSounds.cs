@@ -16,6 +16,8 @@ public class CollisionSounds : MonoBehaviour
     [Space(30)]
     public float totalVolumeMultiplier = 0.3f;
     public float totalPitchMultiplier = 1;
+    [Tooltip("To easily make the speed be local/relative")]
+    public float speedMultiplier = 1;
     [Tooltip("Non-convex MeshCollider submeshes")]
     public bool findMeshColliderSubmesh = true;
 
@@ -86,6 +88,7 @@ public class CollisionSounds : MonoBehaviour
 
         [Header("Volume")]
         public float volumeByForce = 0.1f; //public float baseVolume = 0;
+        public Vector2 volumeFaderBySpeedRange = new Vector2(0.01f, 0.1f);
 
         [Header("Pitch")]
         public float basePitch = 0.5f;
@@ -93,6 +96,11 @@ public class CollisionSounds : MonoBehaviour
 
 
         //Methods
+        public float SpeedFader(float speed)
+        {
+            return Mathf.Clamp01(Mathf.InverseLerp(volumeFaderBySpeedRange.x, volumeFaderBySpeedRange.y, speed));
+        }
+
         public float Volume(float force)
         {
             return volumeByForce * force; //baseVolume + 
@@ -102,6 +110,14 @@ public class CollisionSounds : MonoBehaviour
         {
             return basePitch + pitchBySpeed * speed;
         }
+
+#if UNITY_EDITOR
+        public void Validate()
+        {
+            volumeFaderBySpeedRange.x = Mathf.Max(0, volumeFaderBySpeedRange.x);
+            volumeFaderBySpeedRange.y = Mathf.Max(volumeFaderBySpeedRange.x, volumeFaderBySpeedRange.y);
+        }
+#endif
     }
 
     [System.Serializable]
@@ -263,8 +279,9 @@ public class CollisionSounds : MonoBehaviour
             impactCooldownT = impactCooldown;
 
             //Impact Sound
-            var vol = totalVolumeMultiplier * impactSound.Volume(collision.impulse.magnitude); //Here "force" is actually an impulse
-            var pitch = totalPitchMultiplier * impactSound.Pitch(collision.relativeVelocity.magnitude);
+            var speed = collision.relativeVelocity.magnitude * speedMultiplier;
+            var vol = totalVolumeMultiplier * impactSound.Volume(collision.impulse.magnitude) * impactSound.SpeedFader(speed); //Here "force" is actually an impulse
+            var pitch = totalPitchMultiplier * impactSound.Pitch(speed);
 
             var st = soundSet.sounds[GetSurfaceTypeID(collision)];
 #if UNITY_EDITOR
@@ -276,7 +293,8 @@ public class CollisionSounds : MonoBehaviour
     private void OnCollisionStay(Collision collision)
     {
         var force = Mathf.Max(0, Mathf.Min(maxFrictionForce, collision.impulse.magnitude / Time.deltaTime) - minFrictionForce);
-        var speed = collision.relativeVelocity.magnitude;
+        var speed = collision.relativeVelocity.magnitude * speedMultiplier;
+        force *= frictionSound.SpeedFader(speed); //So that it is found the maximum with this in mind
 
         var s = soundSet.sounds[GetSurfaceTypeID(collision)];
 #if UNITY_EDITOR
