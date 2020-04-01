@@ -6,29 +6,34 @@ using SurfaceSounds;
 public class CollisionSounds : MonoBehaviour
 {
     //Fields
-    public SurfaceSoundSet soundSet;
-
 #if UNITY_EDITOR
-    [Space(30)]
+    [Header("Debug")]
     public string currentSurfaceTypeDebug;
 #endif
 
+    [Header("Quality")]
     [Space(30)]
-    public float totalVolumeMultiplier = 0.3f;
-    public float totalPitchMultiplier = 1;
-    [Tooltip("To easily make the speed be local/relative")]
-    public float speedMultiplier = 1;
     [Tooltip("Non-convex MeshCollider submeshes")]
     public bool findMeshColliderSubmesh = true;
 
+    [Header("Scaling")]
+    [Tooltip("To easily make the speed be local/relative")]
+    public float speedMultiplier = 1;
+    public float totalVolumeMultiplier = 0.3f;
+    public float totalPitchMultiplier = 1;
+
+    [Header("Sounds")]
+    public SurfaceSoundSet soundSet;
+
+    [Header("Friction Sound")]
+    [Space(15)]
+    public FrictionSound frictionSound = new FrictionSound();
+    [Tooltip("When the friction soundType changes, this can be used to play impactSound")]
+
+    [Header("Impact Sound")]
     [Space(15)]
     public Sound impactSound = new Sound();
     public float impactCooldown = 0.1f;
-    [Space(15)]
-    public FrictionSound frictionSound = new FrictionSound();
-    public float minFrictionForce = 1;
-    public float maxFrictionForce = 100;
-    [Tooltip("When the friction soundType changes, this can be used to play impactSound")]
     public FrictionTypeChangeImpact frictionTypeChangeImpact = new FrictionTypeChangeImpact();
 
     private float impactCooldownT;
@@ -128,6 +133,10 @@ public class CollisionSounds : MonoBehaviour
         public float clipChangeSmoothTime = 0.001f;
         [Tooltip("This is used in smoothing the volume and pitch")]
         public SmoothTimes smoothTimes = SmoothTimes.Default(); //make it be smoothtime instead?
+
+        [Header("Force")]
+        public float minForce = 1;
+        public float maxForce = 100;
 
         internal SurfaceSoundSet.SurfaceTypeSounds.Clip clip;
         private float currentVolume;
@@ -292,7 +301,7 @@ public class CollisionSounds : MonoBehaviour
     }
     private void OnCollisionStay(Collision collision)
     {
-        var force = Mathf.Max(0, Mathf.Min(maxFrictionForce, collision.impulse.magnitude / Time.deltaTime) - minFrictionForce);
+        var force = Mathf.Max(0, Mathf.Min(frictionSound.maxForce, collision.impulse.magnitude / Time.deltaTime) - frictionSound.minForce);
         var speed = collision.relativeVelocity.magnitude * speedMultiplier;
         force *= frictionSound.SpeedFader(speed); //So that it is found the maximum with this in mind
 
