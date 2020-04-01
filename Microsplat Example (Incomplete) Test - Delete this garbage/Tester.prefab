@@ -48,9 +48,7 @@ MonoBehaviour:
   clip: {fileID: 8300000, guid: 694a53fae45622f4c8d2269c4d647399, type: 3}
   volume: 1.0965333
   pitch: 0.9505167
-  soundSetName: Player
-  sounds: {fileID: 11400000, guid: f3cb9fc9ce88df748a41be798853fbc5, type: 2}
-  soundSetID: 0
+  soundSet: {fileID: 11400000, guid: 80344998cfdc62548be42ca931b98cce, type: 2}
   downIsGravity: 0
   spherecast: 1
   spherecastRadius: 10

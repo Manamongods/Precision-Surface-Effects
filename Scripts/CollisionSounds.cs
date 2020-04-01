@@ -4,9 +4,11 @@ using UnityEngine;
 
 //Untested
 
-public class CollisionSounds : SurfaceSoundsUser
+public class CollisionSounds : MonoBehaviour
 {
     //Fields
+    public SurfaceSoundSet soundSet;
+
 #if UNITY_EDITOR
     [Space(30)]
     public string currentSurfaceTypeDebug;
@@ -31,7 +33,7 @@ public class CollisionSounds : SurfaceSoundsUser
 
 
     //Methods
-    private SurfaceSounds.SurfaceType GetSurfaceType(Collision c)
+    private int GetSurfaceTypeID(Collision c)
     {
         if(findMeshColliderSubmesh && c.collider is MeshCollider mc && !mc.convex)
         {
@@ -48,11 +50,11 @@ public class CollisionSounds : SurfaceSoundsUser
                 Debug.DrawLine(pos + norm * debugSize, pos - norm * debugSize, Color.white, 0);
 #endif
 
-                return surfaceSounds.GetSurfaceType(c.collider, pos, rh.triangleIndex);
+                return soundSet.surfaceTypes.GetSurfaceType(c.collider, pos, rh.triangleIndex);
             }
         }
 
-        return surfaceSounds.GetCollisionSurfaceType(c);
+        return soundSet.surfaceTypes.GetCollisionSurfaceTypeID(c);
     }
 
 
@@ -93,7 +95,7 @@ public class CollisionSounds : SurfaceSoundsUser
         [Tooltip("This is used in smoothing the volume and pitch")]
         public SmoothTimes smoothTimes = SmoothTimes.Default(); //make it be smoothtime instead?
 
-        internal SurfaceSounds.SurfaceType.SoundSet.Clip ssClip;
+        internal SurfaceSoundSet.SurfaceTypeSounds.Clip ssClip;
         private float currentVolume;
         private float currentPitch;
         private float volumeVelocity;
@@ -205,10 +207,8 @@ public class CollisionSounds : SurfaceSoundsUser
         source.loop = loop;
         source.playOnAwake = false;
     }
-    protected override void OnValidate()
+    private void OnValidate()
     {
-        base.OnValidate();
-
         currentSurfaceTypeDebug = "";
 
         Prepare(impactSound.audioSource, false);
@@ -233,11 +233,11 @@ public class CollisionSounds : SurfaceSoundsUser
             var vol = volumeMultiplier * impactSound.Volume(collision.impulse.magnitude); //Here "force" is actually an impulse
             var pitch = impactSound.Pitch(collision.relativeVelocity.magnitude);
 
-            var st = GetSurfaceType(collision);
+            var st = soundSet.surfaceTypeSounds[GetSurfaceTypeID(collision)];
 #if UNITY_EDITOR
-            currentSurfaceTypeDebug = st.groupName;
+            currentSurfaceTypeDebug = st.autoGroupName;
 #endif
-            st.GetSoundSet(soundSetID).PlayOneShot(impactSound.audioSource, vol, pitch);
+            st.PlayOneShot(impactSound.audioSource, vol, pitch);
         }
     }
     private void OnCollisionStay(Collision collision)
@@ -248,11 +248,11 @@ public class CollisionSounds : SurfaceSoundsUser
         this.force += force;
         this.speed += force * speed; //weights speed, so that it can find a weighted average pitch for all the potential OnCollisionStays
 
-        var st = GetSurfaceType(collision);
+        var s = soundSet.surfaceTypeSounds[GetSurfaceTypeID(collision)];
 #if UNITY_EDITOR
-        currentSurfaceTypeDebug = st.groupName;
+        currentSurfaceTypeDebug = s.autoGroupName;
 #endif
-        frictionSound.ssClip = st.GetSoundSet(soundSetID).loopSound;
+        frictionSound.ssClip = s.loopSound;
     }
 
     private void Update()

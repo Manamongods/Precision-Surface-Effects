@@ -6,9 +6,11 @@ using UnityEngine;
 
 //This is untested though
 
-public class RaycastAnimatorFeet : SurfaceSoundsUser
+public class RaycastAnimatorFeet : MonoBehaviour
 {
     //Fields
+    public SurfaceSoundSet soundSet;
+
     [Space(20)]
     public Foot[] feet = new Foot[2];
 
@@ -46,8 +48,7 @@ public class RaycastAnimatorFeet : SurfaceSoundsUser
         else
             dir = foot.foot.TransformDirection(foot.raycastDirection);
 
-        var st = surfaceSounds.GetRaycastSurfaceType(pos, dir, maxDistance: maxDistance, layerMask: layerMask);
-
-        st.GetSoundSet(soundSetID).PlayOneShot(foot.audioSource);           
+        int sID = soundSet.surfaceTypes.GetRaycastSurfaceTypeID(pos, dir, maxDistance: maxDistance, layerMask: layerMask);
+        soundSet.surfaceTypeSounds[sID].PlayOneShot(foot.audioSource);
     }
 }

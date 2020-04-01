@@ -6,9 +6,11 @@ using UnityEngine;
 
 //This is untested though
 
-public class SphereCastAnimatorFeet : SurfaceSoundsUser
+public class SphereCastAnimatorFeet : MonoBehaviour
 {
     //Fields
+    public SurfaceSoundSet soundSet;
+
     [Space(20)]
     public Foot[] feet = new Foot[2];
 
@@ -34,8 +36,7 @@ public class SphereCastAnimatorFeet : SurfaceSoundsUser
 
         var pos = origin.position;
         var dir = -origin.up;
-        var st = surfaceSounds.GetSphereCastSurfaceType(pos, dir, radius: radius, maxDistance: maxDistance, layerMask: layerMask);
-
-        st.GetSoundSet(soundSetID).PlayOneShot(foot.audioSource);           
+        int sID = soundSet.surfaceTypes.GetSphereCastSurfaceTypeID(pos, dir, radius: radius, maxDistance: maxDistance, layerMask: layerMask);
+        soundSet.surfaceTypeSounds[sID].PlayOneShot(foot.audioSource);           
     }
 }

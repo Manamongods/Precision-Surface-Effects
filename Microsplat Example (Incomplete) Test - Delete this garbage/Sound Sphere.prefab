@@ -127,8 +127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa870f96700d10742b6a826c4992d8db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  surfaceSounds: {fileID: 11400000, guid: f3cb9fc9ce88df748a41be798853fbc5, type: 2}
-  soundSetName: 
+  soundSet: {fileID: 11400000, guid: 80344998cfdc62548be42ca931b98cce, type: 2}
   currentSurfaceTypeDebug: 
   volumeMultiplier: 0.3
   findMeshColliderSubmesh: 1

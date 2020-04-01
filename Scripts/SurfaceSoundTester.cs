@@ -36,13 +36,10 @@ public class SurfaceSoundTester : MonoBehaviour
     public AudioClip clip;
     public float volume;
     public float pitch;
-    [Space(20)]
-    public string soundSetName;
 
     [Header("Input")]
     [Space(50)]
-    public SurfaceSounds sounds;
-    public int soundSetID = 0;
+    public SurfaceSoundSet soundSet;
     public bool downIsGravity;
 
     public bool spherecast;
@@ -62,22 +59,21 @@ public class SurfaceSoundTester : MonoBehaviour
     //Lifecycle
     private void Update()
     {
-        soundSetID = Mathf.Clamp(soundSetID, 0, sounds.soundSetNames.Length - 1);
-        soundSetName = sounds.soundSetNames[soundSetID];
-
         GetDownDir();
 
         var pos = transform.position;
         var downDir = GetDownDir();
 
-        SurfaceSounds.SurfaceType st;
+        int sID;
         if (spherecast)
-            st = sounds.GetSphereCastSurfaceType(pos, downDir, spherecastRadius);
+            sID = soundSet.surfaceTypes.GetSphereCastSurfaceTypeID(pos, downDir, spherecastRadius);
         else
-            st = sounds.GetRaycastSurfaceType(pos, downDir);
+            sID = soundSet.surfaceTypes.GetRaycastSurfaceTypeID(pos, downDir);
 
-        header = st.groupName;
-        clip = st.GetSoundSet(soundSetID).GetRandomClip(out volume, out pitch);
+        var s = soundSet.surfaceTypeSounds[sID];
+
+        header = s.autoGroupName;
+        clip = s.GetRandomClip(out volume, out pitch);
     }
 
     private void OnDrawGizmos()
