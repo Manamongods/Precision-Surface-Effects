@@ -19,6 +19,7 @@ public class CollisionSounds : MonoBehaviour
     [Header("Scaling")]
     [Tooltip("To easily make the speed be local/relative")]
     public float speedMultiplier = 1;
+    public float forceMultiplier = 1;
     public float totalVolumeMultiplier = 0.3f;
     public float totalPitchMultiplier = 1;
 
@@ -288,8 +289,9 @@ public class CollisionSounds : MonoBehaviour
             impactCooldownT = impactCooldown;
 
             //Impact Sound
-            var speed = collision.relativeVelocity.magnitude * speedMultiplier;
-            var vol = totalVolumeMultiplier * impactSound.Volume(collision.impulse.magnitude) * impactSound.SpeedFader(speed); //Here "force" is actually an impulse
+            var speed = speedMultiplier * collision.relativeVelocity.magnitude;
+            var force = forceMultiplier * collision.impulse.magnitude;//Here "force" is actually an impulse
+            var vol = totalVolumeMultiplier * impactSound.Volume(force) * impactSound.SpeedFader(speed); 
             var pitch = totalPitchMultiplier * impactSound.Pitch(speed);
 
             var st = soundSet.sounds[GetSurfaceTypeID(collision)];
@@ -301,8 +303,9 @@ public class CollisionSounds : MonoBehaviour
     }
     private void OnCollisionStay(Collision collision)
     {
-        var force = Mathf.Max(0, Mathf.Min(frictionSound.maxForce, collision.impulse.magnitude / Time.deltaTime) - frictionSound.minForce);
-        var speed = collision.relativeVelocity.magnitude * speedMultiplier;
+        var force = forceMultiplier * collision.impulse.magnitude / Time.deltaTime;
+        force = Mathf.Max(0, Mathf.Min(frictionSound.maxForce, force) - frictionSound.minForce);
+        var speed = speedMultiplier * collision.relativeVelocity.magnitude;
         force *= frictionSound.SpeedFader(speed); //So that it is found the maximum with this in mind
 
         var s = soundSet.sounds[GetSurfaceTypeID(collision)];
