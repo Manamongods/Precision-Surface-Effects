@@ -131,9 +131,14 @@ namespace SurfaceSounds
             if (l > sounds.Length)
                 System.Array.Resize(ref sounds, l);
 
-            for (int i = 0; i < types.surfaceTypes.Length; i++)
+            for (int i = 0; i < sounds.Length; i++)
             {
-                sounds[i].autoGroupName = types.surfaceTypes[i].groupName;
+                string s;
+                if (i < types.surfaceTypes.Length)
+                    s = types.surfaceTypes[i].groupName;
+                else
+                    s = "THIS DOESN'T EXIST AS A SOUND-TYPE (YET?)";
+                sounds[i].autoGroupName = s;
             }
         }
 #endif
