@@ -3,7 +3,22 @@ guid: 39da1380cedde8641bffd460f60b599f
 ModelImporter:
   serializedVersion: 20100
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: ASDF
+    second: {fileID: 2100000, guid: 75ea487111555ab4a9972b904c91c73f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Leaves
+    second: {fileID: 2100000, guid: 48a31eaf194541a46a1a14f0fbfd3bb0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stone
+    second: {fileID: 2100000, guid: a9c8d54b825b1ee408f826928952e7b7, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0
