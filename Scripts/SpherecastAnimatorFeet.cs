@@ -37,7 +37,7 @@ public class SphereCastAnimatorFeet : MonoBehaviour
 
         var pos = origin.position;
         var dir = -origin.up;
-        int sID = soundSet.surfaceTypes.GetSphereCastSurfaceTypeID(pos, dir, radius: radius, maxDistance: maxDistance, layerMask: layerMask);
-        soundSet.surfaceTypeSounds[sID].PlayOneShot(foot.audioSource);           
+        int sID = soundSet.types.GetSphereCastSurfaceTypeID(pos, dir, radius: radius, maxDistance: maxDistance, layerMask: layerMask);
+        soundSet.sounds[sID].PlayOneShot(foot.audioSource);           
     }
 }

@@ -49,7 +49,7 @@ public class RaycastAnimatorFeet : MonoBehaviour
         else
             dir = foot.foot.TransformDirection(foot.raycastDirection);
 
-        int sID = soundSet.surfaceTypes.GetRaycastSurfaceTypeID(pos, dir, maxDistance: maxDistance, layerMask: layerMask);
-        soundSet.surfaceTypeSounds[sID].PlayOneShot(foot.audioSource);
+        int sID = soundSet.types.GetRaycastSurfaceTypeID(pos, dir, maxDistance: maxDistance, layerMask: layerMask);
+        soundSet.sounds[sID].PlayOneShot(foot.audioSource);
     }
 }

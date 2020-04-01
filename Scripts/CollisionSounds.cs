@@ -49,11 +49,11 @@ public class CollisionSounds : MonoBehaviour
                 Debug.DrawLine(pos + norm * debugSize, pos - norm * debugSize, Color.white, 0);
 #endif
 
-                return soundSet.surfaceTypes.GetSurfaceType(c.collider, pos, rh.triangleIndex);
+                return soundSet.types.GetSurfaceType(c.collider, pos, rh.triangleIndex);
             }
         }
 
-        return soundSet.surfaceTypes.GetCollisionSurfaceTypeID(c);
+        return soundSet.types.GetCollisionSurfaceTypeID(c);
     }
 
 
@@ -232,7 +232,7 @@ public class CollisionSounds : MonoBehaviour
             var vol = volumeMultiplier * impactSound.Volume(collision.impulse.magnitude); //Here "force" is actually an impulse
             var pitch = impactSound.Pitch(collision.relativeVelocity.magnitude);
 
-            var st = soundSet.surfaceTypeSounds[GetSurfaceTypeID(collision)];
+            var st = soundSet.sounds[GetSurfaceTypeID(collision)];
 #if UNITY_EDITOR
             currentSurfaceTypeDebug = st.autoGroupName;
 #endif
@@ -247,7 +247,7 @@ public class CollisionSounds : MonoBehaviour
         this.force += force;
         this.speed += force * speed; //weights speed, so that it can find a weighted average pitch for all the potential OnCollisionStays
 
-        var s = soundSet.surfaceTypeSounds[GetSurfaceTypeID(collision)];
+        var s = soundSet.sounds[GetSurfaceTypeID(collision)];
 #if UNITY_EDITOR
         currentSurfaceTypeDebug = s.autoGroupName;
 #endif

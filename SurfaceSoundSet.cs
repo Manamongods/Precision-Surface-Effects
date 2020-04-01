@@ -9,9 +9,10 @@ namespace SurfaceSounds
     public class SurfaceSoundSet : ScriptableObject
     {
         //Fields
-        public SurfaceTypes surfaceTypes;
+        public SurfaceTypes types;
         [ReorderableList()]
-        public SurfaceTypeSounds[] surfaceTypeSounds = new SurfaceTypeSounds[] { new SurfaceTypeSounds() };
+        [UnityEngine.Serialization.FormerlySerializedAs("surfaceTypeSounds ")]
+        public SurfaceTypeSounds[] sounds = new SurfaceTypeSounds[] { new SurfaceTypeSounds() };
 
 
 
@@ -124,16 +125,16 @@ namespace SurfaceSounds
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            if (surfaceTypes == null)
+            if (types == null)
                 return;
 
-            var l = surfaceTypes.surfaceTypes.Length;
-            if (l > surfaceTypeSounds.Length)
-                System.Array.Resize(ref surfaceTypeSounds, l);
+            var l = types.surfaceTypes.Length;
+            if (l > sounds.Length)
+                System.Array.Resize(ref sounds, l);
 
-            for (int i = 0; i < surfaceTypes.surfaceTypes.Length; i++)
+            for (int i = 0; i < types.surfaceTypes.Length; i++)
             {
-                surfaceTypeSounds[i].autoGroupName = surfaceTypes.surfaceTypes[i].groupName;
+                sounds[i].autoGroupName = types.surfaceTypes[i].groupName;
             }
         }
 #endif

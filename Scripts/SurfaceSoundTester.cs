@@ -67,11 +67,11 @@ public class SurfaceSoundTester : MonoBehaviour
 
         int sID;
         if (spherecast)
-            sID = soundSet.surfaceTypes.GetSphereCastSurfaceTypeID(pos, downDir, spherecastRadius);
+            sID = soundSet.types.GetSphereCastSurfaceTypeID(pos, downDir, spherecastRadius);
         else
-            sID = soundSet.surfaceTypes.GetRaycastSurfaceTypeID(pos, downDir);
+            sID = soundSet.types.GetRaycastSurfaceTypeID(pos, downDir);
 
-        var s = soundSet.surfaceTypeSounds[sID];
+        var s = soundSet.sounds[sID];
 
         header = s.autoGroupName;
         clip = s.GetRandomClip(out volume, out pitch);
