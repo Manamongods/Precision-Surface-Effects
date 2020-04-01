@@ -14,7 +14,8 @@ public class CollisionSounds : MonoBehaviour
 #endif
 
     [Space(30)]
-    public float volumeMultiplier = 0.3f;
+    public float totalVolumeMultiplier = 0.3f;
+    public float totalPitchMultiplier = 1;
     [Tooltip("Non-convex MeshCollider submeshes")]
     public bool findMeshColliderSubmesh = true;
 
@@ -28,8 +29,9 @@ public class CollisionSounds : MonoBehaviour
     [Tooltip("When the friction soundType changes, this can be used to play impactSound")]
     public FrictionTypeChangeImpact frictionTypeChangeImpact = new FrictionTypeChangeImpact();
 
-    private float force, speed;
     private float impactCooldownT;
+
+    private readonly List<CollisionSound> collisionSounds = new List<CollisionSound>();
 
 
 
@@ -61,6 +63,12 @@ public class CollisionSounds : MonoBehaviour
 
 
     //Datatypes
+    private struct CollisionSound
+    {
+        public float force, speed;
+        public SurfaceSoundSet.SurfaceTypeSounds s;
+    }
+
     [System.Serializable]
     public class FrictionTypeChangeImpact //Just for foldering
     {
@@ -148,7 +156,7 @@ public class CollisionSounds : MonoBehaviour
                 clip = sts.loopSound;
             }
         }
-        public void Update(float volumeMultiplier, float force, float speed)
+        public void Update(float totalVolumeMultiplier, float totalPitchMultiplier, float force, float speed)
         {
             if (clip == null)
                 return;
@@ -180,11 +188,11 @@ public class CollisionSounds : MonoBehaviour
                 {
                     //Smoothly fades the pitch and volume
                     float lerpedAmount = SmoothDamp(ref currentVolume, clip.volumeMultiplier * Volume(force), ref volumeVelocity, smoothTimes);
-                    audioSource.volume = volumeMultiplier * currentVolume;
+                    audioSource.volume = totalVolumeMultiplier * currentVolume;
 
                     if (speed != 0)
                         SmoothDamp(ref currentPitch, targetPitch, ref pitchVelocity, smoothTimes); // Mathf.LerpUnclamped(currentPitch, targetPitch, lerpedAmount);
-                    audioSource.pitch = currentPitch;
+                    audioSource.pitch = totalPitchMultiplier * currentPitch;
 
 
                     //Ensures the AudioSource is only playing if the volume is high enough
@@ -245,9 +253,7 @@ public class CollisionSounds : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //Clears the accumulations
-        force = 0;
-        speed = 0;
+        collisionSounds.Clear();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -257,8 +263,8 @@ public class CollisionSounds : MonoBehaviour
             impactCooldownT = impactCooldown;
 
             //Impact Sound
-            var vol = volumeMultiplier * impactSound.Volume(collision.impulse.magnitude); //Here "force" is actually an impulse
-            var pitch = impactSound.Pitch(collision.relativeVelocity.magnitude);
+            var vol = totalVolumeMultiplier * impactSound.Volume(collision.impulse.magnitude); //Here "force" is actually an impulse
+            var pitch = totalPitchMultiplier * impactSound.Pitch(collision.relativeVelocity.magnitude);
 
             var st = soundSet.sounds[GetSurfaceTypeID(collision)];
 #if UNITY_EDITOR
@@ -272,25 +278,66 @@ public class CollisionSounds : MonoBehaviour
         var force = Mathf.Max(0, Mathf.Min(maxFrictionForce, collision.impulse.magnitude / Time.deltaTime) - minFrictionForce);
         var speed = collision.relativeVelocity.magnitude;
 
-        this.force += force;
-        this.speed += force * speed; //weights speed, so that it can find a weighted average pitch for all the potential OnCollisionStays
-
         var s = soundSet.sounds[GetSurfaceTypeID(collision)];
 #if UNITY_EDITOR
         currentSurfaceTypeDebug = s.autoGroupName;
 #endif
-        frictionSound.ChangeClip(s, this);
+
+        bool succeeded = false;
+        for (int i = 0; i < collisionSounds.Count; i++)
+        {
+            var cs = collisionSounds[i];
+
+            if(cs.s == s)
+            {
+                cs.force += force;
+                cs.speed += force * speed; //weights speed, so that it can find a weighted average pitch for all the potential OnCollisionStays
+                collisionSounds[i] = cs;
+
+                succeeded = true;
+                break;
+            }
+        }
+
+        if(!succeeded)
+        {
+            collisionSounds.Add
+            (
+                new CollisionSound()
+                {
+                    s = s,
+                    force = force,
+                    speed = force * speed
+                }
+            );
+        }
     }
 
     private void Update()
     {
         impactCooldownT -= Time.deltaTime;
 
-        float speed = 0;
-        if (force > 0) //prevents a divide by zero
-            speed = this.speed / force;
 
-        frictionSound.Update(volumeMultiplier, force, speed);
+        //Finds the maximum sound
+        float maxForce = 0;
+        CollisionSound max = new CollisionSound();
+        for (int i = 0; i < collisionSounds.Count; i++)
+        {
+            var cs = collisionSounds[i];
+            if (cs.force > maxForce)
+            {
+                maxForce = cs.force;
+                max = cs;
+            }
+        }
+        if(max.s != null)
+            frictionSound.ChangeClip(max.s, this);
+
+        float speed = 0;
+        if (max.force > 0) //prevents a divide by zero
+            speed = max.speed / max.force;
+
+        frictionSound.Update(totalVolumeMultiplier, totalPitchMultiplier, max.force, speed);
     }
 }
 

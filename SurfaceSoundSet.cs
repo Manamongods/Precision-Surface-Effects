@@ -35,7 +35,7 @@ namespace SurfaceSounds
             [Header("Clips")]
             public ShotClip[] clipVariants = new ShotClip[1] { new ShotClip() };
 
-            [Header("Friction/Rolling if wanted")]
+            [Header("Friction/Rolling")]
             [Tooltip("This can be used for friction/rolling sounds, or just ignore it")]
             [Space(20)]
             public Clip loopSound = new Clip(); //(no randomization should be used for this clip)
