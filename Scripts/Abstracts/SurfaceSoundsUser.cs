@@ -7,14 +7,20 @@ public abstract class SurfaceSoundsUser : MonoBehaviour
     //Fields
     public SurfaceSounds surfaceSounds;
     public string soundSetName = "Player";
-
-    protected int soundSetID;
+    public int soundSetID = -1;
 
 
     //Lifecycle
     protected virtual void Start()
     {
-        if (soundSetName != "")
+    }
+
+    protected virtual void OnValidate()
+    {
+        try
+        {
             soundSetID = surfaceSounds.FindSoundSetID(soundSetName);
+        }
+        catch { }
     }
 }

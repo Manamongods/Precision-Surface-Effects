@@ -128,7 +128,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   surfaceSounds: {fileID: 11400000, guid: f3cb9fc9ce88df748a41be798853fbc5, type: 2}
-  soundSetName: Player
+  soundSetName: 
   currentSurfaceTypeDebug: 
   volumeMultiplier: 0.3
   findMeshColliderSubmesh: 1
