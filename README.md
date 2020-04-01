@@ -9,7 +9,8 @@ The test scene requires MicroSplat's Examples. But the test scene is very unimpo
 ## Usage
 
 ### Steps
-Create a SurfaceSounds asset in Unity's project window (by right clicking -> Create -> SurfaceSounds)
+Create a SurfaceTypes asset in Unity's project window (by right clicking -> Create -> SurfaceTypes)
+Create a SurfaceSoundSet asset
 
 The component `SurfaceSoundTester.cs` can be used to test it out.
 
@@ -23,7 +24,9 @@ or
 For collision sounds you can use
 `CollisionSounds.cs`
 
-Or if you're coding it yourself, the easiest thing is to reference the SurfaceSounds asset, and then do `surfaceSounds.GetRaycastSurfaceType(pos, Vector3.down).GetSoundSet().PlayOneShot(audioSource);`
+Or if you're coding it yourself, the easiest thing is to reference the SurfaceSoundSet asset, and then do 
+`int surfaceTypeID = surfaceSoundSet.types.GetRaycastSurfaceTypeID(pos, Vector3.down);`
+`surfaceSoundSet.sounds[surfaceTypeID].PlayOneShot(audioSource);`
 
 You could use `GetRaycastSurfaceType`, but games often have entities magically floating with one or fewer feet on a ledge, and in that case the raycast would pass all the way to the bottom of the cliff. That's when it is good to use `GetSphereCastSurfaceType` with a larger radius.
 
