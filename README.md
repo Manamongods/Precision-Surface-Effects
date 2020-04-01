@@ -1,10 +1,10 @@
 # Unity Surface Sounds
 
-Allows you to find audioClips in Unity depending on what a spherecast or raycast hits, aka footstep sounds. You could alternatively find it using `GetCollisionSurfaceType(Collision collision)`, but since Collisions don't know any MeshCollider's triangleIndex it can't discern between submeshes.
+Allows different sounds for footsteps and collisions depending on Terrain splats or MeshRenderer materials.
 
 Uses: https://github.com/garettbass/UnityExtensions.ArrayDrawer for some reorderability
 
-The test scene requires MicroSplat's Examples. But the test scene is very unimportant so you should just delete all that test stuff.
+The test scene requires MicroSplat's Examples
 
 ## Usage
 
@@ -16,9 +16,9 @@ Assign the SurfaceTypes to the SurfaceSoundSet asset
 
 The component `SurfaceSoundTester.cs` can be used to test it out.
 
-Delete the folder "%Microsplat Demo - Trash%" after you have tried it out (if you want to try it out). It is complete garbage apart from being a mediocre demonstration
+Delete the folder "%Microsplat Demo - Trash%" after you have tried it out (if you want to try it out)
 
-You can use these for Animation Events:
+For footstep sounds you can use these for Animation Events:
 `SphereCastAnimatorFeet.cs`
 or
 `RaycastAnimatorFeet.cs`
