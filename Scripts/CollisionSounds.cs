@@ -25,6 +25,7 @@ public class CollisionSounds : MonoBehaviour
     public FrictionSound frictionSound = new FrictionSound();
     public float minFrictionForce = 1;
     public float maxFrictionForce = 100;
+    public FrictionTypeChangeImpact frictionTypeChangeImpact = new FrictionTypeChangeImpact();
 
     private float force, speed;
     private float impactCooldownT;
@@ -60,6 +61,15 @@ public class CollisionSounds : MonoBehaviour
 
     //Datatypes
     [System.Serializable]
+    public class FrictionTypeChangeImpact //Just for foldering
+    {
+        [Range(0, 1)]
+        public float probability = 1;
+        public float volumeMultiplier = 1;
+        public float pitchMultiplier = 1;
+    }
+
+    [System.Serializable]
     public class Sound
     {
         //Fields
@@ -94,7 +104,7 @@ public class CollisionSounds : MonoBehaviour
         [Tooltip("This is used in smoothing the volume and pitch")]
         public SmoothTimes smoothTimes = SmoothTimes.Default(); //make it be smoothtime instead?
 
-        internal SurfaceSoundSet.SurfaceTypeSounds.Clip ssClip;
+        internal SurfaceSoundSet.SurfaceTypeSounds.Clip clip;
         private float currentVolume;
         private float currentPitch;
         private float volumeVelocity;
@@ -118,21 +128,38 @@ public class CollisionSounds : MonoBehaviour
             }
         }
 
-        
+
         //Methods
+        public void ChangeClip(SurfaceSoundSet.SurfaceTypeSounds sts, CollisionSounds cs)
+        {
+            if (clip != sts.loopSound)
+            {
+                if (cs.impactCooldownT <= 0)
+                {
+                    cs.impactCooldownT = cs.impactCooldown;
+
+                    var ftci = cs.frictionTypeChangeImpact;
+
+                    if (Audible(currentVolume) && Random.value < ftci.probability)
+                        sts.PlayOneShot(cs.impactSound.audioSource, ftci.volumeMultiplier * currentVolume, ftci.pitchMultiplier * currentPitch);
+                }
+
+                clip = sts.loopSound;
+            }
+        }
         public void Update(float volumeMultiplier, float force, float speed)
         {
-            if (ssClip == null)
+            if (clip == null)
                 return;
 
-            float targetPitch = ssClip.pitchMultiplier * Pitch(speed);
+            float targetPitch = clip.pitchMultiplier * Pitch(speed);
 
-            if (audioSource.clip != ssClip.clip)
+            if (audioSource.clip != clip.clip)
             {
                 //Changes the clip if silent
                 if (!Audible(currentVolume))
                 {
-                    audioSource.clip = ssClip.clip;
+                    audioSource.clip = clip.clip;
                     currentPitch = targetPitch; //Immediately changes the pitch
                     volumeVelocity = pitchVelocity = 0;
                 }
@@ -151,7 +178,7 @@ public class CollisionSounds : MonoBehaviour
                 else
                 {
                     //Smoothly fades the pitch and volume
-                    float lerpedAmount = SmoothDamp(ref currentVolume, ssClip.volumeMultiplier * Volume(force), ref volumeVelocity, smoothTimes);
+                    float lerpedAmount = SmoothDamp(ref currentVolume, clip.volumeMultiplier * Volume(force), ref volumeVelocity, smoothTimes);
                     audioSource.volume = volumeMultiplier * currentVolume;
 
                     if (speed != 0)
@@ -251,7 +278,7 @@ public class CollisionSounds : MonoBehaviour
 #if UNITY_EDITOR
         currentSurfaceTypeDebug = s.autoGroupName;
 #endif
-        frictionSound.ssClip = s.loopSound;
+        frictionSound.ChangeClip(s, this);
     }
 
     private void Update()

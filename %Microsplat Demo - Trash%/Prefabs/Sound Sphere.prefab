@@ -148,6 +148,10 @@ MonoBehaviour:
       down: 0.15
   minFrictionForce: 1
   maxFrictionForce: 100
+  frictionTypeChangeImpact:
+    probability: 1
+    volumeMultiplier: 0.25
+    pitchMultiplier: 1
 --- !u!1 &7768311541134257655
 GameObject:
   m_ObjectHideFlags: 0
