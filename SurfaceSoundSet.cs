@@ -11,7 +11,6 @@ namespace SurfaceSounds
         //Fields
         public SurfaceTypes types;
         [ReorderableList()]
-        [UnityEngine.Serialization.FormerlySerializedAs("surfaceTypeSounds ")]
         public SurfaceTypeSounds[] sounds = new SurfaceTypeSounds[] { new SurfaceTypeSounds() };
 
 
