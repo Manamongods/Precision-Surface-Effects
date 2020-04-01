@@ -10,7 +10,9 @@ The test scene requires MicroSplat's Examples. But the test scene is very unimpo
 
 ### Steps
 Create a SurfaceTypes asset in Unity's project window (by right clicking -> Create -> SurfaceSounds/Surface Types)
-Create a Surface Sound Set asset
+Create a SurfaceSoundSet asset
+
+Assign the SurfaceTypes to the SurfaceSoundSet asset
 
 The component `SurfaceSoundTester.cs` can be used to test it out.
 
