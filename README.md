@@ -1,4 +1,4 @@
-# Unity Surface Sounds
+# Precision Surface Effects
 
 Allows different sounds for footsteps and collisions depending on Terrain splats or MeshRenderer materials.
 
