@@ -45,16 +45,30 @@ namespace PrecisionSurfaceEffects
         [ReorderableList()]
         public SurfaceType[] surfaceTypes = new SurfaceType[1];
 
+        [Header("Materials")]
         [Space(20)]
         [Tooltip("If your game reuses materials you can easily ")]
         [SerializeField]
         internal MaterialBlendOverride[] materialBlendOverrides = new MaterialBlendOverride[] { new MaterialBlendOverride() };
+
+        [Header("Terrain Textures")]
+        [Space(20)]
+        [Tooltip("If your game reuses materials you can easily ")]
+        [SerializeField]
+        internal TerrainBlends[] terrainBlends = new TerrainBlends[] { new TerrainBlends() };
+
 
         private readonly Dictionary<Material, List<BlendResult>> materialBlendLookup = new Dictionary<Material, List<BlendResult>>(); //for faster lookup
 
 
 
         //Datatypes
+        [System.Serializable]
+        internal class TerrainBlends : SurfaceBlends
+        {
+            public Texture[] terrainAlbedos = new Texture[1];
+        }
+
         [System.Serializable]
         internal class MaterialBlendOverride : SurfaceBlends
         {

@@ -35,9 +35,6 @@ namespace PrecisionSurfaceEffects
     [CreateAssetMenu(menuName = "Precision Surface Effects/Surface Type")]
     public class SurfaceType : ScriptableObject
     {
-        [Header("Terrains")]
-        public Texture2D[] terrainAlbedos;
-
         [Header("Mesh Renderers")]
         public string[] materialKeywords = new string[] { "Grass", "Leaves", "Hay", "Flower" };
     }
