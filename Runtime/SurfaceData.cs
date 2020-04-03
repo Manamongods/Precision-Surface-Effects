@@ -38,7 +38,8 @@ namespace PrecisionSurfaceEffects
         [Tooltip("If it can't find one")]
         public int defaultSurfaceType = 0;
 #if UNITY_EDITOR
-        public string autoDefaultSurfaceTypeGroupName;
+        [ReadOnly]
+        public string defaultSurfaceTypeGroupName;
 #endif
 
         [Space(20)]
@@ -47,18 +48,20 @@ namespace PrecisionSurfaceEffects
 
         [Header("Materials")]
         [Space(20)]
-        [Tooltip("If your game reuses materials you can easily ")]
+        [Tooltip("If your game reuses materials you can easily use these")]
         [SerializeField]
+        [ReorderableList()]
         internal MaterialBlendOverride[] materialBlendOverrides = new MaterialBlendOverride[] { new MaterialBlendOverride() };
 
         [Header("Terrain Textures")]
         [Space(20)]
-        [Tooltip("If your game reuses materials you can easily ")]
         [SerializeField]
+        [ReorderableList()]
         internal TerrainBlends[] terrainBlends = new TerrainBlends[] { new TerrainBlends() };
 
 
-        private readonly Dictionary<Material, List<BlendResult>> materialBlendLookup = new Dictionary<Material, List<BlendResult>>(); //for faster lookup
+        private readonly Dictionary<Material, List<NormalizedBlend>> materialBlendLookup = new Dictionary<Material, List<NormalizedBlend>>(); //for faster lookup
+        private readonly Dictionary<string, List<NormalizedBlend>> terrainAlbedoBlendLookup = new Dictionary<string, List<NormalizedBlend>>();
 
 
 
@@ -66,12 +69,15 @@ namespace PrecisionSurfaceEffects
         [System.Serializable]
         internal class TerrainBlends : SurfaceBlends
         {
+            [Space(10)]
+            [Tooltip("Warning: these have to have different names, because it's the names which are compared")]
             public Texture[] terrainAlbedos = new Texture[1];
         }
 
         [System.Serializable]
         internal class MaterialBlendOverride : SurfaceBlends
         {
+            [Space(10)]
             public Material[] materials = new Material[1];
         }
 
@@ -82,7 +88,7 @@ namespace PrecisionSurfaceEffects
         private void OnValidate()
         {
             defaultSurfaceType = Mathf.Clamp(defaultSurfaceType, 0, surfaceTypes.Length - 1);
-            autoDefaultSurfaceTypeGroupName = surfaceTypes[defaultSurfaceType].name;
+            defaultSurfaceTypeGroupName = surfaceTypes[defaultSurfaceType].name;
 
             Awake();
         }
@@ -90,6 +96,7 @@ namespace PrecisionSurfaceEffects
 
         private void Awake()
         {
+            //Material Lookup
             materialBlendLookup.Clear();
             for (int i = 0; i < materialBlendOverrides.Length; i++)
             {
@@ -101,6 +108,30 @@ namespace PrecisionSurfaceEffects
                     var mat = mbo.materials[ii];
                     if(mat != null)
                         materialBlendLookup.Add(mat, mbo.result);
+                }
+            }
+
+            //Terrain Albedo Lookup
+            terrainAlbedoBlendLookup.Clear();
+            for (int i = 0; i < terrainBlends.Length; i++)
+            {
+                var tb = terrainBlends[i];
+                tb.SortNormalize();
+
+                for (int ii = 0; ii < tb.terrainAlbedos.Length; ii++)
+                {
+                    var tex = tb.terrainAlbedos[ii];
+                    if (tex != null)
+                        terrainAlbedoBlendLookup.Add(tex.name, tb.result);
+                }
+
+                //Bakes these for performance (because these are intrinsically connected to this specific SurfaceData asset, so it is possible to do so)
+                for (int ii = 0; ii < tb.result.Count; ii++)
+                {
+                    if (TryGetStringSurfaceType(tb.result[ii].reference, out int stID))
+                        tb.result[ii].surfaceTypeID = stID;
+                    else
+                        tb.result[ii].surfaceTypeID = -1;
                 }
             }
         }

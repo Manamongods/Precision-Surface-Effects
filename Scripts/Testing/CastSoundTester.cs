@@ -29,24 +29,30 @@ using UnityEngine;
 using PrecisionSurfaceEffects;
 
 [ExecuteInEditMode]
-public class SoundTester : MonoBehaviour
+public class CastSoundTester : MonoBehaviour
 {
     //Fields
-    [Header("Results")]
+    public UnityEngine.UI.Text text;
+
+    [Header("Output")]
+    [Space(30)]
     public TestResult[] results;
 
     [Min(1)]
+    [Space(30)]
     public int maxOutputCount = 4;
     public float minWeight = 0.2f;
 
     [Header("Input")]
-    [Space(50)]
+    [Space(30)]
     public SurfaceSoundSet soundSet;
+
     public bool downIsGravity;
 
     public bool spherecast;
     public float spherecastRadius = 5;
 
+    [System.NonSerialized]
     public float mult = 1;
 
 
@@ -95,9 +101,17 @@ public class SoundTester : MonoBehaviour
             var r = results[i] = new TestResult();
 
             r.header = s.name;
-            r.normalizedWeight = output.normalizedWeight;
+            r.normalizedWeight = output.volume;
             r.clip = s.GetRandomClip(out r.volume, out r.pitch);
         }
+
+        string text = "";
+        for (int i = 0; i < results.Length; i++)
+        {
+            var result = results[i];
+            text = text + result.header + " " + (Mathf.Round(result.normalizedWeight * 1000f) / 1000f) + "\n"; //" W: " + 
+        }
+        this.text.text = text;
     }
 
     private void OnDrawGizmos()

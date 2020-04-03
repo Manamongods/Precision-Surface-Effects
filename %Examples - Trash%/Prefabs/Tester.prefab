@@ -77,7 +77,11 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Grassy Sound
+  m_Text: 'Grassy Sound 0.375
+
+    Rocky Sound 0.375
+
+'
 --- !u!1 &2738777106635253875
 GameObject:
   m_ObjectHideFlags: 0
@@ -187,7 +191,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6759458981224116971}
   - component: {fileID: 6759458981224116968}
-  - component: {fileID: 6759458981224116970}
   m_Layer: 0
   m_Name: Tester
   m_TagString: Untagged
@@ -222,24 +225,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 215b82bcbed6b3549bca19883026ffe4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  results: []
+  results:
+  - header: Grassy Sound
+    normalizedWeight: 0.375
+    clip: {fileID: 8300000, guid: 5c099903d219d5e4894f2fceb00794c7, type: 3}
+    volume: 0.94390374
+    pitch: 0.9479325
+  - header: Rocky Sound
+    normalizedWeight: 0.375
+    clip: {fileID: 8300000, guid: 6898ead3978f3f24abde360099bc5ad2, type: 3}
+    volume: 0.99244
+    pitch: 0.94128174
+  text: {fileID: 342627295689270626}
   maxOutputCount: 4
   minWeight: 0.2
   soundSet: {fileID: 11400000, guid: 80344998cfdc62548be42ca931b98cce, type: 2}
   downIsGravity: 0
   spherecast: 1
   spherecastRadius: 10
---- !u!114 &6759458981224116970
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6759458981224116969}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a790f29346eed074392c7931bb712def, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  text: {fileID: 342627295689270626}
-  ts: {fileID: 6759458981224116968}

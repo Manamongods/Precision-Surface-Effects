@@ -55,7 +55,7 @@ public class SphereCastAnimatorFeet : MonoBehaviour
         for (int i = 0; i < c; i++)
         {
             var output = outputs[i];
-            soundSet.surfaceTypeSounds[output.surfaceTypeID].PlayOneShot(foot.audioSources[i], volumeMultiplier: output.normalizedWeight);
+            soundSet.surfaceTypeSounds[output.surfaceTypeID].PlayOneShot(foot.audioSources[i], volumeMultiplier: output.volume);
         }
     }
 }

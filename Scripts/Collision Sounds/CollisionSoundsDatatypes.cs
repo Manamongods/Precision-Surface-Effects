@@ -45,15 +45,6 @@ namespace PrecisionSurfaceEffects
         //    public float pitchMultiplier = 1;
         //}
 
-        private static readonly SOSorter soSorter = new SOSorter();
-        private class SOSorter : IComparer<SurfaceOutput>
-        {
-            public int Compare(SurfaceOutput x, SurfaceOutput y)
-            {
-                return y.normalizedWeight.CompareTo(x.normalizedWeight); //Descending
-            }
-        }
-
         [System.Serializable]
         public class Sound
         {

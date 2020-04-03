@@ -48,23 +48,7 @@ namespace PrecisionSurfaceEffects
             }
             return cellMix;
         }
-        public static int GetMainTexture(float[] mixes, out float maxMix, float totalMax)
-        {
-            maxMix = 0; //maxMix
-            int maxIndex = -1;
 
-            // loop through each mix value and find the maximum
-            for (int n = 0; n < mixes.Length; n++)
-            {
-                var m = mixes[n];
-                if (m > maxMix && m < totalMax)
-                {
-                    maxIndex = n;
-                    maxMix = m;
-                }
-            }
-            return maxIndex;
-        }
 
         public static int GetSubmesh(Mesh mesh, int raycastHitTriangleIndex)
         {
@@ -84,3 +68,23 @@ namespace PrecisionSurfaceEffects
         }
     }
 }
+
+/*
+ *         public static int GetMainTexture(float[] mixes, out float maxMix, float totalMax)
+        {
+            maxMix = 0; //maxMix
+            int maxIndex = -1;
+
+            // loop through each mix value and find the maximum
+            for (int n = 0; n < mixes.Length; n++)
+            {
+                var m = mixes[n];
+                if (m > maxMix && m < totalMax)
+                {
+                    maxIndex = n;
+                    maxMix = m;
+                }
+            }
+            return maxIndex;
+        }
+ */

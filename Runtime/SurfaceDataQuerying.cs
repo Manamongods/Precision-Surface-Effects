@@ -30,69 +30,6 @@ using UnityExtensions;
 
 namespace PrecisionSurfaceEffects
 {
-    public class SurfaceOutputs : List<SurfaceOutput>
-    {
-        //This (in theory) pushes the weights downward from anchor so that there is never any "popping". It should bias itself to the remaining highest weights
-        //(So long as the weights given were sorted, and there aren't any outputs culled past the maxCount + 1, yet)
-        public void Downshift(int maxCount, float minWeight, float mult = 1)
-        {
-            //This all relies on having the outputs be sorted by decreasing weight
-            for (int i = 0; i < Count; i++)
-            {
-                var val = this[i];
-                val.normalizedWeight *= mult;
-                this[i] = val;
-
-                if (this[i].normalizedWeight < minWeight)
-                {
-                    RemoveAt(i);
-                    i--;
-                }
-            }
-
-            //int downID = maxCount;
-            //if (Count > downID)
-            if(Count > 0)
-            {
-                //for (int i = downID; i >= 0; i--)
-                //{
-                //    if (this[i].normalizedWeight < minWeight)
-                //        downID = i;
-                //    else
-                //        break;
-                //}
-
-                float anchor = 1; // this[0].normalizedWeight; //1
-
-
-                float min = minWeight;
-                if(Count > maxCount)
-                    min = Mathf.Max(min, this[maxCount].normalizedWeight);
-                float downMult = anchor / (anchor - min);
-
-                //Clears any extras
-                while (Count > maxCount)
-                    RemoveAt(Count - 1);
-
-                
-                for (int i = 0; i < Count; i++)
-                {
-                    var o = this[i];
-                    o.normalizedWeight = (o.normalizedWeight - anchor) * downMult + anchor;
-                    this[i] = o;
-                }
-            }
-        }
-
-        public SurfaceOutputs(SurfaceOutputs so) : base(so) { }
-        public SurfaceOutputs() : base() { }
-    }
-    public struct SurfaceOutput
-    {
-        public int surfaceTypeID;
-        public float normalizedWeight;
-    }
-
     public partial class SurfaceData : ScriptableObject
     {
         //Constants
@@ -176,48 +113,60 @@ namespace PrecisionSurfaceEffects
         private void AddTerrainSurfaceTypes(SurfaceOutputs outputs, Terrain terrain, Vector3 worldPosition, int maxOutputCount)
         {
             var mix = Utility.GetTextureMix(terrain, worldPosition);
+            var layers = terrain.terrainData.terrainLayers;
 
-            float totalMax = Mathf.Infinity;
-
-            Continue:
-            while (outputs.Count < maxOutputCount + 1) //adds an additional one to calculate the smooth distribution
+            for (int mixID = 0; mixID < mix.Length; mixID++)
             {
-                var terrainIndex = Utility.GetMainTexture(mix, out float maxMix, totalMax);
-                totalMax = maxMix;
-
-                if (terrainIndex == -1)
-                    return;
-
-                var terrainTextureName = terrain.terrainData.terrainLayers[terrainIndex].diffuseTexture.name; //This might be terrible performance??
-
-                for (int i = 0; i < surfaceTypes.Length; i++)
+                float alpha = mix[mixID];
+                if (alpha > Mathf.Epsilon)
                 {
-                    var st = surfaceTypes[i];
+                    var terrainTextureName = layers[mixID].diffuseTexture.name; //This might be terrible performance??
 
-                    for (int ii = 0; ii < st.terrainAlbedos.Length; ii++)
+                    if (terrainAlbedoBlendLookup.TryGetValue(terrainTextureName, out List<NormalizedBlend> results))
                     {
-                        if (terrainTextureName == st.terrainAlbedos[ii].name)
+                        for (int blendID = 0; blendID < results.Count; blendID++)
                         {
-                            bool success = false;
-                            for (int iii = 0; iii < outputs.Count; iii++)
+                            var blendResult = results[blendID];
+
+                            if (blendResult.surfaceTypeID != -1)
                             {
-                                var output = outputs[iii];
-                                if (output.surfaceTypeID == i)
+                                float volume = alpha * blendResult.volume;
+                                float weightedPitch = volume * blendResult.pitch;
+
+                                bool success = false;
+                                for (int outputID = 0; outputID < outputs.Count; outputID++)
                                 {
-                                    output.normalizedWeight += maxMix;
-                                    outputs[iii] = output;
-                                    success = true;
-                                    break;
+                                    var output = outputs[outputID];
+                                    if (output.surfaceTypeID == blendResult.surfaceTypeID)
+                                    {
+                                        output.volume += volume;
+                                        output.pitch += weightedPitch;
+                                        outputs[outputID] = output;
+                                        success = true;
+                                        break;
+                                    }
                                 }
+
+                                if (!success)
+                                    outputs.Add(new SurfaceOutput() { surfaceTypeID = blendResult.surfaceTypeID, volume = volume, pitch = weightedPitch });
                             }
-
-                            if(!success)
-                                outputs.Add(new SurfaceOutput() { surfaceTypeID = i, normalizedWeight = maxMix });
-
-                            goto Continue;
                         }
                     }
                 }
+            }
+
+            //Sorts and clamps
+            outputs.SortDescending();
+            while (outputs.Count > maxOutputCount + 2)
+                outputs.RemoveAt(maxOutputCount + 1);
+
+            //Normalizes the pitches
+            for (int i = 0; i < outputs.Count; i++)
+            {
+                var o = outputs[i];
+                if(o.volume > 0)
+                    o.pitch /= o.volume;
+                outputs[i] = o;
             }
         }
         private void AddNonTerrainSurfaceTypes(SurfaceOutputs outputs, Collider collider, Vector3 worldPosition, int maxOutputCount, int triangleIndex = -1)
@@ -235,6 +184,7 @@ namespace PrecisionSurfaceEffects
             else if (marker is SurfaceBlendMarker sbm)
             {
                 AddBlends(sbm.blends.result, maxOutputCount);
+                return;
             }
             else
                 blendMarker = marker as SurfaceBlendOverridesMarker;
@@ -247,7 +197,7 @@ namespace PrecisionSurfaceEffects
                 {
                     int subMeshID = Utility.GetSubmesh(collider.GetComponent<MeshFilter>().sharedMesh, triangleIndex);
 
-                    List <BlendResult> blendResults = null;
+                    List <NormalizedBlend> blendResults = null;
                     if(blendMarker != null)
                     {
                         for (int i = 0; i < blendMarker.subMaterials.Length; i++)
@@ -268,7 +218,7 @@ namespace PrecisionSurfaceEffects
                         materials.Clear();
                         mr.GetSharedMaterials(materials);
 
-                        if(materialBlendLookup.TryGetValue(materials[subMeshID], out List<BlendResult> value))
+                        if(materialBlendLookup.TryGetValue(materials[subMeshID], out List<NormalizedBlend> value))
                             blendResults = value;
                     }
 
@@ -297,7 +247,7 @@ namespace PrecisionSurfaceEffects
                 }
             }
         }
-        private void AddBlends(List<BlendResult> blendResults, int maxOutputCount)
+        private void AddBlends(List<NormalizedBlend> blendResults, int maxOutputCount)
         {
             //Adds the blends. If a blend's reference doesn't match any ST, then it will give it the default ST
             int blendCount = Mathf.Min(blendResults.Count, maxOutputCount + 1);
@@ -308,7 +258,7 @@ namespace PrecisionSurfaceEffects
                 if (!TryGetStringSurfaceType(blend.reference, out int stID))
                     stID = defaultSurfaceType;
 
-                outputs.Add(new SurfaceOutput() { surfaceTypeID = stID, normalizedWeight = blend.normalizedWeight });
+                outputs.Add(new SurfaceOutput() { surfaceTypeID = stID, volume = blend.volume, pitch = blend.pitch });
             }
         }
 
@@ -337,7 +287,7 @@ namespace PrecisionSurfaceEffects
 
         private void AddSingleOutput(int stID)
         {
-            outputs.Add(new SurfaceOutput() { surfaceTypeID = stID, normalizedWeight = 1 });
+            outputs.Add(new SurfaceOutput() { surfaceTypeID = stID, volume = 1, pitch = 1 });
         }
         private SurfaceOutputs GetList(bool share)
         {

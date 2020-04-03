@@ -396,7 +396,7 @@ MonoBehaviour:
     - {fileID: 8229951337275091168}
     minimumTypeWeight: 0.1
     volumeByForce: 0.01
-    volumeFaderBySpeedRange: {x: 0.01, y: 0.1}
+    volumeFaderBySpeedRange: {x: 0.01, y: 0.3}
     basePitch: 1
     pitchBySpeed: 0.05
     clipChangeSmoothTime: 0.001
@@ -409,9 +409,9 @@ MonoBehaviour:
     - {fileID: 6513881674433054021}
     minimumTypeWeight: 0.1
     volumeByForce: 0.1
-    volumeFaderBySpeedRange: {x: 0.01, y: 0.1}
-    basePitch: 0.5
-    pitchBySpeed: 0.01
+    volumeFaderBySpeedRange: {x: 0.01, y: 0.3}
+    basePitch: 1
+    pitchBySpeed: -0.01
   impactCooldown: 0.2
 --- !u!1 &7768311541134257655
 GameObject:

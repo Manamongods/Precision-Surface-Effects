@@ -32,56 +32,6 @@ using System.Linq;
 
 namespace PrecisionSurfaceEffects
 {
-    [System.Serializable]
-    public class BlendResult //struct
-    {
-        public string reference;
-        internal float normalizedWeight;
-    }
-
-    [System.Serializable]
-    internal class SurfaceBlends
-    {
-#if UNITY_EDITOR
-        public SurfaceBlend[] blends = new SurfaceBlend[1] { new SurfaceBlend() };
-
-        [System.Serializable]
-        public class SurfaceBlend
-        {
-            public string reference = "Grass";
-            [Min(0)]
-            public float weight = 1;
-        }
-
-        public void SortNormalize()
-        {
-            float weightSum = 0;
-            for (int i = 0; i < blends.Length; i++)
-                weightSum += blends[i].weight;
-
-            result.Clear();
-            for (int i = 0; i < blends.Length; i++)
-            {
-                var blend = blends[i];
-
-                var br = new BlendResult()
-                {
-                    normalizedWeight = blend.weight / weightSum,
-                    reference = blend.reference
-                };
-
-                result.Add(br);
-            }
-
-            result.Sort((x, y) => y.normalizedWeight.CompareTo(x.normalizedWeight)); //Descending
-        }
-#endif
-
-        [HideInInspector]
-        [SerializeField]
-        public List<BlendResult> result = new List<BlendResult>();
-    }
-
     [DisallowMultipleComponent]
     public abstract class Marker : MonoBehaviour { }
 

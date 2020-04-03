@@ -10,19 +10,72 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8de655e55134ea4458afbf3a4e8e4f11, type: 3}
-  m_Name: Surface Types
+  m_Name: Surface Data
   m_EditorClassIdentifier: 
   defaultSurfaceType: 0
-  autoDefaultSurfaceTypeGroupName: None
+  defaultSurfaceTypeGroupName: None
   surfaceTypes:
   - {fileID: 11400000, guid: 6c0b9ac2e69dcf24382e061aa542dde9, type: 2}
   - {fileID: 11400000, guid: 6429e74e3fb784e4cba139237084981a, type: 2}
   - {fileID: 11400000, guid: 9485fbaaf0172d547bdefd61ad1c6a7c, type: 2}
   materialBlendOverrides:
-  - blends:
+  - groupName: Stoney
+    volumeMultiplier: 1
+    pitchMultiplier: 1
+    blends:
     - reference: Stone
       weight: 1
+      normalizedWeight: 1
     result:
     - reference: Stone
+      volume: 1
+      pitch: 1
     materials:
     - {fileID: 2100000, guid: 27b693d56a456064ba16f9ed7df95f23, type: 2}
+  terrainBlends:
+  - groupName: Gras
+    volumeMultiplier: 1
+    pitchMultiplier: 1
+    blends:
+    - reference: Grass
+      weight: 1
+      normalizedWeight: 1
+    result:
+    - reference: Grass
+      volume: 1
+      pitch: 1
+    terrainAlbedos:
+    - {fileID: 2800000, guid: 66fb879d08c8d4a8d9217a396637cd02, type: 3}
+    - {fileID: 2800000, guid: a4a9376fca9114840bb973b6693e7ff5, type: 3}
+  - groupName: Rocky
+    volumeMultiplier: 1
+    pitchMultiplier: 1
+    blends:
+    - reference: Stone
+      weight: 1
+      normalizedWeight: 1
+    result:
+    - reference: Stone
+      volume: 1
+      pitch: 1
+    terrainAlbedos:
+    - {fileID: 2800000, guid: b2e5c511fff7f41559554175e2005252, type: 3}
+  - groupName: Desertey
+    volumeMultiplier: 1
+    pitchMultiplier: 1
+    blends:
+    - reference: Stone
+      weight: 1
+      normalizedWeight: 0.6666667
+    - reference: Grass
+      weight: 0.5
+      normalizedWeight: 0.33333334
+    result:
+    - reference: Stone
+      volume: 0.6666667
+      pitch: 1
+    - reference: Grass
+      volume: 0.33333334
+      pitch: 1
+    terrainAlbedos:
+    - {fileID: 2800000, guid: 1d6b5702e2d7947a6aca898081729d0f, type: 3}
