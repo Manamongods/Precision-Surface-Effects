@@ -22,12 +22,40 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityExtensions;
 
-namespace SurfaceSounds
+namespace PrecisionSurfaceEffects
 {
-    public class SurfaceTypeMarker : MonoBehaviour
+    [CreateAssetMenu(menuName = "Precision Surface Effects/Surface Sound Set")]
+    public class SurfaceParticleSet : SurfaceSet<SurfaceTypeParticles>
     {
-        public string reference = "Grass";
+        //Fields
+        [Space(30)]
+        [ReorderableList()]
+        //[UnityEngine.Serialization.FormerlySerializedAs("surfaceTypes")]
+        public SurfaceTypeParticles[] surfaceTypeParticles = new SurfaceTypeParticles[] { new SurfaceTypeParticles() };
+
+
+        //Lifecycle
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            Resize(ref surfaceTypeParticles);
+        }
+#endif
+
+        private void OnEnable()
+        {
+            //instantiates
+        }
+    }
+
+    [System.Serializable]
+    public class SurfaceTypeParticles : SurfaceSetType
+    {
+        public ParticleSystem particleSystem;
     }
 }

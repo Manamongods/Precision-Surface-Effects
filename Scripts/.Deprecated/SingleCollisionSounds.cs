@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using SurfaceSounds;
 
-public class CollisionSounds : MonoBehaviour
+public class SingleCollisionSounds : MonoBehaviour
 {
     //Fields
 #if UNITY_EDITOR
@@ -46,7 +46,7 @@ public class CollisionSounds : MonoBehaviour
     //Methods
     private int GetSurfaceTypeID(Collision c)
     {
-        if(findMeshColliderSubmesh && c.collider is MeshCollider mc && !mc.convex)
+        if (findMeshColliderSubmesh && c.collider is MeshCollider mc && !mc.convex)
         {
             var contact = c.GetContact(0);
             var pos = contact.point;
@@ -203,7 +203,7 @@ public class CollisionSounds : MonoBehaviour
                 SmoothDamp(ref currentVolume, 0, ref volumeVelocity, new SmoothTimes() { down = clipChangeSmoothTime });
                 audioSource.volume = currentVolume;
             }
-            else 
+            else
             {
                 if (audioSource.clip == null)
                 {
@@ -291,7 +291,7 @@ public class CollisionSounds : MonoBehaviour
             //Impact Sound
             var speed = speedMultiplier * collision.relativeVelocity.magnitude;
             var force = forceMultiplier * collision.impulse.magnitude;//Here "force" is actually an impulse
-            var vol = totalVolumeMultiplier * impactSound.Volume(force) * impactSound.SpeedFader(speed); 
+            var vol = totalVolumeMultiplier * impactSound.Volume(force) * impactSound.SpeedFader(speed);
             var pitch = totalPitchMultiplier * impactSound.Pitch(speed);
 
             var st = soundSet.sounds[GetSurfaceTypeID(collision)];
@@ -318,7 +318,7 @@ public class CollisionSounds : MonoBehaviour
         {
             var cs = collisionSounds[i];
 
-            if(cs.s == s)
+            if (cs.s == s)
             {
                 cs.force += force;
                 cs.speed += force * speed; //weights speed, so that it can find a weighted average pitch for all the potential OnCollisionStays
@@ -329,7 +329,7 @@ public class CollisionSounds : MonoBehaviour
             }
         }
 
-        if(!succeeded)
+        if (!succeeded)
         {
             collisionSounds.Add
             (
@@ -360,7 +360,7 @@ public class CollisionSounds : MonoBehaviour
                 max = cs;
             }
         }
-        if(max.s != null)
+        if (max.s != null)
             frictionSound.ChangeClip(max.s, this);
 
         float speed = 0;
@@ -370,14 +370,3 @@ public class CollisionSounds : MonoBehaviour
         frictionSound.Update(totalVolumeMultiplier, totalPitchMultiplier, max.force, speed);
     }
 }
-
-/*
- *         //var norm = collision.GetContact(0).normal;
-
-        //Debug.DrawRay(collision.GetContact(0).point, collision.impulse.normalized * 3);
-
-        //Friction Sound
-        //var force = Vector3.ProjectOnPlane(collision.impulse, norm).magnitude / Time.deltaTime; //Finds tangent force
-        //var impulse = collision.impulse;
-        //var force = (1 - Vector3.Dot(impulse.normalized, norm)) * impulse.magnitude / Time.deltaTime; //Finds tangent force
-*/

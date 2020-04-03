@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3daba9dcf2f2e3b418addc7ef6a1b7d1, type: 3}
   m_Name: Collision Object Thing Sound Set 1
   m_EditorClassIdentifier: 
-  types: {fileID: 11400000, guid: f3cb9fc9ce88df748a41be798853fbc5, type: 2}
-  sounds:
-  - autoGroupName: None
+  data: {fileID: 11400000, guid: b902d9bfcde7bee47b786803851a1b91, type: 2}
+  surfaceTypeSounds:
+  - name: None
     volume: 1
     volumeVariation: 0.2
     pitch: 1
@@ -28,13 +28,13 @@ MonoBehaviour:
       clip: {fileID: 0}
       volumeMultiplier: 1
       pitchMultiplier: 1
-  - autoGroupName: Grassy Sound
+  - name: Grassy Sound
     volume: 1
     volumeVariation: 0.2
     pitch: 1
     pitchVariation: 0.2
     clipVariants:
-    - clip: {fileID: 8300000, guid: 24d70d8d5dd91ce4788dffa0b8d52499, type: 3}
+    - clip: {fileID: 8300000, guid: 5c099903d219d5e4894f2fceb00794c7, type: 3}
       volumeMultiplier: 1
       pitchMultiplier: 1
       probabilityWeight: 1
@@ -42,13 +42,13 @@ MonoBehaviour:
       clip: {fileID: 8300000, guid: 23d13f52b5a01964e82ea27791642175, type: 3}
       volumeMultiplier: 1
       pitchMultiplier: 1
-  - autoGroupName: Rocky Sound
+  - name: Rocky Sound
     volume: 1
     volumeVariation: 0.2
     pitch: 1
     pitchVariation: 0.2
     clipVariants:
-    - clip: {fileID: 8300000, guid: ef3e8320fd4310747a758671194f5681, type: 3}
+    - clip: {fileID: 8300000, guid: 6898ead3978f3f24abde360099bc5ad2, type: 3}
       volumeMultiplier: 1
       pitchMultiplier: 1
       probabilityWeight: 1

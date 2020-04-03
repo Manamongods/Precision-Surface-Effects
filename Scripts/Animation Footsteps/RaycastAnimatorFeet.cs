@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using SurfaceSounds;
+using PrecisionSurfaceEffects;
 
 //You use PlayFootSound(int id) as an animation event
 
@@ -14,6 +14,7 @@ public class RaycastAnimatorFeet : MonoBehaviour
 
     [Space(20)]
     public Foot[] feet = new Foot[2];
+    public float minWeight = 0.2f;
 
     [Header("Raycasting")]
     public LayerMask layerMask = -1;
@@ -26,7 +27,7 @@ public class RaycastAnimatorFeet : MonoBehaviour
     [System.Serializable]
     public class Foot
     {
-        public AudioSource audioSource;
+        public AudioSource[] audioSources;
 
         [Header("Raycasting")]
         public Transform foot;
@@ -41,6 +42,7 @@ public class RaycastAnimatorFeet : MonoBehaviour
     {
         var foot = feet[footID];
 
+
         var pos = foot.foot.TransformPoint(foot.raycastOffset);
 
         Vector3 dir;
@@ -49,7 +51,22 @@ public class RaycastAnimatorFeet : MonoBehaviour
         else
             dir = foot.foot.TransformDirection(foot.raycastDirection);
 
-        int sID = soundSet.types.GetRaycastSurfaceTypeID(pos, dir, maxDistance: maxDistance, layerMask: layerMask);
-        soundSet.sounds[sID].PlayOneShot(foot.audioSource);
+
+        int maxCount = foot.audioSources.Length;
+        var outputs =  soundSet.data.GetRaycastSurfaceTypes
+        (
+            pos, dir, 
+            maxOutputCount: maxCount, shareList: true,
+            maxDistance: maxDistance, layerMask: layerMask
+        );
+        outputs.Downshift(maxCount, minWeight);
+
+
+        int c = Mathf.Min(outputs.Count, foot.audioSources.Length);
+        for (int i = 0; i < c; i++)
+        {
+            var output = outputs[i];
+            soundSet.surfaceTypeSounds[output.surfaceTypeID].PlayOneShot(foot.audioSources[i], volumeMultiplier: output.normalizedWeight);
+        }
     }
 }

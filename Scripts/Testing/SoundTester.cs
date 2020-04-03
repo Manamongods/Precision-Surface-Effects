@@ -26,17 +26,18 @@ SOFTWARE.
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using SurfaceSounds;
+using PrecisionSurfaceEffects;
 
 [ExecuteInEditMode]
-public class SurfaceSoundTester : MonoBehaviour
+public class SoundTester : MonoBehaviour
 {
     //Fields
-    [Header("Result")]
-    public string header;
-    public AudioClip clip;
-    public float volume;
-    public float pitch;
+    [Header("Results")]
+    public TestResult[] results;
+
+    [Min(1)]
+    public int maxOutputCount = 4;
+    public float minWeight = 0.2f;
 
     [Header("Input")]
     [Space(50)]
@@ -45,6 +46,8 @@ public class SurfaceSoundTester : MonoBehaviour
 
     public bool spherecast;
     public float spherecastRadius = 5;
+
+    public float mult = 1;
 
 
     //Methods
@@ -57,24 +60,44 @@ public class SurfaceSoundTester : MonoBehaviour
     }
 
 
+    //Datatypes
+    [System.Serializable]
+    public class TestResult
+    {
+        public string header;
+        public float normalizedWeight;
+        public AudioClip clip;
+        public float volume;
+        public float pitch;
+    }
+
+
     //Lifecycle
     private void Update()
     {
-        GetDownDir();
-
         var pos = transform.position;
         var downDir = GetDownDir();
 
-        int sID;
+        SurfaceOutputs outputs;
         if (spherecast)
-            sID = soundSet.types.GetSphereCastSurfaceTypeID(pos, downDir, spherecastRadius);
+            outputs = soundSet.data.GetSphereCastSurfaceTypes(pos, downDir, spherecastRadius, maxOutputCount: maxOutputCount, shareList: true);
         else
-            sID = soundSet.types.GetRaycastSurfaceTypeID(pos, downDir);
+            outputs = soundSet.data.GetRaycastSurfaceTypes(pos, downDir, maxOutputCount: maxOutputCount, shareList: true);
+        outputs.Downshift(maxOutputCount, minWeight, mult);
 
-        var s = soundSet.sounds[sID];
+        results = new TestResult[outputs.Count];
+        for (int i = 0; i < outputs.Count; i++)
+        {
+            var output = outputs[i];
 
-        header = s.autoGroupName;
-        clip = s.GetRandomClip(out volume, out pitch);
+            var s = soundSet.surfaceTypeSounds[output.surfaceTypeID];
+
+            var r = results[i] = new TestResult();
+
+            r.header = s.name;
+            r.normalizedWeight = output.normalizedWeight;
+            r.clip = s.GetRandomClip(out r.volume, out r.pitch);
+        }
     }
 
     private void OnDrawGizmos()

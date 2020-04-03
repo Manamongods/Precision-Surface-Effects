@@ -70,7 +70,7 @@ MonoBehaviour:
     m_FontStyle: 0
     m_BestFit: 1
     m_MinSize: 10
-    m_MaxSize: 100
+    m_MaxSize: 60
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -115,7 +115,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 400, y: 200}
+  m_SizeDelta: {x: 800, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &7134798677151034747
 Canvas:
@@ -222,10 +222,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 215b82bcbed6b3549bca19883026ffe4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  header: Rocky Sound
-  clip: {fileID: 8300000, guid: 694a53fae45622f4c8d2269c4d647399, type: 3}
-  volume: 1.0965333
-  pitch: 0.9505167
+  results: []
+  maxOutputCount: 4
+  minWeight: 0.2
   soundSet: {fileID: 11400000, guid: 80344998cfdc62548be42ca931b98cce, type: 2}
   downIsGravity: 0
   spherecast: 1
