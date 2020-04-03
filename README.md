@@ -1,5 +1,7 @@
 # Unity Surface Sounds
 
+WARNING: A MASSIVE UPDATE IS COMING
+
 Allows different sounds for footsteps and collisions depending on Terrain splats or MeshRenderer materials.
 
 Uses: https://github.com/garettbass/UnityExtensions.ArrayDrawer for some reorderability
