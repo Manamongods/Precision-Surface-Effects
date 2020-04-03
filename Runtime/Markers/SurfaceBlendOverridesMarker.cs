@@ -32,10 +32,10 @@ using System.Linq;
 
 namespace PrecisionSurfaceEffects
 {
-    [DisallowMultipleComponent]
     public abstract class Marker : MonoBehaviour { }
 
     [RequireComponent(typeof(MeshRenderer), typeof(MeshFilter), typeof(MeshCollider))]
+    [DisallowMultipleComponent]
     public sealed class SurfaceBlendOverridesMarker : Marker
     {
         //[ReorderableList()]

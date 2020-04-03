@@ -112,13 +112,30 @@ namespace PrecisionSurfaceEffects
         }
         private void AddTerrainSurfaceTypes(SurfaceOutputs outputs, Terrain terrain, Vector3 worldPosition, int maxOutputCount)
         {
+            void AppendDefault(float volume, float pitch)
+            {
+                for (int i = 0; i < outputs.Count; i++)
+                {
+                    var o = outputs[i];
+                    if (o.surfaceTypeID == defaultSurfaceType)
+                    {
+                        o.volume += volume;
+                        o.pitch += pitch * volume;
+                        outputs[i] = o;
+                        return;
+                    }
+                }
+               
+                outputs.Add(new SurfaceOutput() { surfaceTypeID = defaultSurfaceType, pitch = pitch * volume, volume = volume });
+            }
+
             var mix = Utility.GetTextureMix(terrain, worldPosition);
             var layers = terrain.terrainData.terrainLayers;
 
             for (int mixID = 0; mixID < mix.Length; mixID++)
             {
                 float alpha = mix[mixID];
-                if (alpha > Mathf.Epsilon)
+                if (alpha > 0.000000001f) //Mathf.Epsilon
                 {
                     var terrainTextureName = layers[mixID].diffuseTexture.name; //This might be terrible performance??
 
@@ -128,11 +145,11 @@ namespace PrecisionSurfaceEffects
                         {
                             var blendResult = results[blendID];
 
+                            float volume = alpha * blendResult.volume;
+                            float weightedPitch = volume * blendResult.pitch;
+
                             if (blendResult.surfaceTypeID != -1)
                             {
-                                float volume = alpha * blendResult.volume;
-                                float weightedPitch = volume * blendResult.pitch;
-
                                 bool success = false;
                                 for (int outputID = 0; outputID < outputs.Count; outputID++)
                                 {
@@ -150,8 +167,12 @@ namespace PrecisionSurfaceEffects
                                 if (!success)
                                     outputs.Add(new SurfaceOutput() { surfaceTypeID = blendResult.surfaceTypeID, volume = volume, pitch = weightedPitch });
                             }
+                            else
+                                AppendDefault(volume, blendResult.pitch);
                         }
                     }
+                    else
+                        AppendDefault(alpha, 1);
                 }
             }
 
@@ -173,22 +194,7 @@ namespace PrecisionSurfaceEffects
         {
             //Markers
             var marker = collider.GetComponent<Marker>();
-            SurfaceBlendOverridesMarker blendMarker = null;
-            if (marker is SurfaceTypeMarker typeMarker)
-            {
-                //Type Marker
-                if (TryGetStringSurfaceType(typeMarker.reference, out int stID))
-                    AddSingleOutput(stID);
-                return;
-            }
-            else if (marker is SurfaceBlendMarker sbm)
-            {
-                AddBlends(sbm.blends.result, maxOutputCount);
-                return;
-            }
-            else
-                blendMarker = marker as SurfaceBlendOverridesMarker;
-
+           
             var mr = collider.GetComponent<MeshRenderer>();
             if (mr != null)
             {
@@ -198,7 +204,7 @@ namespace PrecisionSurfaceEffects
                     int subMeshID = Utility.GetSubmesh(collider.GetComponent<MeshFilter>().sharedMesh, triangleIndex);
 
                     List <NormalizedBlend> blendResults = null;
-                    if(blendMarker != null)
+                    if (marker is SurfaceBlendOverridesMarker blendMarker)
                     {
                         for (int i = 0; i < blendMarker.subMaterials.Length; i++)
                         {
@@ -225,6 +231,8 @@ namespace PrecisionSurfaceEffects
                     if (blendResults != null)
                     {
                         AddBlends(blendResults, maxOutputCount);
+
+                        return;
                     }
                     else
                     {
@@ -238,13 +246,28 @@ namespace PrecisionSurfaceEffects
                         return;
                     }
                 }
-                else
-                {
-                    //Defaults to the first material. For most colliders it can't be discerned which specific material it is
-                    if (TryGetStringSurfaceType(mr.sharedMaterial.name, out int stID))
-                        AddSingleOutput(stID);
-                    return;
-                }
+            }
+
+            if (marker is SurfaceTypeMarker typeMarker)
+            {
+                //Single Type Marker
+                if (TryGetStringSurfaceType(typeMarker.reference, out int stID))
+                    AddSingleOutput(stID);
+                return;
+            }
+            else if (marker is SurfaceBlendMarker blendMarker)
+            {
+                //Single Blend Marker
+                AddBlends(blendMarker.blends.result, maxOutputCount);
+                return;
+            }
+
+            //Defaults to the first material (For most colliders it can't be discerned which specific material it is)
+            if (mr != null)
+            {
+                if (TryGetStringSurfaceType(mr.sharedMaterial.name, out int stID))
+                    AddSingleOutput(stID);
+                return;
             }
         }
         private void AddBlends(List<NormalizedBlend> blendResults, int maxOutputCount)

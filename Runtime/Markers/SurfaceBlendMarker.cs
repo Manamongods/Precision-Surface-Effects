@@ -28,8 +28,11 @@ using UnityEngine;
 
 namespace PrecisionSurfaceEffects
 {
+    [DisallowMultipleComponent]
+    public abstract class SingleMarker : Marker { }
+
     [RequireComponent(typeof(Collider))]
-    public sealed class SurfaceBlendMarker : Marker
+    public sealed class SurfaceBlendMarker : SingleMarker
     {
         [SerializeField]
         internal SurfaceBlends blends = new SurfaceBlends();

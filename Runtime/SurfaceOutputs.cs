@@ -52,6 +52,8 @@ namespace PrecisionSurfaceEffects
             //if (Count > downID)
             if (Count > 0)
             {
+                const float eps = 0.0000001f;
+
                 //for (int i = downID; i >= 0; i--)
                 //{
                 //    if (this[i].normalizedWeight < minWeight)
@@ -60,12 +62,13 @@ namespace PrecisionSurfaceEffects
                 //        break;
                 //}
 
-                float anchor = 1; // this[0].normalizedWeight; //1
+                float anchor = this[0].volume; // + eps; //1
 
 
                 float min = minWeight;
                 if (Count > maxCount)
                     min = Mathf.Max(min, this[maxCount].volume);
+                min -= eps;
                 float downMult = anchor / (anchor - min);
 
                 //Clears any extras
@@ -77,6 +80,13 @@ namespace PrecisionSurfaceEffects
                 {
                     var o = this[i];
                     o.volume = (o.volume - anchor) * downMult + anchor;
+
+                    //if(o.volume < 0) //???? is this possible whatsoever?
+                    //{
+                    //    RemoveAt(i);
+                    //    i--;
+                    //}
+                    //else
                     this[i] = o;
                 }
             }

@@ -27,7 +27,8 @@ using UnityEngine;
 namespace PrecisionSurfaceEffects
 {
     [RequireComponent(typeof(Collider))] //?
-    public class SurfaceTypeMarker : Marker
+    [DisallowMultipleComponent]
+    public class SurfaceTypeMarker : SingleMarker
     {
         public string reference = "Grass";
     }
