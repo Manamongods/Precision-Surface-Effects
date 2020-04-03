@@ -1,3 +1,5 @@
+WARNING: A big update is being worked on
+
 # Precision Surface Effects
 
 Allows different sounds for footsteps and collisions depending on Terrain splats or MeshRenderer materials.
@@ -9,7 +11,10 @@ The test scene requires MicroSplat's Examples
 ## Usage
 
 ### Steps
-Create a SurfaceTypes asset in Unity's project window (by right clicking -> Create -> SurfaceSounds/Surface Types)
+Create a SurfaceData asset in Unity's project window (by right clicking -> Create -> Precision Surface Effects/Surface Data)
+Create SurfaceType asset for each surface type, such as Grassy, Rocky, Dirt, Gravel, Sand, Snow. Assign them to the SurfaceData asset.
+Fill the 
+
 Create a SurfaceSoundSet asset
 
 Assign the SurfaceTypes to the SurfaceSoundSet asset
