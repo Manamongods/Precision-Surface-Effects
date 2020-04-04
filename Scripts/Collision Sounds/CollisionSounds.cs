@@ -33,6 +33,8 @@ namespace PrecisionSurfaceEffects
     public partial class CollisionSounds : MonoBehaviour
     {
         //Constants
+        public const bool CLAMP_FINAL_ONE_SHOT_VOLUME = true;
+
         private const float EXTRA_SEARCH_THICKNESS = 0.01f;
         private const int MAX_OUTPUT_MULT = 2; //because they will be blended, I can't be sure they have been sorted and culled properly yet
 
@@ -168,26 +170,35 @@ namespace PrecisionSurfaceEffects
 
         private void OnCollisionEnter(Collision collision)
         {
+            //Debug.Log(collision.collider.gameObject.name + " " + collision.impulse.magnitude);
+
             //Impact Sound
             if (impactCooldownT <= 0)
             {
-                impactCooldownT = impactCooldown;
-
                 var speed = speedMultiplier * collision.relativeVelocity.magnitude; //Can't consistently use CurrentRelativeVelocity(collision);, probably maybe because it's too late to get that speed (already resolved)
                 var force = forceMultiplier * collision.impulse.magnitude;//Here "force" is actually an impulse
                 var vol = totalVolumeMultiplier * impactSound.Volume(force) * impactSound.SpeedFader(speed);
-                var pitch = totalPitchMultiplier * impactSound.Pitch(speed);
 
-                int maxc = impactSound.audioSources.Length;
-                var outputs = GetSurfaceTypeOutputs(collision, maxc);
-                outputs.Downshift(maxc, impactSound.minimumTypeWeight);
-
-                var c = Mathf.Min(maxc, outputs.Count);
-                for (int i = 0; i < c; i++)
+                if (vol > 0.00000000000001f)
                 {
-                    var output = outputs[i];
-                    var st = soundSet.surfaceTypeSounds[output.surfaceTypeID];
-                    st.PlayOneShot(impactSound.audioSources[i], vol * output.weight * output.volume, pitch * output.pitch);
+                    impactCooldownT = impactCooldown;
+
+                    var pitch = totalPitchMultiplier * impactSound.Pitch(speed);
+
+                    int maxc = impactSound.audioSources.Length;
+                    var outputs = GetSurfaceTypeOutputs(collision, maxc);
+                    outputs.Downshift(maxc, impactSound.minimumTypeWeight);
+
+                    var c = Mathf.Min(maxc, outputs.Count);
+                    for (int i = 0; i < c; i++)
+                    {
+                        var output = outputs[i];
+                        var st = soundSet.surfaceTypeSounds[output.surfaceTypeID];
+                        var voll = vol * output.weight * output.volume;
+                        if (CLAMP_FINAL_ONE_SHOT_VOLUME)
+                            voll = Mathf.Min(voll, 1);
+                        st.PlayOneShot(impactSound.audioSources[i], voll, pitch * output.pitch);
+                    }
                 }
             }
         }

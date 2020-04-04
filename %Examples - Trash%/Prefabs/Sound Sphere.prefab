@@ -51,7 +51,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 15
+  MinDistance: 5
   MaxDistance: 500
   Pan2D: 0
   rolloffMode: 0
@@ -178,7 +178,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 130
   DopplerLevel: 1
-  MinDistance: 15
+  MinDistance: 5
   MaxDistance: 500
   Pan2D: 0
   rolloffMode: 0
@@ -370,7 +370,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &7768311540337565091
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -398,7 +398,7 @@ MonoBehaviour:
     volumeByForce: 0.2
     volumeFaderBySpeedRange: {x: 0, y: 0.1}
     basePitch: 0.35
-    pitchBySpeed: 0.1
+    pitchBySpeed: 0.05
     clipChangeSmoothTime: 0.01
     smoothTimes:
       up: 0.06
@@ -410,7 +410,7 @@ MonoBehaviour:
     - {fileID: 6513881674433054021}
     minimumTypeWeight: 0.1
     volumeByForce: 0.2
-    volumeFaderBySpeedRange: {x: 0.01, y: 0.3}
+    volumeFaderBySpeedRange: {x: 0.01, y: 0.1}
     basePitch: 0.5
     pitchBySpeed: -0.0025
   impactCooldown: 0.01
@@ -466,7 +466,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 15
+  MinDistance: 5
   MaxDistance: 500
   Pan2D: 0
   rolloffMode: 0
@@ -593,7 +593,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 130
   DopplerLevel: 1
-  MinDistance: 15
+  MinDistance: 5
   MaxDistance: 500
   Pan2D: 0
   rolloffMode: 0

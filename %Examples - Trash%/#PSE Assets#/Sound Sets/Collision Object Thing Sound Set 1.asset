@@ -54,8 +54,8 @@ MonoBehaviour:
       probabilityWeight: 1
     loopSound:
       clip: {fileID: 8300000, guid: 9a532385e5f2c8b4fbd8a76c22fa5862, type: 3}
-      volumeMultiplier: 1
-      pitchMultiplier: 1
+      volumeMultiplier: 4
+      pitchMultiplier: 1.5
   - name: Wood
     volume: 1
     volumeVariation: 0.2
@@ -82,5 +82,5 @@ MonoBehaviour:
       probabilityWeight: 1
     loopSound:
       clip: {fileID: 8300000, guid: 9a532385e5f2c8b4fbd8a76c22fa5862, type: 3}
-      volumeMultiplier: 1
-      pitchMultiplier: 1.5
+      volumeMultiplier: 4
+      pitchMultiplier: 2
