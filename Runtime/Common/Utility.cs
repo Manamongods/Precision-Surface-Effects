@@ -21,11 +21,8 @@ namespace PrecisionSurfaceEffects
             // of textures added to the terrain.
 
             // calculate which splat map cell the worldPos falls within (ignoring y)
-            float mapX = (((WorldPos.x - terrainPos.x) / terrainData.size.x) * terrainData.alphamapWidth);
-            float mapZ = (((WorldPos.z - terrainPos.z) / terrainData.size.z) * terrainData.alphamapHeight);
-
-            //mapX += 0.5f; //?????????
-            //mapZ += 0.5f;//?????????
+            float mapX = (((WorldPos.x - terrainPos.x) / terrainData.size.x) * (terrainData.alphamapWidth - 1));
+            float mapZ = (((WorldPos.z - terrainPos.z) / terrainData.size.z) * (terrainData.alphamapHeight - 1));
 
             int mapXID = (int)mapX;
             int mapZID = (int)mapZ;

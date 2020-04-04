@@ -18,6 +18,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6c0b9ac2e69dcf24382e061aa542dde9, type: 2}
   - {fileID: 11400000, guid: 6429e74e3fb784e4cba139237084981a, type: 2}
   - {fileID: 11400000, guid: 9485fbaaf0172d547bdefd61ad1c6a7c, type: 2}
+  - {fileID: 11400000, guid: 67c7087d938d74d418275f9d858a6161, type: 2}
+  - {fileID: 11400000, guid: caf894f75216e834b901279babde721d, type: 2}
   materialBlendOverrides:
   - groupName: Stoney Stuff
     volumeMultiplier: 1

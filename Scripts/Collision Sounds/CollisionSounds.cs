@@ -217,7 +217,7 @@ namespace PrecisionSurfaceEffects
 
             if (impulse - previousImpulse >= impulseChangeToImpact)
             {
-                Debug.Log(impulse - previousImpulse);
+                //Debug.Log(impulse - previousImpulse);
                 OnCollisionEnter(collision);
             }
             previousImpulse = impulse;

@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3daba9dcf2f2e3b418addc7ef6a1b7d1, type: 3}
+  m_Name: Footsteps
+  m_EditorClassIdentifier: 
+  data: {fileID: 11400000, guid: b902d9bfcde7bee47b786803851a1b91, type: 2}
+  surfaceTypeSounds:
+  - name: None
+    volume: 1
+    volumeVariation: 0.2
+    pitch: 1
+    pitchVariation: 0.2
+    clipVariants:
+    - clip: {fileID: 0}
+      volumeMultiplier: 1
+      pitchMultiplier: 1
+      probabilityWeight: 1
+    loopSound:
+      clip: {fileID: 0}
+      volumeMultiplier: 1
+      pitchMultiplier: 1
+  - name: Grassy
+    volume: 1
+    volumeVariation: 0.2
+    pitch: 1
+    pitchVariation: 0.2
+    clipVariants:
+    - clip: {fileID: 8300000, guid: 8d93736d3c6baf341bc47a2953f63663, type: 3}
+      volumeMultiplier: 1
+      pitchMultiplier: 1
+      probabilityWeight: 1
+    loopSound:
+      clip: {fileID: 0}
+      volumeMultiplier: 1
+      pitchMultiplier: 1
+  - name: Rocky
+    volume: 1
+    volumeVariation: 0.2
+    pitch: 1
+    pitchVariation: 0.2
+    clipVariants:
+    - clip: {fileID: 8300000, guid: f3e564ab55b5ba24d824b7ca71950c73, type: 3}
+      volumeMultiplier: 1
+      pitchMultiplier: 1
+      probabilityWeight: 1
+    loopSound:
+      clip: {fileID: 0}
+      volumeMultiplier: 1
+      pitchMultiplier: 1
+  - name: Wood
+    volume: 1
+    volumeVariation: 0.2
+    pitch: 1
+    pitchVariation: 0.2
+    clipVariants:
+    - clip: {fileID: 8300000, guid: 72b4382cae039794bb0dd0df6fb3e292, type: 3}
+      volumeMultiplier: 1
+      pitchMultiplier: 1
+      probabilityWeight: 1
+    - clip: {fileID: 8300000, guid: 46100fda67d57774b93da415dd7c9e4f, type: 3}
+      volumeMultiplier: 1
+      pitchMultiplier: 1
+      probabilityWeight: 1
+    - clip: {fileID: 8300000, guid: f8d171ce8bbdbab4bb4728814885a4a5, type: 3}
+      volumeMultiplier: 1
+      pitchMultiplier: 1
+      probabilityWeight: 1
+    loopSound:
+      clip: {fileID: 0}
+      volumeMultiplier: 1
+      pitchMultiplier: 1
+  - name: Metallic
+    volume: 1
+    volumeVariation: 0.2
+    pitch: 1
+    pitchVariation: 0.2
+    clipVariants:
+    - clip: {fileID: 8300000, guid: 22fd99ad9764748459c360765644b57e, type: 3}
+      volumeMultiplier: 1
+      pitchMultiplier: 1
+      probabilityWeight: 1
+    - clip: {fileID: 8300000, guid: 7d1f874cf81685942aaba56ac1ba3f30, type: 3}
+      volumeMultiplier: 1
+      pitchMultiplier: 1
+      probabilityWeight: 1
+    loopSound:
+      clip: {fileID: 0}
+      volumeMultiplier: 1
+      pitchMultiplier: 1
