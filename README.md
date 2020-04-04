@@ -1,4 +1,5 @@
-WARNING: A big update is being worked on
+WARNING: A big update is being worked on.
+MOST OF THIS IS OUTDATED
 
 # Precision Surface Effects
 
@@ -11,6 +12,7 @@ The test scene requires MicroSplat's Examples
 ## Usage
 
 ### Steps
+
 Create a SurfaceData asset in Unity's project window (by right clicking -> Create -> Precision Surface Effects/Surface Data)
 Create SurfaceType asset for each surface type, such as Grassy, Rocky, Dirt, Gravel, Sand, Snow. Assign them to the SurfaceData asset.
 Fill the 
