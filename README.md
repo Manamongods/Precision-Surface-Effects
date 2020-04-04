@@ -1,4 +1,4 @@
-WARNING: A big update is being worked on
+WARNING: A big update is being worked on.
 MOST OF THIS IS OUTDATED
 
 # Precision Surface Effects
