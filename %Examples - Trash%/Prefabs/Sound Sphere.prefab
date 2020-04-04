@@ -383,7 +383,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa870f96700d10742b6a826c4992d8db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentFrictionDebug: 
+  currentFrictionDebug: (This only works in playmode)
   findMeshColliderSubmesh: 1
   speedMultiplier: 1
   forceMultiplier: 1
@@ -395,14 +395,15 @@ MonoBehaviour:
     - {fileID: 7768311542087541603}
     - {fileID: 8229951337275091168}
     minimumTypeWeight: 0.1
-    volumeByForce: 0.01
-    volumeFaderBySpeedRange: {x: 0.01, y: 0.3}
-    basePitch: 1
-    pitchBySpeed: 0.05
-    clipChangeSmoothTime: 0.001
+    volumeByForce: 0.2
+    volumeFaderBySpeedRange: {x: 0, y: 0.1}
+    basePitch: 0.35
+    pitchBySpeed: 0.1
+    clipChangeSmoothTime: 0.01
     smoothTimes:
-      up: 0.05
-      down: 0.15
+      up: 0.06
+      down: 0.18
+  frictionNormalForceMultiplier: 0.3
   impactSound:
     audioSources:
     - {fileID: 7768311541134257654}
@@ -410,9 +411,10 @@ MonoBehaviour:
     minimumTypeWeight: 0.1
     volumeByForce: 0.1
     volumeFaderBySpeedRange: {x: 0.01, y: 0.3}
-    basePitch: 1
-    pitchBySpeed: -0.01
-  impactCooldown: 0.2
+    basePitch: 0.5
+    pitchBySpeed: -0.005
+  impactCooldown: 0.01
+  impulseChangeToImpact: 0.25
 --- !u!1 &7768311541134257655
 GameObject:
   m_ObjectHideFlags: 0

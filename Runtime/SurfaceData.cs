@@ -34,6 +34,7 @@ namespace PrecisionSurfaceEffects
     public partial class SurfaceData : ScriptableObject
     {
         //Fields
+        [Header("Surface Types")]
         [Space(20)]
         [Tooltip("If it can't find one")]
         public int defaultSurfaceType = 0;

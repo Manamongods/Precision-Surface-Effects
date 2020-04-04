@@ -28,7 +28,7 @@ MonoBehaviour:
       clip: {fileID: 0}
       volumeMultiplier: 1
       pitchMultiplier: 1
-  - name: Grassy Sound
+  - name: Grassy
     volume: 1
     volumeVariation: 0.2
     pitch: 1
@@ -41,8 +41,8 @@ MonoBehaviour:
     loopSound:
       clip: {fileID: 8300000, guid: 23d13f52b5a01964e82ea27791642175, type: 3}
       volumeMultiplier: 1
-      pitchMultiplier: 1
-  - name: Rocky Sound
+      pitchMultiplier: 0.5
+  - name: Rocky
     volume: 1
     volumeVariation: 0.2
     pitch: 1

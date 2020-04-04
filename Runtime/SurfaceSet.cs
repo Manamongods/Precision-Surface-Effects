@@ -31,6 +31,7 @@ namespace PrecisionSurfaceEffects
     public class SurfaceSetType
     {
         [ReadOnly]
+        [SeperatorLine(true)]
         public string name = "";
     }
 

@@ -19,7 +19,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6429e74e3fb784e4cba139237084981a, type: 2}
   - {fileID: 11400000, guid: 9485fbaaf0172d547bdefd61ad1c6a7c, type: 2}
   materialBlendOverrides:
-  - groupName: Stoney
+  - groupName: Stoney Stuff
     volumeMultiplier: 1
     pitchMultiplier: 1
     blends:
@@ -28,6 +28,7 @@ MonoBehaviour:
       normalizedWeight: 1
     result:
     - reference: Stone
+      normalizedWeight: 1
       volume: 1
       pitch: 1
     materials:
@@ -42,6 +43,7 @@ MonoBehaviour:
       normalizedWeight: 1
     result:
     - reference: Grass
+      normalizedWeight: 1
       volume: 1
       pitch: 1
     terrainAlbedos:
@@ -56,6 +58,7 @@ MonoBehaviour:
       normalizedWeight: 1
     result:
     - reference: Stone
+      normalizedWeight: 1
       volume: 1
       pitch: 1
     terrainAlbedos:
@@ -72,10 +75,12 @@ MonoBehaviour:
       normalizedWeight: 0.33333334
     result:
     - reference: Stone
-      volume: 0.6666667
+      normalizedWeight: 0.6666667
+      volume: 1
       pitch: 1
     - reference: Grass
-      volume: 0.33333334
+      normalizedWeight: 0.33333334
+      volume: 1
       pitch: 1
     terrainAlbedos:
     - {fileID: 2800000, guid: 1d6b5702e2d7947a6aca898081729d0f, type: 3}

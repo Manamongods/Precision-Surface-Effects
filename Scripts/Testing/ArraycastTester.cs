@@ -72,7 +72,7 @@ public class ArraycastTester : MonoBehaviour
                 var output = outputs[ii];
 
                 var pos3 = pos2 - down * yStep * (yOffset  + output.surfaceTypeID);
-                Debug.DrawLine(pos3, pos3 + forward * output.volume * depth, Color.yellow);
+                Debug.DrawLine(pos3, pos3 + forward * output.weight * depth, Color.yellow);
             }
         }
     }

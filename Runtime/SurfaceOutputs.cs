@@ -38,10 +38,10 @@ namespace PrecisionSurfaceEffects
             for (int i = 0; i < Count; i++)
             {
                 var val = this[i];
-                val.volume *= mult;
+                val.weight *= mult;
                 this[i] = val;
 
-                if (this[i].volume < minWeight)
+                if (this[i].weight < minWeight)
                 {
                     RemoveAt(i);
                     i--;
@@ -62,12 +62,12 @@ namespace PrecisionSurfaceEffects
                 //        break;
                 //}
 
-                float anchor = this[0].volume; // + eps; //1
+                float anchor = this[0].weight; // + eps; //1
 
 
                 float min = minWeight;
                 if (Count > maxCount)
-                    min = Mathf.Max(min, this[maxCount].volume);
+                    min = Mathf.Max(min, this[maxCount].weight);
                 min -= eps;
                 float downMult = anchor / (anchor - min);
 
@@ -79,7 +79,7 @@ namespace PrecisionSurfaceEffects
                 for (int i = 0; i < Count; i++)
                 {
                     var o = this[i];
-                    o.volume = (o.volume - anchor) * downMult + anchor;
+                    o.weight = (o.weight - anchor) * downMult + anchor;
 
                     //if(o.volume < 0) //???? is this possible whatsoever?
                     //{
@@ -97,7 +97,7 @@ namespace PrecisionSurfaceEffects
         {
             public int Compare(SurfaceOutput x, SurfaceOutput y)
             {
-                return y.volume.CompareTo(x.volume); //Descending
+                return y.weight.CompareTo(x.weight); //Descending
             }
         }
 
@@ -113,7 +113,8 @@ namespace PrecisionSurfaceEffects
     public struct SurfaceOutput
     {
         public int surfaceTypeID;
-        public float volume; //normalizedWeight
+        public float weight; //normalizedWeight
+        public float volume;
         public float pitch;
     }
 }

@@ -66,7 +66,8 @@ public class RaycastAnimatorFeet : MonoBehaviour
         for (int i = 0; i < c; i++)
         {
             var output = outputs[i];
-            soundSet.surfaceTypeSounds[output.surfaceTypeID].PlayOneShot(foot.audioSources[i], volumeMultiplier: output.volume);
+            var vm = output.weight * output.volume;
+            soundSet.surfaceTypeSounds[output.surfaceTypeID].PlayOneShot(foot.audioSources[i], volumeMultiplier: vm, pitchMultiplier: output.pitch);
         }
     }
 }

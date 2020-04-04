@@ -33,8 +33,9 @@ namespace PrecisionSurfaceEffects
     internal class NormalizedBlend
     {
         public string reference;
-        public float volume; //normalizedWeight
-        public float pitch = 1;
+        public float normalizedWeight;
+        public float volume;
+        public float pitch;
 
         internal int surfaceTypeID; //only used for terrains
     }
@@ -87,14 +88,15 @@ namespace PrecisionSurfaceEffects
                 {
                     reference = blend.reference,
 
-                    volume = weight * volumeMultiplier,
+                    normalizedWeight = weight,
+                    volume = volumeMultiplier,
                     pitch = pitchMultiplier,
                 };
 
                 result.Add(br);
             }
 
-            result.Sort((x, y) => y.volume.CompareTo(x.volume)); //Descending
+            result.Sort((x, y) => y.normalizedWeight.CompareTo(x.normalizedWeight)); //Descending
         }
 #endif
 

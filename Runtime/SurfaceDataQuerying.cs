@@ -112,21 +112,22 @@ namespace PrecisionSurfaceEffects
         }
         private void AddTerrainSurfaceTypes(SurfaceOutputs outputs, Terrain terrain, Vector3 worldPosition, int maxOutputCount)
         {
-            void AppendDefault(float volume, float pitch)
+            void AppendDefault(float weight, float weightedVolume, float weightedPitch)
             {
                 for (int i = 0; i < outputs.Count; i++)
                 {
                     var o = outputs[i];
                     if (o.surfaceTypeID == defaultSurfaceType)
                     {
-                        o.volume += volume;
-                        o.pitch += pitch * volume;
+                        o.weight += weight;
+                        o.volume += weightedVolume;
+                        o.pitch += weightedPitch;
                         outputs[i] = o;
                         return;
                     }
                 }
                
-                outputs.Add(new SurfaceOutput() { surfaceTypeID = defaultSurfaceType, pitch = pitch * volume, volume = volume });
+                outputs.Add(new SurfaceOutput() { surfaceTypeID = defaultSurfaceType, volume = weightedVolume, pitch = weightedPitch, weight = weight });
             }
 
             var mix = Utility.GetTextureMix(terrain, worldPosition);
@@ -145,8 +146,9 @@ namespace PrecisionSurfaceEffects
                         {
                             var blendResult = results[blendID];
 
-                            float volume = alpha * blendResult.volume;
-                            float weightedPitch = volume * blendResult.pitch;
+                            float weight = alpha * blendResult.normalizedWeight;
+                            float weightedVolume = weight * blendResult.volume;
+                            float weightedPitch = weight * blendResult.pitch;
 
                             if (blendResult.surfaceTypeID != -1)
                             {
@@ -156,7 +158,8 @@ namespace PrecisionSurfaceEffects
                                     var output = outputs[outputID];
                                     if (output.surfaceTypeID == blendResult.surfaceTypeID)
                                     {
-                                        output.volume += volume;
+                                        output.weight += weight;
+                                        output.volume += weightedVolume;
                                         output.pitch += weightedPitch;
                                         outputs[outputID] = output;
                                         success = true;
@@ -165,14 +168,25 @@ namespace PrecisionSurfaceEffects
                                 }
 
                                 if (!success)
-                                    outputs.Add(new SurfaceOutput() { surfaceTypeID = blendResult.surfaceTypeID, volume = volume, pitch = weightedPitch });
+                                {
+                                    outputs.Add
+                                    (
+                                        new SurfaceOutput()
+                                        {
+                                            surfaceTypeID = blendResult.surfaceTypeID,
+                                            weight = weight,
+                                            volume = weightedVolume,
+                                            pitch = weightedPitch,
+                                        }
+                                    );
+                                }
                             }
                             else
-                                AppendDefault(volume, blendResult.pitch);
+                                AppendDefault(weight, weightedVolume, weightedPitch);
                         }
                     }
                     else
-                        AppendDefault(alpha, 1);
+                        AppendDefault(alpha, alpha, alpha);
                 }
             }
 
@@ -185,8 +199,12 @@ namespace PrecisionSurfaceEffects
             for (int i = 0; i < outputs.Count; i++)
             {
                 var o = outputs[i];
-                if(o.volume > 0)
-                    o.pitch /= o.volume;
+                if(o.weight > 0)
+                {
+                    float invw = 1 / o.weight;
+                    o.volume *= invw;
+                    o.pitch *= invw;
+                }
                 outputs[i] = o;
             }
         }
@@ -281,7 +299,7 @@ namespace PrecisionSurfaceEffects
                 if (!TryGetStringSurfaceType(blend.reference, out int stID))
                     stID = defaultSurfaceType;
 
-                outputs.Add(new SurfaceOutput() { surfaceTypeID = stID, volume = blend.volume, pitch = blend.pitch });
+                outputs.Add(new SurfaceOutput() { surfaceTypeID = stID, weight = blend.normalizedWeight, volume = blend.volume, pitch = blend.pitch });
             }
         }
 
@@ -296,9 +314,9 @@ namespace PrecisionSurfaceEffects
                     stID = i;
                     var st = surfaceTypes[i];
 
-                    for (int ii = 0; ii < st.materialKeywords.Length; ii++)
+                    for (int ii = 0; ii < st.keywords.Length; ii++)
                     {
-                        if (checkName.Contains(st.materialKeywords[ii].ToLowerInvariant())) //check if the material name contains the keyword
+                        if (checkName.Contains(st.keywords[ii].ToLowerInvariant())) //check if the material name contains the keyword
                             return true;
                     }
                 }
@@ -310,7 +328,7 @@ namespace PrecisionSurfaceEffects
 
         private void AddSingleOutput(int stID)
         {
-            outputs.Add(new SurfaceOutput() { surfaceTypeID = stID, volume = 1, pitch = 1 });
+            outputs.Add(new SurfaceOutput() { surfaceTypeID = stID, weight = 1, volume = 1, pitch = 1 });
         }
         private SurfaceOutputs GetList(bool share)
         {

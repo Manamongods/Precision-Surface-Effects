@@ -16,7 +16,7 @@ MonoBehaviour:
   surfaceTypeParticles:
   - name: None
     particleSystem: {fileID: 0}
-  - name: Grassy Sound
+  - name: Grassy
     particleSystem: {fileID: 0}
-  - name: Rocky Sound
+  - name: Rocky
     particleSystem: {fileID: 0}

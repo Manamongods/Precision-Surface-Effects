@@ -101,7 +101,7 @@ public class CastSoundTester : MonoBehaviour
             var r = results[i] = new TestResult();
 
             r.header = s.name;
-            r.normalizedWeight = output.volume;
+            r.normalizedWeight = output.weight;
             r.clip = s.GetRandomClip(out r.volume, out r.pitch);
         }
 

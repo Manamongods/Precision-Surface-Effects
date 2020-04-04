@@ -33,7 +33,7 @@ namespace PrecisionSurfaceEffects
     public partial class CollisionSounds : MonoBehaviour
     {
         //Constants
-        private const float EXTRA_SEARCH_THICKNESS = 0.001f;
+        private const float EXTRA_SEARCH_THICKNESS = 0.01f;
         private const int MAX_OUTPUT_MULT = 2; //because they will be blended, I can't be sure they have been sorted and culled properly yet
 
 
@@ -42,6 +42,7 @@ namespace PrecisionSurfaceEffects
 #if UNITY_EDITOR
         [Header("Debug")]
         [TextArea(1, 10)]
+        //[ReadOnly]
         public string currentFrictionDebug;
 #endif
 
@@ -62,13 +63,15 @@ namespace PrecisionSurfaceEffects
 
         [Header("Friction Sound")]
         [Space(15)]
-        public FrictionSound frictionSound = new FrictionSound();
-        [Tooltip("When the friction soundType changes, this can be used to play impactSound")]
+        public FrictionSound frictionSound = new FrictionSound(); //[Tooltip("When the friction soundType changes, this can be used to play impactSound")]
+        [Min(0)]
+        public float frictionNormalForceMultiplier = 0.3f;
 
         [Header("Impact Sound")]
         [Space(15)]
         public Sound impactSound = new Sound();
         public float impactCooldown = 0.1f; //public FrictionTypeChangeImpact frictionTypeChangeImpact = new FrictionTypeChangeImpact();
+        public float impulseChangeToImpact = 100;
 
         //Impact Sound
         private float impactCooldownT;
@@ -79,6 +82,8 @@ namespace PrecisionSurfaceEffects
         private float weightedSpeed;
         private float forceSum;
         private bool downShifted;
+
+        private float previousImpulse;
 
 
 
@@ -101,7 +106,7 @@ namespace PrecisionSurfaceEffects
 #endif
 
                     SurfaceData.outputs.Clear();
-                    soundSet.data.AddSurfaceTypes(SurfaceData.outputs, c.collider, pos, rh.triangleIndex);
+                    soundSet.data.AddSurfaceTypes(SurfaceData.outputs, c.collider, pos, maxOutputs, triangleIndex: rh.triangleIndex);
                     return SurfaceData.outputs;
                 }
             }
@@ -124,7 +129,8 @@ namespace PrecisionSurfaceEffects
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            currentFrictionDebug = "";
+            if(!Application.isPlaying)
+                currentFrictionDebug = "(This only works in playmode)";
 
             impactSound.Validate(false);
             frictionSound.Validate(true);
@@ -139,8 +145,10 @@ namespace PrecisionSurfaceEffects
             forceSum = 0;
         }
 
-        private float RelativeVelocity(Collision collision)
+        private Vector3 CurrentRelativeVelocity(Collision collision)
         {
+            //return collision.relativeVelocity.magnitude;
+
             Vector3 Vel(Rigidbody rb, Vector3 pos)
             {
                 if (rb == null)
@@ -157,7 +165,7 @@ namespace PrecisionSurfaceEffects
             var vel = Vel(contact.thisCollider.attachedRigidbody, contact.point);
             var ovel = Vel(contact.otherCollider.attachedRigidbody, contact.point);
 
-            return (vel - ovel).magnitude;
+            return (vel - ovel); //.magnitude;
         }
 
         private void OnCollisionEnter(Collision collision)
@@ -167,7 +175,7 @@ namespace PrecisionSurfaceEffects
             {
                 impactCooldownT = impactCooldown;
 
-                var speed = speedMultiplier * RelativeVelocity(collision); // collision.relativeVelocity.magnitude;
+                var speed = speedMultiplier * collision.relativeVelocity.magnitude; //Can't consistently use CurrentRelativeVelocity(collision);, probably maybe because it's too late to get that speed (already resolved)
                 var force = forceMultiplier * collision.impulse.magnitude;//Here "force" is actually an impulse
                 var vol = totalVolumeMultiplier * impactSound.Volume(force) * impactSound.SpeedFader(speed);
                 var pitch = totalPitchMultiplier * impactSound.Pitch(speed);
@@ -181,15 +189,31 @@ namespace PrecisionSurfaceEffects
                 {
                     var output = outputs[i];
                     var st = soundSet.surfaceTypeSounds[output.surfaceTypeID];
-                    st.PlayOneShot(impactSound.audioSources[i], vol * output.volume, pitch * output.pitch);
+                    st.PlayOneShot(impactSound.audioSources[i], vol * output.weight * output.volume, pitch * output.pitch);
                 }
             }
         }
         private void OnCollisionStay(Collision collision)
         {
-            var force = forceMultiplier * collision.impulse.magnitude / Time.deltaTime; //force = Mathf.Max(0, Mathf.Min(frictionSound.maxForce, force) - frictionSound.minForce);
-            var speed = speedMultiplier * RelativeVelocity(collision); // collision.relativeVelocity.magnitude;
+            //TODO: make this use multiple contacts for speed and normal?
+
+            var contact = collision.GetContact(0);
+            var norm = contact.normal;
+
+            var imp = collision.impulse;
+            var impMag = imp.magnitude;
+
+            var impulse = forceMultiplier * impMag * Mathf.Lerp(1, frictionNormalForceMultiplier, Mathf.Abs(Vector3.Dot(imp.normalized, norm)));
+            var force = impulse / Time.deltaTime; //force = Mathf.Max(0, Mathf.Min(frictionSound.maxForce, force) - frictionSound.minForce);
+            var speed = speedMultiplier * CurrentRelativeVelocity(collision).magnitude; // Vector3.ProjectOnPlane(CurrentRelativeVelocity(collision), contact.normal).magnitude; // collision.relativeVelocity.magnitude;
             force *= frictionSound.SpeedFader(speed); //So that it is found the maximum with this in mind
+
+            if (impulse - previousImpulse >= impulseChangeToImpact)
+            {
+                Debug.Log(impulse - previousImpulse);
+                OnCollisionEnter(collision);
+            }
+            previousImpulse = impulse;
 
             if (force > 0)
             {
@@ -211,6 +235,7 @@ namespace PrecisionSurfaceEffects
                         var sumOutput = averageOutputs[ii];
                         if (sumOutput.surfaceTypeID == output.surfaceTypeID)
                         {
+                            sumOutput.weight = invInfluence * sumOutput.weight + influence * output.weight;
                             sumOutput.volume = invInfluence * sumOutput.volume + influence * output.volume;
                             sumOutput.pitch = invInfluence * sumOutput.pitch + influence * output.pitch;
                             success = true;
@@ -225,6 +250,7 @@ namespace PrecisionSurfaceEffects
                             new SurfaceOutput()
                             {
                                 surfaceTypeID = output.surfaceTypeID,
+                                weight = output.weight * influence,
                                 volume = output.volume * influence,
                                 pitch = output.pitch * influence,
                             }
@@ -270,8 +296,10 @@ namespace PrecisionSurfaceEffects
                     {
                         var source = frictionSound.sources[sourceID];
 
-                        if (source.clip == clip)
+                        if (source.clip == clip || source.Silent || source.clip == null || source.clip.clip == null)
                         {
+                            source.ChangeClip(clip, this);
+
                             givenSource = sourceID;
                             source.given = true;
                             break;
@@ -325,11 +353,12 @@ namespace PrecisionSurfaceEffects
 
 #if UNITY_EDITOR
                 var st = soundSet.surfaceTypeSounds[output.surfaceTypeID];
-                currentFrictionDebug = currentFrictionDebug + st.name + " V: " + output.volume + " P: " + output.pitch + "\n";
+                currentFrictionDebug = currentFrictionDebug + st.name + " V: " + output.weight + " P: " + output.pitch + "\n";
 #endif
 
+                var vm = totalVolumeMultiplier * output.volume;
                 var pm = totalPitchMultiplier * output.pitch;
-                source.Update(frictionSound, totalVolumeMultiplier, pm, forceSum * output.volume, speed);
+                source.Update(frictionSound, vm, pm, forceSum * output.weight, speed);
             }
 
             //Updates the sources which haven't been given

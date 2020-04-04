@@ -36,6 +36,7 @@ namespace PrecisionSurfaceEffects
     public class SurfaceType : ScriptableObject
     {
         [Header("Mesh Renderers")]
-        public string[] materialKeywords = new string[] { "Grass", "Leaves", "Hay", "Flower" };
+        [UnityEngine.Serialization.FormerlySerializedAs("materialKeywords")]
+        public string[] keywords = new string[] { "Grass", "Leaves", "Hay", "Flower" };
     }
 }

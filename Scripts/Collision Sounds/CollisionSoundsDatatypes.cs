@@ -143,6 +143,8 @@ namespace PrecisionSurfaceEffects
 
 
                 //Methods
+                public bool Silent => !Audible(currentVolume);
+
                 public void ChangeClip(SurfaceTypeSounds.Clip clip, CollisionSounds cs)
                 {
                     if (this.clip != clip)
