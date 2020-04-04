@@ -176,7 +176,7 @@ AudioSource:
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 128
+  Priority: 130
   DopplerLevel: 1
   MinDistance: 15
   MaxDistance: 500
@@ -403,16 +403,16 @@ MonoBehaviour:
     smoothTimes:
       up: 0.06
       down: 0.18
-  frictionNormalForceMultiplier: 0.3
+  frictionNormalForceMultiplier: 0.1
   impactSound:
     audioSources:
     - {fileID: 7768311541134257654}
     - {fileID: 6513881674433054021}
     minimumTypeWeight: 0.1
-    volumeByForce: 0.1
+    volumeByForce: 0.2
     volumeFaderBySpeedRange: {x: 0.01, y: 0.3}
     basePitch: 0.5
-    pitchBySpeed: -0.005
+    pitchBySpeed: -0.0025
   impactCooldown: 0.01
   impulseChangeToImpact: 0.25
 --- !u!1 &7768311541134257655
@@ -591,7 +591,7 @@ AudioSource:
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 128
+  Priority: 130
   DopplerLevel: 1
   MinDistance: 15
   MaxDistance: 500

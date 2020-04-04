@@ -145,7 +145,7 @@ namespace PrecisionSurfaceEffects
             forceSum = 0;
         }
 
-        private Vector3 CurrentRelativeVelocity(Collision collision)
+        private Vector3 CurrentRelativeVelocity(ContactPoint contact)
         {
             //return collision.relativeVelocity.magnitude;
 
@@ -159,8 +159,6 @@ namespace PrecisionSurfaceEffects
             //This version takes into account angular, I believe Unity's doesn't
 
             //TODO: make it use multiple contacts?
-
-            var contact = collision.GetContact(0);
 
             var vel = Vel(contact.thisCollider.attachedRigidbody, contact.point);
             var ovel = Vel(contact.otherCollider.attachedRigidbody, contact.point);
@@ -195,17 +193,26 @@ namespace PrecisionSurfaceEffects
         }
         private void OnCollisionStay(Collision collision)
         {
-            //TODO: make this use multiple contacts for speed and normal?
-
-            var contact = collision.GetContact(0);
-            var norm = contact.normal;
-
             var imp = collision.impulse;
             var impMag = imp.magnitude;
+            var normImp = imp.normalized;
 
-            var impulse = forceMultiplier * impMag * Mathf.Lerp(1, frictionNormalForceMultiplier, Mathf.Abs(Vector3.Dot(imp.normalized, norm)));
+            float speed = 0;
+            float impulse = 0;
+            int contactCount = collision.contactCount;
+            for (int i = 0; i < contactCount; i++)
+            {
+                var contact = collision.GetContact(0);
+                var norm = contact.normal;
+                impulse += impMag * Mathf.Lerp(1, frictionNormalForceMultiplier, Mathf.Abs(Vector3.Dot(normImp, norm)));
+
+                speed += CurrentRelativeVelocity(contact).magnitude;
+            }
+            float invCount = 1 / contactCount;
+            impulse *= forceMultiplier * invCount;
+            speed *= speedMultiplier * invCount; // Vector3.ProjectOnPlane(CurrentRelativeVelocity(collision), contact.normal).magnitude; // collision.relativeVelocity.magnitude;
+
             var force = impulse / Time.deltaTime; //force = Mathf.Max(0, Mathf.Min(frictionSound.maxForce, force) - frictionSound.minForce);
-            var speed = speedMultiplier * CurrentRelativeVelocity(collision).magnitude; // Vector3.ProjectOnPlane(CurrentRelativeVelocity(collision), contact.normal).magnitude; // collision.relativeVelocity.magnitude;
             force *= frictionSound.SpeedFader(speed); //So that it is found the maximum with this in mind
 
             if (impulse - previousImpulse >= impulseChangeToImpact)
