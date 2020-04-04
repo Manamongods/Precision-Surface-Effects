@@ -13,9 +13,9 @@ public class SimpleFootsteps : MonoBehaviour
     public int layerIndex;
     public string stateName = "Grounded";
 
-    public string multiplierName = "Forward";
+    public string speedName = "Forward";
     public float basePitch = 0.5f;
-    public float pitchByMultiplier;
+    public float pitchBySpeed;
 
     public Time[] times;
 
@@ -56,13 +56,13 @@ public class SimpleFootsteps : MonoBehaviour
         if (state.IsName(stateName))
         {
             var nt = state.normalizedTime % 1;
-            float amount = animator.GetFloat(multiplierName);
+            float amount = animator.GetFloat(speedName);
 
             for (int i = 0; i < times.Length; i++)
             {
                 var t = times[i];
                 if (Passed(previousNT, nt, t.time))
-                    feet.PlayFootSound(t.id, amount, basePitch + amount * pitchByMultiplier);
+                    feet.PlayFootSound(t.id, amount, basePitch + amount * pitchBySpeed);
             }
 
             previousNT = nt;
