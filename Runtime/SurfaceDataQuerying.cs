@@ -283,7 +283,17 @@ namespace PrecisionSurfaceEffects
             //Defaults to the first material (For most colliders it can't be discerned which specific material it is)
             if (mr != null)
             {
-                if (TryGetStringSurfaceType(mr.sharedMaterial.name, out int stID))
+                var mat = mr.sharedMaterial;
+
+                //Blend Lookup
+                if (materialBlendLookup.TryGetValue(mat, out List<NormalizedBlend> value))
+                {
+                    AddBlends(value, maxOutputCount);
+                    return;
+                }
+
+                //Name
+                if (TryGetStringSurfaceType(mat.name, out int stID))
                     AddSingleOutput(stID);
                 return;
             }
