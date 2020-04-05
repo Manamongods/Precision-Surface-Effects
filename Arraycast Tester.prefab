@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxOutputCount: 4
-  minWeight: 0.3
+  minWeight: 0.1
   surfaceData: {fileID: 11400000, guid: b902d9bfcde7bee47b786803851a1b91, type: 2}
   width: 10
   depth: 5
