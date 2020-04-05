@@ -32,7 +32,7 @@ public class SphereCastAnimatorFeet : MonoBehaviour
 
 
     //Methods
-    public void PlayFootSound(int footID)
+    public void PlayFootSound(int footID, float volumeMultiplier = 1, float pitchMultiplier = 1)
     {
         var foot = feet[footID];
 
@@ -50,13 +50,12 @@ public class SphereCastAnimatorFeet : MonoBehaviour
         );
         outputs.Downshift(maxCount, minWeight);
 
-
-        int c = Mathf.Min(outputs.Count, foot.audioSources.Length);
-        for (int i = 0; i < c; i++)
+        for (int i = 0; i < outputs.Count; i++)
         {
             var output = outputs[i];
-            var vm = output.weight * output.volume;
-            soundSet.surfaceTypeSounds[output.surfaceTypeID].PlayOneShot(foot.audioSources[i], volumeMultiplier: vm, pitchMultiplier: output.pitch);
+            var vm = output.weight * output.volume * volumeMultiplier;
+            var pm = output.pitch * pitchMultiplier;
+            soundSet.surfaceTypeSounds[output.surfaceTypeID].PlayOneShot(foot.audioSources[i], volumeMultiplier: vm, pitchMultiplier: pm);
         }
     }
 }

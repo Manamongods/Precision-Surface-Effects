@@ -32,13 +32,12 @@ namespace PrecisionSurfaceEffects
     {
         //This (in theory) pushes the weights downward from anchor so that there is never any "popping". It should bias itself to the remaining highest weights
         //(So long as the weights given were sorted, and there aren't any outputs culled past the maxCount + 1, yet)
-        public void Downshift(int maxCount, float minWeight, float mult = 1)
+        public void Downshift(int maxCount = 1, float minWeight = 0) //, float mult = 1)
         {
             //This all relies on having the outputs be sorted by decreasing weight
             for (int i = 0; i < Count; i++)
             {
-                var val = this[i];
-                val.weight *= mult;
+                var val = this[i]; //val.weight *= mult;
                 this[i] = val;
 
                 if (this[i].weight < minWeight)

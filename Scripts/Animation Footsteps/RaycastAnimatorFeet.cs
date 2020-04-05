@@ -56,14 +56,12 @@ public class RaycastAnimatorFeet : MonoBehaviour
         var outputs =  soundSet.data.GetRaycastSurfaceTypes
         (
             pos, dir, 
-            maxOutputCount: maxCount, shareList: true,
+            maxOutputCount: maxCount, shareList: true, //shareList is used to avoid reallocations, but it means you have to use the outputs' information immediately
             maxDistance: maxDistance, layerMask: layerMask
         );
-        outputs.Downshift(maxCount, minWeight);
+        outputs.Downshift(maxCount, minWeight); //This is used to smoothly cull. Until you do this, it is not guaranteed to be fewer outputs than (maxOutputs + 1)
 
-
-        int c = Mathf.Min(outputs.Count, foot.audioSources.Length);
-        for (int i = 0; i < c; i++)
+        for (int i = 0; i < outputs.Count; i++)
         {
             var output = outputs[i];
             var vm = output.weight * output.volume * volumeMultiplier;

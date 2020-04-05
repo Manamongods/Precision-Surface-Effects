@@ -39,6 +39,15 @@ namespace PrecisionSurfaceEffects
         public SurfaceTypeSounds[] surfaceTypeSounds = new SurfaceTypeSounds[] { new SurfaceTypeSounds() };
 
 
+        //Methods
+        public void PlayOneShot(SurfaceOutput output, AudioSource audioSource, float volumeMultiplier = 1, float pitchMultiplier = 1)
+        {
+            var vol = volumeMultiplier * output.volume * output.weight;
+            var pitch = pitchMultiplier * output.pitch;
+            surfaceTypeSounds[output.surfaceTypeID].PlayOneShot(audioSource, vol, pitch);
+        }
+
+
         //Lifecycle
 #if UNITY_EDITOR
         private void OnValidate()

@@ -52,8 +52,7 @@ public class CastSoundTester : MonoBehaviour
     public bool spherecast;
     public float spherecastRadius = 5;
 
-    [System.NonSerialized]
-    public float mult = 1;
+    //public float mult = 1;
 
 
     //Methods
@@ -89,7 +88,7 @@ public class CastSoundTester : MonoBehaviour
             outputs = soundSet.data.GetSphereCastSurfaceTypes(pos, downDir, spherecastRadius, maxOutputCount: maxOutputCount, shareList: true);
         else
             outputs = soundSet.data.GetRaycastSurfaceTypes(pos, downDir, maxOutputCount: maxOutputCount, shareList: true);
-        outputs.Downshift(maxOutputCount, minWeight, mult);
+        outputs.Downshift(maxOutputCount, minWeight); //, mult);
 
         results = new TestResult[outputs.Count];
         for (int i = 0; i < outputs.Count; i++)

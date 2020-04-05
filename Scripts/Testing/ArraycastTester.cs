@@ -46,8 +46,7 @@ public class ArraycastTester : MonoBehaviour
     public float yOffset = 0;
     public int count;
 
-    [System.NonSerialized]
-    public float mult = 1;
+    //public float mult = 1;
 
 
     //Lifecycle
@@ -65,7 +64,7 @@ public class ArraycastTester : MonoBehaviour
             var pos2 = pos + right * (t - 0.5f) * width;
 
             SurfaceOutputs outputs = surfaceData.GetRaycastSurfaceTypes(pos2, down, maxOutputCount: maxOutputCount, shareList: true);
-            outputs.Downshift(maxOutputCount, minWeight, mult);
+            outputs.Downshift(maxOutputCount, minWeight); //, mult);
 
             for (int ii = 0; ii < outputs.Count; ii++)
             {

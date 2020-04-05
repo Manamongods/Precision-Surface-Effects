@@ -19,7 +19,7 @@ public class SimpleFootsteps : MonoBehaviour
 
     public Time[] times;
 
-    private float previousNT;
+    private float previousNormalizedTime;
 
 
     //Datatypes
@@ -32,17 +32,17 @@ public class SimpleFootsteps : MonoBehaviour
 
 
     //Methods
-    private static bool Passed(float prev, float curr, float t)
+    private static bool Passed(float prevNT, float currNT, float t)
     {
-        if (prev > curr)
+        if (prevNT > currNT)
         {
-            if (t >= prev)
-                curr++;
-            else if (t < curr)
-                prev--;
+            if (t >= prevNT)
+                currNT++;
+            else if (t < currNT)
+                prevNT--;
         }
 
-        if (prev <= t && t < curr)
+        if (prevNT <= t && t < currNT)
             return true;
 
         return false;
@@ -55,17 +55,17 @@ public class SimpleFootsteps : MonoBehaviour
         var state = animator.GetCurrentAnimatorStateInfo(layerIndex);
         if (state.IsName(stateName))
         {
-            var nt = state.normalizedTime % 1;
+            var normalizedTime = state.normalizedTime % 1;
             float amount = animator.GetFloat(speedName);
 
             for (int i = 0; i < times.Length; i++)
             {
                 var t = times[i];
-                if (Passed(previousNT, nt, t.time))
+                if (Passed(previousNormalizedTime, normalizedTime, t.time))
                     feet.PlayFootSound(t.id, amount, basePitch + amount * pitchBySpeed);
             }
 
-            previousNT = nt;
+            previousNormalizedTime = normalizedTime;
         }
     }
 }
