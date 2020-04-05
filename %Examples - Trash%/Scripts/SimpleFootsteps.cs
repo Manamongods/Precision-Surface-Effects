@@ -7,7 +7,7 @@ using UnityEngine;
 public class SimpleFootsteps : MonoBehaviour
 {
     //Fields
-    public RaycastAnimatorFeet feet;
+    public RaycastFeet feet;
 
     public Animator animator;
     public int layerIndex;

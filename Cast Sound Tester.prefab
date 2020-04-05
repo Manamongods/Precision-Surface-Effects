@@ -192,8 +192,8 @@ GameObject:
   - component: {fileID: 6759458981224116971}
   - component: {fileID: 6759458981224116968}
   m_Layer: 0
-  m_Name: Tester
-  m_TagString: Untagged
+  m_Name: Cast Sound Tester
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

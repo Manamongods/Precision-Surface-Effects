@@ -7,7 +7,7 @@ using PrecisionSurfaceEffects;
 
 //This is untested though
 
-public class RaycastAnimatorFeet : MonoBehaviour
+public class RaycastFeet : MonoBehaviour
 {
     //Fields
     public SurfaceSoundSet soundSet;

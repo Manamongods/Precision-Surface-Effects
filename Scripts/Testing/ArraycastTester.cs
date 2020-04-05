@@ -44,12 +44,16 @@ public class ArraycastTester : MonoBehaviour
     public float depth = 1;
     public float yStep = -5;
     public float yOffset = 0;
-    public int count;
-
-    //public float mult = 1;
+    public int count; //public float mult = 1;
 
 
     //Lifecycle
+    private void Awake()
+    {
+        if (Application.isPlaying)
+            enabled = false;
+    }
+
     private void Update()
     {
         var pos = transform.position;

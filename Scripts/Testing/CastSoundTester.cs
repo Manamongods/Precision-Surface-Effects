@@ -50,9 +50,7 @@ public class CastSoundTester : MonoBehaviour
     public bool downIsGravity;
 
     public bool spherecast;
-    public float spherecastRadius = 5;
-
-    //public float mult = 1;
+    public float spherecastRadius = 5; //public float mult = 1;
 
 
     //Methods
@@ -78,6 +76,12 @@ public class CastSoundTester : MonoBehaviour
 
 
     //Lifecycle
+    private void Awake()
+    {
+        if (Application.isPlaying)
+            enabled = false;
+    }
+
     private void Update()
     {
         var pos = transform.position;

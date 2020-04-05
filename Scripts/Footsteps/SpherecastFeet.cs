@@ -7,7 +7,7 @@ using PrecisionSurfaceEffects;
 
 //This is untested though
 
-public class SphereCastAnimatorFeet : MonoBehaviour
+public class SphereCastFeet : MonoBehaviour
 {
     //Fields
     public SurfaceSoundSet soundSet;
