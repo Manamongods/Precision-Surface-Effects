@@ -5,20 +5,12 @@ using PrecisionSurfaceEffects;
 
 //You use PlayFootSound(int id) as an animation event
 
-//This is untested though
-
-public class RaycastFeet : MonoBehaviour
+public class RaycastFeet : CastFeet
 {
     //Fields
-    public SurfaceSoundSet soundSet;
-
     [Space(20)]
     public Foot[] feet = new Foot[2];
-    public float minWeight = 0.2f;
-
-    [Header("Raycasting")]
-    public LayerMask layerMask = -1;
-    public float maxDistance = Mathf.Infinity;
+    [Space(20)]
     [Tooltip("This is optional")]
     public Transform directionOverride;
 
@@ -38,10 +30,12 @@ public class RaycastFeet : MonoBehaviour
 
 
     //Methods
-    public void PlayFootSound(int footID, float volumeMultiplier = 1, float pitchMultiplier = 1)
+    public override void PlayFootSound(int footID, float volumeMultiplier = 1, float pitchMultiplier = 1)
     {
-        var foot = feet[footID];
+        volumeMultiplier *= this.volumeMultiplier;
+        pitchMultiplier *= this.pitchMultiplier;
 
+        var foot = feet[footID];
 
         var pos = foot.foot.TransformPoint(foot.raycastOffset);
 

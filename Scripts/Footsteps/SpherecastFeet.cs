@@ -5,20 +5,15 @@ using PrecisionSurfaceEffects;
 
 //You use PlayFootSound(int id) as an animation event
 
-//This is untested though
+//You should scale the radius by transform.lossyScale if you want to be able to shrink the character
 
-public class SphereCastFeet : MonoBehaviour
+public class SphereCastFeet : CastFeet
 {
     //Fields
-    public SurfaceSoundSet soundSet;
-
     [Space(20)]
     public Foot[] feet = new Foot[2];
-    public float minWeight = 0.2f;
 
-    [Header("Sphere Cast")]
-    public LayerMask layerMask = -1;
-    public float maxDistance = Mathf.Infinity;
+    [Space(20)]
     public Transform origin;
     public float radius = 1;
 
@@ -32,8 +27,11 @@ public class SphereCastFeet : MonoBehaviour
 
 
     //Methods
-    public void PlayFootSound(int footID, float volumeMultiplier = 1, float pitchMultiplier = 1)
+    public override void PlayFootSound(int footID, float volumeMultiplier = 1, float pitchMultiplier = 1)
     {
+        volumeMultiplier *= this.volumeMultiplier;
+        pitchMultiplier *= this.pitchMultiplier;
+
         var foot = feet[footID];
 
 
@@ -57,5 +55,12 @@ public class SphereCastFeet : MonoBehaviour
             var pm = output.pitch * pitchMultiplier;
             soundSet.surfaceTypeSounds[output.surfaceTypeID].PlayOneShot(foot.audioSources[i], volumeMultiplier: vm, pitchMultiplier: pm);
         }
+    }
+
+
+    //Lifecycle
+    protected virtual void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawWireSphere(origin.position, radius);
     }
 }
