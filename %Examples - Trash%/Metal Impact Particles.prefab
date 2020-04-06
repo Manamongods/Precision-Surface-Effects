@@ -20,7 +20,7 @@ PrefabInstance:
     - target: {fileID: 83522031641595680, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}
       propertyPath: m_VelocityScale
-      value: 0.05
+      value: 0.025
       objectReference: {fileID: 0}
     - target: {fileID: 83522031641595680, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}
@@ -84,21 +84,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7670574646986875101, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}
-      propertyPath: InitialModule.startSpeed.scalar
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 7670574646986875101, guid: d7001457c7180594a83ab93837359c5d,
-        type: 3}
-      propertyPath: InitialModule.startSpeed.minScalar
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7670574646986875101, guid: d7001457c7180594a83ab93837359c5d,
-        type: 3}
-      propertyPath: InitialModule.startSize.scalar
-      value: 0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 7670574646986875101, guid: d7001457c7180594a83ab93837359c5d,
-        type: 3}
       propertyPath: InitialModule.startSize.minMaxState
       value: 3
       objectReference: {fileID: 0}
@@ -114,23 +99,28 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7670574646986875101, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}
-      propertyPath: InitialModule.startSize.minScalar
-      value: 0.025
-      objectReference: {fileID: 0}
-    - target: {fileID: 7670574646986875101, guid: d7001457c7180594a83ab93837359c5d,
-        type: 3}
       propertyPath: NoiseModule.strength.scalar
-      value: 2
+      value: 0.75
       objectReference: {fileID: 0}
     - target: {fileID: 7670574646986875101, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}
       propertyPath: NoiseModule.frequency
-      value: 0.2
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 7670574646986875101, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}
       propertyPath: ClampVelocityModule.drag.scalar
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7670574646986875101, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 7670574646986875101, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: InitialModule.startSize.minScalar
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 8104508447486059129, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}

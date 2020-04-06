@@ -47,12 +47,7 @@ public class RaycastFeet : CastFeet
 
 
         int maxCount = foot.audioSources.Length;
-        var outputs =  soundSet.data.GetRaycastSurfaceTypes
-        (
-            pos, dir, 
-            maxOutputCount: maxCount, shareList: true, //shareList is used to avoid reallocations, but it means you have to use the outputs' information immediately
-            maxDistance: maxDistance, layerMask: layerMask
-        );
+        var outputs =  soundSet.data.GetRaycastSurfaceTypes(pos, dir, maxDistance: maxDistance, layerMask: layerMask, shareList: true); //shareList is used to avoid reallocations, but it means you have to use the outputs' information immediately
         outputs.Downshift(maxCount, minWeight); //This is used to smoothly cull. Until you do this, it is not guaranteed to be fewer outputs than (maxOutputs + 1)
 
         for (int i = 0; i < outputs.Count; i++)

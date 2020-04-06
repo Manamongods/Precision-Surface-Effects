@@ -39,16 +39,17 @@ namespace PrecisionSurfaceEffects
         public bool setColor = true; //this isn't the case for sparks or cartooney white puffs
 
         [Header("Shape")]
-        public float shapeScaler = 1;
-        public float constantShapeScale = 0.2f;
+        public float shapeRadiusScaler = 1;
+        public float constantShapeRadius = 0.2f;
 
         [Header("Speed")]
         public float baseSpeedMultiplier = 1;
         public float speedMultiplierBySpeed = 1;
 
         [Header("Count")]
+        public Vector2 countBySpeedRange = new Vector2(0, 5);
         public float countByImpulse;
-        public int maxCount = 100;
+        public int maxRate = 1000;
 
         [Header("Size")]
         public float baseScaler = 1;
@@ -82,10 +83,15 @@ namespace PrecisionSurfaceEffects
             return instance;
         }
 
-        public static void GetData(Collision c, out float impulse, out float speed, out Vector3 rot, out Vector3 center, out float radius)
+        private static Vector3 Vel(Rigidbody r, Vector3 point)
         {
-            impulse = c.impulse.magnitude;
-            speed = c.relativeVelocity.magnitude;
+            if (r == null)
+                return Vector3.zero;
+            return r.GetPointVelocity(point);
+        }
+        public static void GetData(Collision c, out float impulse, out float speed, out Vector3 rot, out Vector3 center, out float radius, out Vector3 vel0, out Vector3 vel1)
+        {
+            impulse = c.impulse.magnitude; //speed = c.relativeVelocity.magnitude;
 
 
             Vector3 normal;
@@ -124,22 +130,31 @@ namespace PrecisionSurfaceEffects
             }
 
             rot = Quaternion.FromToRotation(Vector3.up, normal).eulerAngles;
+
+            vel0 = Vel(c.GetContact(0).thisCollider.attachedRigidbody, center);
+            vel1 = Vel(c.rigidbody, center);
+
+            speed = (vel0 - vel1).magnitude;
         }
 
-        public void PlayParticles(Collision c, float weight, float impulse, float speed, Vector3 rot, Vector3 center, float radius)
+        public void PlayParticles(Collision c, float weight, float impulse, float speed, Vector3 rot, Vector3 center, float radius, Vector3 vel0, Vector3 vel1)
         {
-            if (inheritVelocities  && temporarySystem == null)
+            if (inheritVelocities && temporarySystem == null)
             {
                 var inst = Instantiate(this);
                 temporarySystem = inst.GetComponent<ParticleSystem>();
                 Destroy(inst);
+                temporarySystem.transform.SetParent(transform);
+                temporarySystem.gameObject.name = "Temporary Buffer System";
             }
+
+            //TODO: what is the cost of Clear()? or to just set particles, can I just use one particlesystem efficiently?
 
             ParticleSystem system = inheritVelocities ? temporarySystem : particleSystem;
 
 
-            radius *= shapeScaler;
-            radius += constantShapeScale;
+            radius *= shapeRadiusScaler;
+            radius += constantShapeRadius;
 
             var main = system.main;
             main.startSpeedMultiplier = startSpeedMultiplier * (baseSpeedMultiplier + speed * speedMultiplierBySpeed);
@@ -157,7 +172,8 @@ namespace PrecisionSurfaceEffects
             main.startSize = ss;
 
 
-            var countf = Mathf.Min(countByImpulse * impulse, maxCount) * weight;
+            float countMult = Mathf.Clamp01(Mathf.InverseLerp(countBySpeedRange.x, countBySpeedRange.y, speed));
+            var countf = Mathf.Min(countByImpulse * impulse, maxRate * Time.deltaTime) * weight;
             int count = (int)countf;
             if (Random.value < countf - count)
                 count++;
@@ -167,15 +183,6 @@ namespace PrecisionSurfaceEffects
 
             if (inheritVelocities)
             {
-                Vector3 Vel(Rigidbody r)
-                {
-                    if (r == null)
-                        return Vector3.zero;
-                    return r.GetPointVelocity(center);
-                }
-                var vel0 = Vel(c.GetContact(0).thisCollider.attachedRigidbody);
-                var vel1 = Vel(c.rigidbody);
-
                 int dstCount = particleSystem.GetParticles(destinationParticles);
 
                 int maxDst = Mathf.Min(destinationParticles.Length, main.maxParticles);

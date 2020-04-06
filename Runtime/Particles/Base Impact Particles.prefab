@@ -169,8 +169,8 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 10
-      minScalar: 5
+      scalar: 1.5
+      minScalar: 0.5
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -4827,13 +4827,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inheritVelocities: 1
   setColor: 1
-  shapeScaler: 1
-  constantShapeScale: 0.2
+  shapeRadiusScaler: 1
+  constantShapeRadius: 0.2
   baseSpeedMultiplier: 1
   speedMultiplierBySpeed: 1
-  countByImpulse: 0
+  countByImpulse: 1
   maxCount: 100
   baseScaler: 1
-  scalerByImpulse: 1
+  scalerByImpulse: 0.01
   maxScale: 4
   particleSystem: {fileID: 7670574646986875101}

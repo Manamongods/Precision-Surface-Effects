@@ -35,8 +35,7 @@ namespace PrecisionSurfaceEffects
         //Constants
         public const bool CLAMP_FINAL_ONE_SHOT_VOLUME = true;
 
-        private const float EXTRA_SEARCH_THICKNESS = 0.01f;
-        private const int MAX_OUTPUT_MULT = 2; //because they will be blended, I can't be sure they have been sorted and culled properly yet
+        private const float EXTRA_SEARCH_THICKNESS = 0.01f; //private const int MAX_OUTPUT_MULT = 2; //because they will be blended, I can't be sure they have been sorted and culled properly yet
 
 
 
@@ -80,6 +79,8 @@ namespace PrecisionSurfaceEffects
 
         [Space(30)]
         [Header("Particles")]
+        public SurfaceParticleSet particleSet;
+        public Vector2 particleBySpeedRange = new Vector2(0.01f, 0.1f);
         public float particleScaler = 1;
         public float particleCountMultiplier = 1;
 
@@ -94,7 +95,7 @@ namespace PrecisionSurfaceEffects
 
 
         //Methods
-        private SurfaceOutputs GetSurfaceTypeOutputs(Collision c, int maxOutputs)
+        private SurfaceOutputs GetSurfaceTypeOutputs(Collision c) //, int maxOutputs)
         {
             if (findMeshColliderSubmesh && c.collider is MeshCollider mc && !mc.convex)
             {
@@ -112,12 +113,12 @@ namespace PrecisionSurfaceEffects
 #endif
 
                     SurfaceData.outputs.Clear();
-                    soundSet.data.AddSurfaceTypes(c.collider, pos, maxOutputs, triangleIndex: rh.triangleIndex);
+                    soundSet.data.AddSurfaceTypes(c.collider, pos, triangleIndex: rh.triangleIndex);
                     return SurfaceData.outputs;
                 }
             }
 
-            return soundSet.data.GetCollisionSurfaceTypes(c, maxOutputs);
+            return soundSet.data.GetCollisionSurfaceTypes(c);
         }
 
         private Vector3 CurrentRelativeVelocity(ContactPoint contact)
@@ -158,6 +159,28 @@ namespace PrecisionSurfaceEffects
                 return priority < otherCSM.priority;
             }
             return false;
+        }
+
+        private void DoParticles(Collision c, SurfaceOutputs outputs)
+        {
+            if (particleSet == null || outputs.Count == 0)
+                return;
+
+            SurfaceParticles.GetData(c, out float impulse, out float speed, out Vector3 rot, out Vector3 center, out float radius, out Vector3 vel0, out Vector3 vel1);
+
+            for (int i = 0; i < outputs.Count; i++)
+            {
+                var o = outputs[i];
+
+                SurfaceParticles particles;
+                if (o.particlesOverride != null)
+                    particles = o.particlesOverride;
+                else
+                    particles = particleSet.surfaceTypeParticles[o.surfaceTypeID].particles;
+
+                if (particles != null)
+                    particles.GetInstance().PlayParticles(c, o.weight, impulse, speed, rot, center, radius, vel0, vel1);
+            }
         }
 
 
@@ -213,7 +236,7 @@ namespace PrecisionSurfaceEffects
                     var pitch = totalPitchMultiplier * impactSound.Pitch(speed);
 
                     int maxc = impactSound.audioSources.Length;
-                    var outputs = GetSurfaceTypeOutputs(collision, maxc);
+                    var outputs = GetSurfaceTypeOutputs(collision); //, maxc);
                     outputs.Downshift(maxc, impactSound.minimumTypeWeight);
 
                     var c = Mathf.Min(maxc, outputs.Count);
@@ -226,8 +249,12 @@ namespace PrecisionSurfaceEffects
                             voll = Mathf.Min(voll, 1);
                         st.PlayOneShot(impactSound.audioSources[i], voll, pitch * output.pitch);
                     }
+
+                    DoParticles(collision, outputs);
                 }
             }
+
+            //TODO: move the particles to always work?
         }
         internal void OnCollisionStay(Collision collision)
         {
@@ -265,7 +292,7 @@ namespace PrecisionSurfaceEffects
 
             if (force > 0)
             {
-                var outputs = GetSurfaceTypeOutputs(collision, frictionSound.sources.Length * MAX_OUTPUT_MULT);
+                var outputs = GetSurfaceTypeOutputs(collision); //, frictionSound.sources.Length * MAX_OUTPUT_MULT);
 
                 forceSum += force;
                 weightedSpeed += force * speed;
@@ -305,6 +332,9 @@ namespace PrecisionSurfaceEffects
                         );
                     }
                 }
+
+                outputs.Downshift();
+                DoParticles(collision, outputs);
             }
         }
 

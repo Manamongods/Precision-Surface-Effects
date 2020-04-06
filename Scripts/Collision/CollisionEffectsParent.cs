@@ -14,7 +14,7 @@ namespace PrecisionSurfaceEffects
         public int priority;
     }
 
-    public class CollisionSoundsParent : CollisionEffectsMaker
+    public class CollisionEffectsParent : CollisionEffectsMaker
     {
         //Fields
         public Type[] types;

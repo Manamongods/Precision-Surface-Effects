@@ -383,6 +383,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa870f96700d10742b6a826c4992d8db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  priority: 0
   currentFrictionDebug: (This only works in playmode)
   findMeshColliderSubmesh: 1
   speedMultiplier: 1
@@ -415,6 +416,15 @@ MonoBehaviour:
     pitchBySpeed: -0.0025
   impactCooldown: 0.01
   impulseChangeToImpact: 0.25
+  vibrationSound:
+    audioSource: {fileID: 0}
+    volumeByForce: 0.1
+    basePitch: 0.5
+    pitchBySpeed: 0.035
+  particleSet: {fileID: 11400000, guid: ba419fd3c5da39648b19eb10694ec9c9, type: 2}
+  particleBySpeedRange: {x: 0.01, y: 0.1}
+  particleScaler: 1
+  particleCountMultiplier: 1
 --- !u!1 &7768311541134257655
 GameObject:
   m_ObjectHideFlags: 0

@@ -90,9 +90,9 @@ public class CastSoundTester : MonoBehaviour
 
         SurfaceOutputs outputs;
         if (spherecast)
-            outputs = soundSet.data.GetSphereCastSurfaceTypes(pos, downDir, spherecastRadius, maxOutputCount: maxOutputCount, shareList: true);
+            outputs = soundSet.data.GetSphereCastSurfaceTypes(pos, downDir, spherecastRadius, shareList: true); //maxOutputCount: maxOutputCount, 
         else
-            outputs = soundSet.data.GetRaycastSurfaceTypes(pos, downDir, maxOutputCount: maxOutputCount, shareList: true);
+            outputs = soundSet.data.GetRaycastSurfaceTypes(pos, downDir, shareList: true);
         outputs.Downshift(maxOutputCount, minWeight); //, mult);
 
         hardness = outputs.hardness;

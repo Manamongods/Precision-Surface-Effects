@@ -67,7 +67,7 @@ public class ArraycastTester : MonoBehaviour
             float t = i / (count - 1f);
             var pos2 = pos + right * (t - 0.5f) * width;
 
-            SurfaceOutputs outputs = surfaceData.GetRaycastSurfaceTypes(pos2, down, maxOutputCount: maxOutputCount, shareList: true);
+            SurfaceOutputs outputs = surfaceData.GetRaycastSurfaceTypes(pos2, down, shareList: true); //maxOutputCount: maxOutputCount, 
             outputs.Downshift(maxOutputCount, minWeight); //, mult);
 
             for (int ii = 0; ii < outputs.Count; ii++)

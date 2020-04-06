@@ -40,12 +40,7 @@ public class SphereCastFeet : CastFeet
 
 
         int maxCount = foot.audioSources.Length;
-        var outputs = soundSet.data.GetSphereCastSurfaceTypes
-        (
-            pos, dir, radius: radius,
-            maxOutputCount: maxCount, shareList: true,
-            maxDistance: maxDistance, layerMask: layerMask
-        );
+        var outputs = soundSet.data.GetSphereCastSurfaceTypes(pos, dir, radius: radius, maxDistance: maxDistance, layerMask: layerMask, shareList: true);
         outputs.Downshift(maxCount, minWeight);
 
         for (int i = 0; i < outputs.Count; i++)
