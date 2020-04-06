@@ -10,7 +10,7 @@ public class GSEditor : Editor
 {
     private void OnSceneGUI()
     {
-        if (!(Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.T))
+        if (!(Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.R))
             return;
 
         var ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
@@ -48,7 +48,7 @@ public class GunShooter : MonoBehaviour
     //Lifecycle
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.T))
+        if(Input.GetKeyDown(KeyCode.R))
         {
             var r = Camera.main.ScreenPointToRay(Input.mousePosition);
             Shoot(r.origin, r.direction);

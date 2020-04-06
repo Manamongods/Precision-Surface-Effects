@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BallShooter : MonoBehaviour
 {
+    public KeyCode key;
+
     public GameObject prefab;
     public float speed;
     public Transform axes;
@@ -13,7 +15,7 @@ public class BallShooter : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(key))
         {
             if(instances.Count >= maxCount)
             {
