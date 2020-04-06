@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17a939634c7ae3a4197d571c0df6eb35, type: 3}
   m_Name: Metallic
   m_EditorClassIdentifier: 
+  hardness: 3
   keywords:
   - Metal
   - Steel
@@ -19,3 +20,40 @@ MonoBehaviour:
   - Gold
   - Aluminum
   - Plating
+  subTypes:
+  - keyword: Metal
+    defaultColor: {r: 1, g: 1, b: 1, a: 1}
+    volumeMultiplier: 1
+    pitchMultiplier: 1
+    hardnessMultiplier: 1
+    particlesOverride: {fileID: 0}
+  - keyword: Steel
+    defaultColor: {r: 1, g: 1, b: 1, a: 1}
+    volumeMultiplier: 1
+    pitchMultiplier: 1
+    hardnessMultiplier: 1
+    particlesOverride: {fileID: 0}
+  - keyword: Iron
+    defaultColor: {r: 1, g: 1, b: 1, a: 1}
+    volumeMultiplier: 1
+    pitchMultiplier: 1
+    hardnessMultiplier: 1
+    particlesOverride: {fileID: 0}
+  - keyword: Gold
+    defaultColor: {r: 1, g: 1, b: 1, a: 1}
+    volumeMultiplier: 1
+    pitchMultiplier: 1
+    hardnessMultiplier: 1
+    particlesOverride: {fileID: 0}
+  - keyword: Aluminum
+    defaultColor: {r: 1, g: 1, b: 1, a: 1}
+    volumeMultiplier: 1
+    pitchMultiplier: 1
+    hardnessMultiplier: 1
+    particlesOverride: {fileID: 0}
+  - keyword: Plating
+    defaultColor: {r: 1, g: 1, b: 1, a: 1}
+    volumeMultiplier: 1
+    pitchMultiplier: 1
+    hardnessMultiplier: 1
+    particlesOverride: {fileID: 0}

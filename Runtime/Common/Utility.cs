@@ -6,11 +6,12 @@ namespace PrecisionSurfaceEffects
 {
     public static class Utility
     {
-        //maybe a problem wtih out of bounds??!?!:
-
-        //(Modified), From: https://answers.unity.com/questions/456973/getting-the-texture-of-a-certain-point-on-terrain.html
+        //(Highly modified), From: https://answers.unity.com/questions/456973/getting-the-texture-of-a-certain-point-on-terrain.html
         public static float[] GetTextureMix(Terrain terrain, Vector3 WorldPos)
         {
+            //maybe a problem wtih out of bounds??!?!:
+
+
             var terrainData = terrain.terrainData; //terrain = Terrain.activeTerrain;
             var terrainPos = terrain.transform.position;
 
@@ -62,6 +63,13 @@ namespace PrecisionSurfaceEffects
             }
 
             throw new System.Exception("Is this even possible?");
+        }
+
+
+        public static void Fill<T>(GameObject g, ref T[] children) where T : Component
+        {
+            if (children == null || children.Length == 0)
+                children = g.GetComponentsInChildren<T>();
         }
     }
 }

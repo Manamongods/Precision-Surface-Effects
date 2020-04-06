@@ -30,7 +30,7 @@ using UnityEngine;
 
 namespace PrecisionSurfaceEffects
 {
-    public partial class CollisionSounds : MonoBehaviour
+    public partial class CollisionSounds : CollisionEffectsMaker
     {
         //Constants
         public const bool CLAMP_FINAL_ONE_SHOT_VOLUME = true;
@@ -75,16 +75,20 @@ namespace PrecisionSurfaceEffects
         public float impactCooldown = 0.1f; //public FrictionTypeChangeImpact frictionTypeChangeImpact = new FrictionTypeChangeImpact();
         public float impulseChangeToImpact = 100;
 
-        //Impact Sound
-        private float impactCooldownT;
+        [Header("Vibration Sound")]
+        public VibrationSound vibrationSound = new VibrationSound();
 
-        //Friction Sound
+        [Space(30)]
+        [Header("Particles")]
+        public float particleScaler = 1;
+        public float particleCountMultiplier = 1;
+
+        private float impactCooldownT;
         private readonly SurfaceOutputs averageOutputs = new SurfaceOutputs(); // List<CollisionSound> collisionSounds = new List<CollisionSound>();
         private readonly List<int> givenSources = new List<int>();
         private float weightedSpeed;
         private float forceSum;
         private bool downShifted;
-
         private float previousImpulse;
 
 
@@ -108,12 +112,52 @@ namespace PrecisionSurfaceEffects
 #endif
 
                     SurfaceData.outputs.Clear();
-                    soundSet.data.AddSurfaceTypes(SurfaceData.outputs, c.collider, pos, maxOutputs, triangleIndex: rh.triangleIndex);
+                    soundSet.data.AddSurfaceTypes(c.collider, pos, maxOutputs, triangleIndex: rh.triangleIndex);
                     return SurfaceData.outputs;
                 }
             }
 
             return soundSet.data.GetCollisionSurfaceTypes(c, maxOutputs);
+        }
+
+        private Vector3 CurrentRelativeVelocity(ContactPoint contact)
+        {
+            //return collision.relativeVelocity.magnitude;
+
+            Vector3 Vel(Rigidbody rb, Vector3 pos)
+            {
+                if (rb == null)
+                    return Vector3.zero;
+                return rb.GetPointVelocity(pos);
+            }
+
+            //This version takes into account angular, I believe Unity's doesn't
+
+            //TODO: make it use multiple contacts?
+
+            var vel = Vel(contact.thisCollider.attachedRigidbody, contact.point);
+            var ovel = Vel(contact.otherCollider.attachedRigidbody, contact.point);
+
+            return (vel - ovel); //.magnitude;
+        }
+
+        private bool Stop(Collision collision)
+        {
+            Transform target;
+            if (collision.rigidbody != null)
+                target = collision.rigidbody.transform;
+            else
+                target = collision.collider.transform;
+
+            var otherCSM = target.GetComponent<CollisionEffectsMaker>();
+            if (otherCSM != null)
+            {
+                if (otherCSM.priority == priority) 
+                    return Random.value > 0.5f; //(otherCSM.gameObject.GetInstanceID() > gameObject.GetInstanceID()))
+
+                return priority < otherCSM.priority;
+            }
+            return false;
         }
 
 
@@ -147,34 +191,17 @@ namespace PrecisionSurfaceEffects
             forceSum = 0;
         }
 
-        private Vector3 CurrentRelativeVelocity(ContactPoint contact)
-        {
-            //return collision.relativeVelocity.magnitude;
-
-            Vector3 Vel(Rigidbody rb, Vector3 pos)
-            {
-                if (rb == null)
-                    return Vector3.zero;
-                return rb.GetPointVelocity(pos);
-            }
-
-            //This version takes into account angular, I believe Unity's doesn't
-
-            //TODO: make it use multiple contacts?
-
-            var vel = Vel(contact.thisCollider.attachedRigidbody, contact.point);
-            var ovel = Vel(contact.otherCollider.attachedRigidbody, contact.point);
-
-            return (vel - ovel); //.magnitude;
-        }
-
-        private void OnCollisionEnter(Collision collision)
+        internal void OnCollisionEnter(Collision collision)
         {
             //Debug.Log(collision.collider.gameObject.name + " " + collision.impulse.magnitude);
 
             //Impact Sound
             if (impactCooldownT <= 0)
             {
+                //This prevents multiple sounds for one collision
+                if(Stop(collision))
+                    return;
+
                 var speed = speedMultiplier * collision.relativeVelocity.magnitude; //Can't consistently use CurrentRelativeVelocity(collision);, probably maybe because it's too late to get that speed (already resolved)
                 var force = forceMultiplier * collision.impulse.magnitude;//Here "force" is actually an impulse
                 var vol = totalVolumeMultiplier * impactSound.Volume(force) * impactSound.SpeedFader(speed);
@@ -202,8 +229,11 @@ namespace PrecisionSurfaceEffects
                 }
             }
         }
-        private void OnCollisionStay(Collision collision)
+        internal void OnCollisionStay(Collision collision)
         {
+            if (Stop(collision))
+                return;
+
             var imp = collision.impulse;
             var impMag = imp.magnitude;
             var normImp = imp.normalized;

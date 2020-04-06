@@ -15,8 +15,14 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: b902d9bfcde7bee47b786803851a1b91, type: 2}
   surfaceTypeParticles:
   - name: None
-    particleSystem: {fileID: 0}
+    particles: {fileID: 0}
   - name: Grassy
-    particleSystem: {fileID: 0}
+    particles: {fileID: 0}
   - name: Rocky
-    particleSystem: {fileID: 0}
+    particles: {fileID: 8494628303865124500, guid: b950e3cba0b0e2c488d34e42357fe985,
+      type: 3}
+  - name: Wood
+    particles: {fileID: 0}
+  - name: Metallic
+    particles: {fileID: 8494628303865124500, guid: b950e3cba0b0e2c488d34e42357fe985,
+      type: 3}

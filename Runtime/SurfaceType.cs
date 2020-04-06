@@ -32,9 +32,40 @@ using UnityExtensions;
 
 namespace PrecisionSurfaceEffects
 {
+    [System.Serializable]
+    public class STSettings
+    {
+        public Color defaultColor = Color.white;
+        public float volumeMultiplier = 1;
+        public float pitchMultiplier = 1;
+        public float hardnessMultiplier = 1;
+    }
+
     [CreateAssetMenu(menuName = "Precision Surface Effects/Surface Type")]
     public class SurfaceType : ScriptableObject
     {
-        public string[] keywords = new string[] { "Grass", "Leaves", "Hay", "Flower" };
+        public float hardness = 1;
+        public Color defaultColorTint = Color.white;
+
+        [Space(30)]
+        public SubType[] subTypes = new SubType[1] { new SubType() };
+
+        [System.Serializable]
+        public class SubType
+        {
+            public string keyword = "Grass"; //public string[] keywords = new string[1] { "Grass" };
+            internal string lowerKeyword;
+
+            public STSettings settings = new STSettings();
+        }
+
+        private void OnValidate()
+        {
+            for (int i = 0; i < subTypes.Length; i++)
+            {
+                var st = subTypes[i];
+                st.lowerKeyword = st.keyword.ToLowerInvariant();
+            }
+        }
     }
 }

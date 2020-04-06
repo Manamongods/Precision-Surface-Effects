@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace PrecisionSurfaceEffects
 {
-    [CustomPropertyDrawer(typeof(SurfaceBlends.SurfaceBlend))]
+    [CustomPropertyDrawer(typeof(SurfaceBlends.Blend))]
     [CanEditMultipleObjects]
     public class SurfaceBlendDrawer : PropertyDrawer
     {

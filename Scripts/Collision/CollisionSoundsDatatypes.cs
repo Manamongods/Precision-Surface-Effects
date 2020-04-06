@@ -28,7 +28,7 @@ using UnityEngine;
 
 namespace PrecisionSurfaceEffects
 {
-    public partial class CollisionSounds : MonoBehaviour
+    public partial class CollisionSounds : CollisionEffectsMaker
     {
         //private struct CollisionSound
         //{
@@ -44,6 +44,17 @@ namespace PrecisionSurfaceEffects
         //    public float volumeMultiplier = 1;
         //    public float pitchMultiplier = 1;
         //}
+
+        [System.Serializable]
+        public class VibrationSound
+        {
+            public AudioSource audioSource;
+
+            public float volumeByForce = 0.1f;
+
+            public float basePitch = 0.5f;
+            public float pitchBySpeed = 0.035f;
+        }
 
         [System.Serializable]
         public class Sound

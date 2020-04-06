@@ -37,6 +37,7 @@ public class CastSoundTester : MonoBehaviour
     [Header("Output")]
     [Space(30)]
     public TestResult[] results;
+    public float hardness;
 
     [Min(1)]
     [Space(30)]
@@ -94,6 +95,8 @@ public class CastSoundTester : MonoBehaviour
             outputs = soundSet.data.GetRaycastSurfaceTypes(pos, downDir, maxOutputCount: maxOutputCount, shareList: true);
         outputs.Downshift(maxOutputCount, minWeight); //, mult);
 
+        hardness = outputs.hardness;
+
         results = new TestResult[outputs.Count];
         for (int i = 0; i < outputs.Count; i++)
         {
@@ -114,6 +117,7 @@ public class CastSoundTester : MonoBehaviour
             var result = results[i];
             text = text + result.header + " " + (Mathf.Round(result.normalizedWeight * 1000f) / 1000f) + "\n"; //" W: " + 
         }
+        text = text + "\nHardness: " + (Mathf.Round(hardness * 1000f) / 1000f);
         this.text.text = text;
     }
 
