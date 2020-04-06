@@ -31,10 +31,14 @@ namespace PrecisionSurfaceEffects
     [RequireComponent(typeof(Collider))]
     public abstract class Marker : MonoBehaviour
     {
+        [HideInInspector]
         public Marker[] markerFamily;
 
         public bool GetMarker<MarkerType>(out MarkerType marker) where MarkerType : Marker
         {
+            //marker = GetComponent<MarkerType>(); //See how badly this performs lol
+            //return marker;
+
             for (int i = 0; i < markerFamily.Length; i++)
             {
                 if(markerFamily[i] is MarkerType m)

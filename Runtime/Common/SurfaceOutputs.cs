@@ -58,7 +58,7 @@ namespace PrecisionSurfaceEffects
                 var val = this[i]; //val.weight *= mult;
                 this[i] = val;
 
-                if (this[i].weight < minWeight)
+                if (this[i].weight <= minWeight) //= to get rid of 0s if 0
                 {
                     RemoveAt(i);
                     i--;

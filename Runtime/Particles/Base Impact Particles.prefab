@@ -4831,8 +4831,9 @@ MonoBehaviour:
   constantShapeRadius: 0.2
   baseSpeedMultiplier: 1
   speedMultiplierBySpeed: 1
+  countBySpeedRange: {x: 0, y: 15}
   countByImpulse: 1
-  maxCount: 100
+  maxRate: 1000
   baseScaler: 1
   scalerByImpulse: 0.01
   maxScale: 4

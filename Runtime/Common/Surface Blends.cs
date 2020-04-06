@@ -44,6 +44,7 @@ namespace PrecisionSurfaceEffects
 
         [Header("Particles")]
         public float particleSizeMultiplier = 1; //public float particleSpeedMultiplier = 1;
+        public float particleCountMultiplier = 1;
 
         [Tooltip("These are used for multiple surface type weights")]
         [Header("Blends")]

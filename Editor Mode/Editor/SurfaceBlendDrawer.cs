@@ -4,7 +4,6 @@ using UnityEditor;
 namespace PrecisionSurfaceEffects
 {
     [CustomPropertyDrawer(typeof(SurfaceBlends.Blend))]
-    [CanEditMultipleObjects]
     public class SurfaceBlendDrawer : PropertyDrawer
     {
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)

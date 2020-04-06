@@ -38,13 +38,26 @@ namespace PrecisionSurfaceEffects
 {
     //This gives a smooth control similar to Terrain, to MeshRenderers 
 
+
+
+    [System.Serializable]
+    public class SubMaterial
+    {
+        public int materialID;
+        [ReadOnly]
+        public Material material;
+    }
+
     [RequireComponent(typeof(MeshRenderer), typeof(MeshFilter), typeof(MeshCollider))]
     [DisallowMultipleComponent]
     public sealed class SurfaceBlendMapMarker : Marker
     {
         //Fields
+        public Color lastSampledColor;
+
+        [Space(30)]
         [SerializeField]
-        internal BlendMap[] blendMaps = new BlendMap[1] { new BlendMap() };
+        public BlendMap[] blendMaps = new BlendMap[1] { new BlendMap() };
 
         private Vector3[] vertices;
         private int[] triangles;
@@ -60,7 +73,7 @@ namespace PrecisionSurfaceEffects
             {
                 var blend = blendResults.result[i];
 
-                sd.AddBlend(blend, null, null, true, weightMultiplier, ref totalWeight);
+                sd.AddBlend(blend, null, null, false, weightMultiplier, ref totalWeight);
             }
         }
 
@@ -68,8 +81,7 @@ namespace PrecisionSurfaceEffects
         {
             totalWeight = 0;
 
-            bool success = false;
-
+            //Finds Barycentric
             var triangle = triangleID * 3;
             var t0 = triangles[triangle + 0];
             var t1 = triangles[triangle + 1];
@@ -77,11 +89,17 @@ namespace PrecisionSurfaceEffects
             var a = vertices[t0];
             var b = vertices[t1];
             var c = vertices[t2];
+            point = transform.InverseTransformPoint(point);
             var bary = new Barycentric(a, b, c, point);
 
             float totalTotalWeight = 0;
             for (int i = 0; i < blendMaps.Length; i++)
-                totalTotalWeight += blendMaps[i].weight;
+            {
+                var bm = blendMaps[i];
+                for (int ii = 0; ii < bm.subMaterials.Length; ii++)
+                    if (bm.subMaterials[ii].materialID == submeshID)
+                        totalTotalWeight += bm.weight;
+            }
 
             for (int i = 0; i < blendMaps.Length; i++)
             {
@@ -92,73 +110,36 @@ namespace PrecisionSurfaceEffects
                     if (bm.subMaterials[ii].materialID == submeshID)
                     {
                         var uv = bary.Interpolate(bm.uvs[t0], bm.uvs[t1], bm.uvs[t2]);
-                        uv = uv * new Vector2(bm.st.x, bm.st.y) + new Vector2(bm.st.z, bm.st.w); //?
-                        var color = bm.map.GetPixelBilinear(uv.x, uv.y); //this only works for clamp or repeat btw (not mirror etc.)
+                        uv = uv * new Vector2(bm.uvScaleOffset.x, bm.uvScaleOffset.y) + new Vector2(bm.uvScaleOffset.z, bm.uvScaleOffset.w); //?
+                        Color color = bm.map.GetPixelBilinear(uv.x, uv.y); //this only works for clamp or repeat btw (not mirror etc.)
+
+#if UNITY_EDITOR
+                        lastSampledColor = color; //Debug.Log(color);
+#endif
+
 
                         float rgbaSum = color.r + color.g + color.b + color.a;
-                        float invTotal = bm.weight / (rgbaSum * totalTotalWeight);
+                        var sum = Mathf.Max(1, rgbaSum) * totalTotalWeight;
+                        //if (sum > 0)
+                        {
+                            float invTotal = bm.weight / sum;
 
-                        Add(sd, bm.r.result, color.r * invTotal, ref totalWeight);
-                        Add(sd, bm.g.result, color.g * invTotal, ref totalWeight);
-                        Add(sd, bm.b.result, color.b * invTotal, ref totalWeight);
-                        Add(sd, bm.a.result, color.a * invTotal, ref totalWeight);
+                            Add(sd, bm.r.result, color.r * invTotal, ref totalWeight);
+                            Add(sd, bm.g.result, color.g * invTotal, ref totalWeight);
+                            Add(sd, bm.b.result, color.b * invTotal, ref totalWeight);
+                            Add(sd, bm.a.result, color.a * invTotal, ref totalWeight);
 
-                        success = true;
-                        break;
+                            break;
+                        }
                     }
                 }
             }
 
-            return success;
+            return totalTotalWeight > 0;
         }
 
-       
-
-        //Datatypes
-        [System.Serializable]
-        internal class BlendMap
+        public void Refresh()
         {
-            //Fields
-            public float weight = 1;
-
-            [SerializeField]
-            internal SubMaterial[] subMaterials = new SubMaterial[1] { new SubMaterial() };
-
-            [Min(0)]
-            public int uvID = 0;
-            public Texture2D map; //must be readable
-            public Vector4 st = new Vector4(1, 1, 0, 0);
-
-            public SurfaceBlends r = new SurfaceBlends();
-            public SurfaceBlends g = new SurfaceBlends();
-            public SurfaceBlends b = new SurfaceBlends();
-            public SurfaceBlends a = new SurfaceBlends();
-
-            public Vector2[] uvs;
-
-            internal Color sample;
-
-
-
-            //Datatypes
-            [System.Serializable]
-            public class SubMaterial
-            {
-                public int materialID;
-                [ReadOnly]
-                public Material material;
-            }
-        }
-
-
-
-        //Lifecycle
-#if UNITY_EDITOR
-        private void OnValidate()
-        {
-            var mr = GetComponent<MeshRenderer>();
-            var mats = mr.sharedMaterials;
-
             for (int i = 0; i < blendMaps.Length; i++)
             {
                 var bm = blendMaps[i];
@@ -166,6 +147,83 @@ namespace PrecisionSurfaceEffects
                 bm.g.SortNormalize();
                 bm.b.SortNormalize();
                 bm.a.SortNormalize();
+            }
+        }
+
+       
+
+        //Datatypes
+        [System.Serializable]
+        public class BlendMap
+        {
+            //Fields
+            public float weight = 1;
+
+            [Header("Materials")]
+            [SerializeField]
+            public SubMaterial[] subMaterials = new SubMaterial[1] { new SubMaterial() };
+
+            [Header("Texture")]
+            public Texture2D map; //must be readable
+            [Range(0, 7)]
+            public int uvChannel = 0;
+            public Vector4 uvScaleOffset = new Vector4(1, 1, 0, 0); //st
+
+            [Header("Channel Blends")]
+            public SurfaceBlends r = new SurfaceBlends();
+            public SurfaceBlends g = new SurfaceBlends();
+            public SurfaceBlends b = new SurfaceBlends();
+            public SurfaceBlends a = new SurfaceBlends();
+
+            internal Vector2[] uvs;
+        }
+
+
+
+        //Lifecycle
+#if UNITY_EDITOR
+        protected override void OnValidate()
+        {
+            base.OnValidate();
+
+            Refresh();
+
+
+            //var mf = GetComponent<MeshFilter>();
+            //var m = mf.sharedMesh;
+
+            //for (int i = 0; i < blendMaps.Length; i++)
+            //{
+            //    var bm = blendMaps[i];
+            //    bm.uvChannel = Mathf.Min(bm.uvChannel, m.)
+            //}
+
+            Awake();
+        }
+#endif
+
+        private void Awake()
+        {
+            var mf = GetComponent<MeshFilter>();
+            var m = mf.sharedMesh;
+
+            vertices = m.vertices;
+            triangles = m.triangles;
+            
+            for (int i = 0; i < blendMaps.Length; i++)
+			{
+                var bm = blendMaps[i];
+                temporaryUVs.Clear();
+                m.GetUVs(bm.uvChannel, temporaryUVs);
+                bm.uvs = temporaryUVs.ToArray();
+            }
+
+            var mr = GetComponent<MeshRenderer>();
+            var mats = mr.sharedMaterials;
+
+            for (int i = 0; i < blendMaps.Length; i++)
+            {
+                var bm = blendMaps[i];
 
                 for (int ii = 0; ii < bm.subMaterials.Length; ii++)
                 {
@@ -176,23 +234,5 @@ namespace PrecisionSurfaceEffects
                 }
             }
         }
-
-        private void Awake()
-        {
-            var mf = GetComponent<MeshFilter>();
-            var m = mf.sharedMesh;
-
-            vertices = m.vertices;
-            triangles= m.triangles;
-            
-            for (int i = 0; i < blendMaps.Length; i++)
-			{
-                var bm = blendMaps[i];
-                temporaryUVs.Clear();
-                m.GetUVs(bm.uvID, temporaryUVs);
-                bm.uvs = temporaryUVs.ToArray();
-            }
-        }
-#endif
     }
 }

@@ -153,8 +153,8 @@ namespace PrecisionSurfaceEffects
             var otherCSM = target.GetComponent<CollisionEffectsMaker>();
             if (otherCSM != null)
             {
-                if (otherCSM.priority == priority) 
-                    return Random.value > 0.5f; //(otherCSM.gameObject.GetInstanceID() > gameObject.GetInstanceID()))
+                if (otherCSM.priority == priority)
+                    return (otherCSM.gameObject.GetInstanceID() > gameObject.GetInstanceID());
 
                 return priority < otherCSM.priority;
             }

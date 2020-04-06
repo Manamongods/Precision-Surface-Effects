@@ -11,7 +11,7 @@ public class SurfaceBlendOverridesMarkerEditor : Editor
         var s = target as SurfaceBlendOverridesMarker;
 
         if(s.GetComponent<MeshCollider>().convex)
-        EditorGUILayout.HelpBox("The MeshCollider is Convex", MessageType.Warning);
+            EditorGUILayout.HelpBox("The MeshCollider is Convex", MessageType.Error);
 
         base.OnInspectorGUI();
     }

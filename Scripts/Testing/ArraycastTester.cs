@@ -47,6 +47,7 @@ public class ArraycastTester : MonoBehaviour
     public int count; //public float mult = 1;
 
 
+
     //Lifecycle
     private void Awake()
     {
