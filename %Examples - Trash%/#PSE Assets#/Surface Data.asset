@@ -25,6 +25,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9485fbaaf0172d547bdefd61ad1c6a7c, type: 2}
   - {fileID: 11400000, guid: 67c7087d938d74d418275f9d858a6161, type: 2}
   - {fileID: 11400000, guid: caf894f75216e834b901279babde721d, type: 2}
+  - {fileID: 11400000, guid: 7fb46efebbba52e4c991952b4b323e07, type: 2}
   materialBlendOverrides:
   - groupName: Stoney Stuff
     hardnessMultiplier: 1
@@ -53,7 +54,6 @@ MonoBehaviour:
       normalizedWeight: 1
     terrainAlbedos:
     - {fileID: 2800000, guid: 66fb879d08c8d4a8d9217a396637cd02, type: 3}
-    - {fileID: 2800000, guid: a4a9376fca9114840bb973b6693e7ff5, type: 3}
   - groupName: Rocky
     hardnessMultiplier: 1
     volumeMultiplier: 1
@@ -67,7 +67,24 @@ MonoBehaviour:
       normalizedWeight: 1
     terrainAlbedos:
     - {fileID: 2800000, guid: b2e5c511fff7f41559554175e2005252, type: 3}
-  - groupName: Desertey
+  - groupName: Desertey muddy stuff
+    hardnessMultiplier: 1
+    volumeMultiplier: 1
+    pitchMultiplier: 0.75
+    particleSizeMultiplier: 1
+    particleCountMultiplier: 1
+    blends:
+    - reference: Stone
+      weight: 1
+      tintColor: {r: 1, g: 1, b: 1, a: 1}
+      normalizedWeight: 0.6666667
+    - reference: Mud
+      weight: 0.5
+      tintColor: {r: 1, g: 1, b: 1, a: 1}
+      normalizedWeight: 0.33333334
+    terrainAlbedos:
+    - {fileID: 2800000, guid: 1d6b5702e2d7947a6aca898081729d0f, type: 3}
+  - groupName: Stonegrass
     hardnessMultiplier: 1
     volumeMultiplier: 1
     pitchMultiplier: 1
@@ -77,10 +94,10 @@ MonoBehaviour:
     - reference: Stone
       weight: 1
       tintColor: {r: 1, g: 1, b: 1, a: 1}
-      normalizedWeight: 0.6666667
+      normalizedWeight: 0.5
     - reference: Grass
-      weight: 0.5
+      weight: 1
       tintColor: {r: 1, g: 1, b: 1, a: 1}
-      normalizedWeight: 0.33333334
+      normalizedWeight: 0.5
     terrainAlbedos:
-    - {fileID: 2800000, guid: 1d6b5702e2d7947a6aca898081729d0f, type: 3}
+    - {fileID: 2800000, guid: a4a9376fca9114840bb973b6693e7ff5, type: 3}

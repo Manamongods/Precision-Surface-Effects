@@ -70,7 +70,7 @@ MonoBehaviour:
       clip: {fileID: 8300000, guid: dc3b059c7c4ee6f4c9ddc7802e1df77a, type: 3}
       volumeMultiplier: 1
       pitchMultiplier: 1
-  - name: Metallic
+  - name: Hollow Metal
     volume: 1
     volumeVariation: 0.2
     pitch: 1
@@ -84,3 +84,17 @@ MonoBehaviour:
       clip: {fileID: 8300000, guid: 9a532385e5f2c8b4fbd8a76c22fa5862, type: 3}
       volumeMultiplier: 4
       pitchMultiplier: 2
+  - name: Muddy
+    volume: 1
+    volumeVariation: 0.2
+    pitch: 1
+    pitchVariation: 0.2
+    clipVariants:
+    - clip: {fileID: 8300000, guid: c7449f353fcce324787a755ffee82b68, type: 3}
+      volumeMultiplier: 1
+      pitchMultiplier: 1
+      probabilityWeight: 1
+    loopSound:
+      clip: {fileID: 8300000, guid: 23d13f52b5a01964e82ea27791642175, type: 3}
+      volumeMultiplier: 2
+      pitchMultiplier: 0.25
