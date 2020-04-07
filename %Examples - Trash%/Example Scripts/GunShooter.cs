@@ -20,46 +20,25 @@ public class GSEditor : Editor
     }
 }
 
-public class GunShooter : MonoBehaviour
+public class GunShooter : SurfaceEffectsBase
 {
     //Fields
-    public SurfaceSoundSet soundSet;
-    public SurfaceParticleSet particleSet;
-
+    [Space(20)]
+    public AudioSource[] audioSources;
     public float speed = 100;
     public float impulse = 100;
-    public float radius = 0;
-    public float countScaler = 1;
-    public float sizeScaler = 1;
-
-    public AudioSource[] audioSources;
-    public float minimumWeight = 0.1f;
-
-    public float volumeMultiplier = 1;
-    public float pitchMultiplier = 1;
 
 
     //Methods
     public void Shoot(Vector3 pos, Vector3 dir)
     {
-        var outputs = soundSet.data.GetRaycastSurfaceTypes(pos, dir);
-        outputs.Downshift(audioSources.Length, minimumWeight);
+        var outputs = Play(audioSources, pos, dir, impulse, speed);
 
         if (outputs.collider != null)
         {
             var rb = outputs.collider.attachedRigidbody;
             if (rb != null)
                 rb.AddForceAtPosition(-outputs.hitNormal * impulse, outputs.hitPosition, ForceMode.Impulse); //dir 
-        }
-
-        for (int i = 0; i < outputs.Count; i++)
-        {
-            var output = outputs[i];
-
-            soundSet.PlayOneShot(output, audioSources[i], volumeMultiplier, pitchMultiplier);
-
-            particleSet.PlayParticles(outputs, output, impulse, speed * dir, radius, deltaTime: 0.25f); //-speed * outputs.hitNormal
-            //Deltatime allows you to control how many max particles you can accept, because Time.deltaTime is irrelevant for a single shot
         }
     }
 

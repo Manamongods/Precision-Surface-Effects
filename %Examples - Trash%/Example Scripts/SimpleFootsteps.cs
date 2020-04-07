@@ -14,8 +14,9 @@ public class SimpleFootsteps : MonoBehaviour
     public string stateName = "Grounded";
 
     public string speedName = "Forward";
-    public float basePitch = 1;
-    public float pitchBySpeed;
+
+    public float impulseBySpeed = 10;
+    public float speedBySpeed = 10;
 
     public Time[] times = new Time[2]
     {
@@ -66,7 +67,7 @@ public class SimpleFootsteps : MonoBehaviour
             {
                 var t = times[i];
                 if (Passed(previousNormalizedTime, normalizedTime, t.time))
-                    feet.PlayFootSound(t.id, speed, basePitch + speed * pitchBySpeed);
+                    feet.PlayFootSound(t.id, speed * impulseBySpeed, speed * speedBySpeed);
             }
 
             previousNormalizedTime = normalizedTime;

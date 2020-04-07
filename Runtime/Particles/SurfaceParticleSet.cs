@@ -53,10 +53,10 @@ namespace PrecisionSurfaceEffects
             else
                 p = surfaceTypeParticles[output.surfaceTypeID].particles;
 
-            p = p.GetInstance();
-
             if(p != null)
             {
+                p = p.GetInstance();
+
                 var rot = Quaternion.FromToRotation(Vector3.up, outputs.hitNormal);
                 var otherVel = SurfaceParticles.GetVelocity(outputs.collider.attachedRigidbody, outputs.hitPosition);
                 var speed = (otherVel - vel).magnitude;

@@ -29,6 +29,12 @@ using UnityExtensions;
 
 namespace PrecisionSurfaceEffects
 {
+    [System.Serializable]
+    public class SurfaceParticlesSettings
+    {
+
+    }
+
     [CreateAssetMenu(menuName = "Precision Surface Effects/Surface Sound Set")]
     public class SurfaceSoundSet : SurfaceSet<SurfaceTypeSounds>
     {
@@ -77,7 +83,8 @@ namespace PrecisionSurfaceEffects
         [Header("Friction/Rolling")]
         [Tooltip("This can be used for friction/rolling sounds, or just ignore it")]
         [Space(20)]
-        public Clip loopSound = new Clip(); //(no randomization should be used for this clip)
+        [UnityEngine.Serialization.FormerlySerializedAs("loopSound")]
+        public Clip frictionSound = new Clip(); //(no randomization should be used for this clip)
 
 
         //Datatypes

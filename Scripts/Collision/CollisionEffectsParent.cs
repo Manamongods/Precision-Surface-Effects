@@ -17,6 +17,7 @@ namespace PrecisionSurfaceEffects
     public class CollisionEffectsParent : CollisionEffectsMaker
     {
         //Fields
+        public int defaultType = -1;
         public Type[] types;
 
 
@@ -30,6 +31,13 @@ namespace PrecisionSurfaceEffects
 
 
         //Lifecycle
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            defaultType = Mathf.Clamp(defaultType, -1, types.Length - 1);
+        }
+#endif
+
         private void OnCollisionEnter(Collision collision)
         {
             var thisCollider = collision.GetContact(0).thisCollider;
@@ -47,6 +55,12 @@ namespace PrecisionSurfaceEffects
                         return;
                     }
                 }
+            }
+
+            if(defaultType != -1)
+            {
+                types[defaultType].collisionEffects.OnCollisionEnter(collision);
+                return;
             }
         }
 
@@ -67,6 +81,12 @@ namespace PrecisionSurfaceEffects
                         return;
                     }
                 }
+            }
+
+            if (defaultType != -1)
+            {
+                types[defaultType].collisionEffects.OnCollisionStay(collision);
+                return;
             }
         }
     }

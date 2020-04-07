@@ -9,8 +9,9 @@ public class AnimatorEventFootsteps : MonoBehaviour
 
     public Animator animator;
     public string speedName = "Forward";
-    public float basePitch = 1;
-    public float pitchBySpeed;
+
+    public float impulseBySpeed = 10;
+    public float speedBySpeed = 10;
 
 
     //Methods
@@ -18,6 +19,6 @@ public class AnimatorEventFootsteps : MonoBehaviour
     {
         float speed = animator.GetFloat(speedName);
 
-        feet.PlayFootSound(footID, speed, basePitch + speed * pitchBySpeed);
+        feet.PlayFootSound(footID, impulse: impulseBySpeed * speed, speed: speedBySpeed * speed);
     }
 }

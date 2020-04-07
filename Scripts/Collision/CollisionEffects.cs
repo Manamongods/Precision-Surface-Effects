@@ -66,6 +66,7 @@ namespace PrecisionSurfaceEffects
 
         [Header("Friction Sound")]
         [Space(15)]
+        public bool doFrictionSounds = true;
         public FrictionSound frictionSound = new FrictionSound(); //[Tooltip("When the friction soundType changes, this can be used to play impactSound")]
         [Min(0)]
         public float frictionNormalForceMultiplier = 0.3f;
@@ -292,6 +293,9 @@ namespace PrecisionSurfaceEffects
             }
             previousImpulse = impulse;
 
+            if (!doFrictionSounds)
+                return;
+
             if (force > 0)
             {
                 var outputs = GetSurfaceTypeOutputs(collision); //, frictionSound.sources.Length * MAX_OUTPUT_MULT);
@@ -368,7 +372,7 @@ namespace PrecisionSurfaceEffects
                     var c = Mathf.Min(maxCount, averageOutputs.Count); //?
 
                     var output = averageOutputs[outputID];
-                    var clip = soundSet.surfaceTypeSounds[output.surfaceTypeID].loopSound;
+                    var clip = soundSet.surfaceTypeSounds[output.surfaceTypeID].frictionSound;
 
                     //Finds and assigns sources that match the clip already
                     int givenSource = -1;
@@ -396,7 +400,7 @@ namespace PrecisionSurfaceEffects
                     //If it wasn't given a source
                     if (givenSources[outputID] == -1)
                     {
-                        var clip = soundSet.surfaceTypeSounds[output.surfaceTypeID].loopSound;
+                        var clip = soundSet.surfaceTypeSounds[output.surfaceTypeID].frictionSound;
           
                         for (int sourceID = 0; sourceID < frictionSound.sources.Length; sourceID++)
                         {
