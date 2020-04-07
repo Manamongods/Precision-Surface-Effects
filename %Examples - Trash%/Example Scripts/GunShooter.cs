@@ -10,16 +10,18 @@ public class GSEditor : Editor
 {
     private void OnSceneGUI()
     {
-        if (!(Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.R))
+        if (!(Event.current.keyCode == KeyCode.R)) //Event.current.type == EventType.KeyDown && 
             return;
 
         var ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
 
         var gs = target as GunShooter;
-        gs.Shoot(ray.origin, ray.direction);
+        if(gs.CanShoot())
+            gs.Shoot(ray.origin, ray.direction);
     }
 }
 
+[ExecuteInEditMode]
 public class GunShooter : SurfaceEffectsBase
 {
     //Fields
@@ -27,12 +29,26 @@ public class GunShooter : SurfaceEffectsBase
     public AudioSource[] audioSources;
     public float speed = 100;
     public float impulse = 100;
+    public float interval = 0.1f;
+    internal float previousTime;
 
 
     //Methods
+    internal bool CanShoot()
+    {
+        return (Time.realtimeSinceStartup - previousTime) >= interval;
+    }
+
     public void Shoot(Vector3 pos, Vector3 dir)
     {
+        previousTime = Time.realtimeSinceStartup;
+
         var outputs = Play(audioSources, pos, dir, impulse, speed);
+
+        for (int i = 0; i < outputs.Count; i++)
+        {
+            audioSources[i].transform.position = outputs.hitPosition;
+        }
 
         if (outputs.collider != null)
         {
@@ -46,7 +62,7 @@ public class GunShooter : SurfaceEffectsBase
     //Lifecycle
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.R))
+        if(Input.GetKey(KeyCode.R) && CanShoot())
         {
             var r = Camera.main.ScreenPointToRay(Input.mousePosition);
             Shoot(r.origin, r.direction);
