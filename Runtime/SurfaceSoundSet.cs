@@ -48,8 +48,8 @@ namespace PrecisionSurfaceEffects
         //Methods
         public void PlayOneShot(SurfaceOutput output, AudioSource audioSource, float volumeMultiplier = 1, float pitchMultiplier = 1)
         {
-            var vol = volumeMultiplier * output.volume * output.weight;
-            var pitch = pitchMultiplier * output.pitch;
+            var vol = volumeMultiplier * output.volumeScaler * output.weight;
+            var pitch = pitchMultiplier * output.pitchScaler;
             surfaceTypeSounds[output.surfaceTypeID].PlayOneShot(audioSource, vol, pitch);
         }
 

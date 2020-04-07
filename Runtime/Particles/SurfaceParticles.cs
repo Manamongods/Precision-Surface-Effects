@@ -32,6 +32,8 @@ namespace PrecisionSurfaceEffects
     public class SurfaceParticles : MonoBehaviour
     {
         //Fields
+        public SurfaceParticles[] children; //subParticleSystems
+
         [Header("Quality")]
         public bool inheritVelocities = true;
 
@@ -46,6 +48,7 @@ namespace PrecisionSurfaceEffects
         [Header("Shape")]
         public float shapeRadiusScaler = 1;
         public float constantShapeRadius = 0.2f;
+        public Vector3 shapeRotationOffset = new Vector3(-90, 0, 0);
 
         [Header("Speed")]
         public float baseSpeedMultiplier = 1;
@@ -54,12 +57,14 @@ namespace PrecisionSurfaceEffects
         [Header("Count")]
         public Vector2 countBySpeedRange = new Vector2(0, 5);
         public float countByImpulse;
-        public int maxRate = 1000;
+        [Tooltip("This is to prevent excessive numbers such as from perhaps a bug")]
+        public int maxCount = 1000; //maxRate //
 
         [Header("Size")]
-        public float baseScaler = 1;
-        public float scalerByImpulse= 1;
-        public float maxScale = 4;
+        public float baseScaler = 0.5f;
+        public AnimationCurve scalerByForce = AnimationCurve.Linear(0, 0, 1, 1); //1, 1000, 5 //public float scalerByImpulse = 1; //public float baseScaler = 1;
+        public float scalerForceRange = 1000;
+        public float scalerByForceMultiplier = 4; //public float maxScale = 4;
 
         [HideInInspector]
         public new ParticleSystem particleSystem;
@@ -72,7 +77,7 @@ namespace PrecisionSurfaceEffects
         private static readonly ParticleSystem.Particle[] destinationParticles = new ParticleSystem.Particle[10000];
 
         private float startSpeedMultiplier;
-        private float startSizeCM;
+        private float startSizeM;
 
         private Color c;
         private Color c0, c1;
@@ -90,7 +95,6 @@ namespace PrecisionSurfaceEffects
             if (instance == null)
             {
                 instance = Instantiate(this);
-                instance.gameObject.hideFlags = HideFlags.DontSave;
             }
 
             return instance;
@@ -150,8 +154,17 @@ namespace PrecisionSurfaceEffects
             speed = (vel0 - vel1).magnitude;
         }
 
-        public void PlayParticles(Color color, float weight, float impulse, float speed, Quaternion rot, Vector3 center, float radius, Vector3 normal, Vector3 vel0, Vector3 vel1, float dt = 0.25f)
+        public void PlayParticles(Color color, float particleCountScaler, float particleSizeScaler, float weight, float impulse, float speed, Quaternion rot, Vector3 center, float radius, Vector3 normal, Vector3 vel0, Vector3 vel1, float dt = 0.25f, bool withChildren = true)
         {
+            if (withChildren)
+            {
+                for (int i = 0; i < children.Length; i++)
+                {
+                    var sps = children[i].GetInstance();
+                    sps.PlayParticles(color, particleCountScaler, particleSizeScaler, weight, impulse, speed, rot, center, radius, normal, vel0, vel1, dt: dt, withChildren: false);
+                }
+            }
+
             if (inheritVelocities && temporarySystem == null)
             {
                 var inst = Instantiate(this);
@@ -162,7 +175,6 @@ namespace PrecisionSurfaceEffects
                 temporarySystem.gameObject.name = "Temporary Buffer System";
                 var em2 = temporarySystem.emission;
                 em2.enabled = false;
-                temporarySystem.gameObject.hideFlags = HideFlags.DontSave;
 
                 if(normal != Vector3.zero)
                 {
@@ -187,17 +199,18 @@ namespace PrecisionSurfaceEffects
             var shape = system.shape;
             shape.position = center;
             shape.radius = radius;
-            shape.rotation = rot.eulerAngles;
+            shape.rotation = rot.eulerAngles + shapeRotationOffset;
 
 
-            float scale =  Mathf.Min(baseScaler + scalerByImpulse * impulse, maxScale);
-            var ss = main.startSize;
-            ss.curveMultiplier = scale * startSizeCM;
-            main.startSize = ss;
+            float force = impulse / dt;
+            float scale = baseScaler + scalerByForceMultiplier * scalerByForce.Evaluate(force / scalerForceRange);// Mathf.Min(baseScaler + scalerByImpulse * impulse, maxScale);
+            scale *= particleSizeScaler;
+            main.startSizeMultiplier = scale * startSizeM;
 
 
-            float countMult = Mathf.Clamp01(Mathf.InverseLerp(countBySpeedRange.x, countBySpeedRange.y, speed));
-            var countf = Mathf.Min(countByImpulse * impulse, maxRate * dt) * weight;
+            float countMult = particleCountScaler * Mathf.Clamp01(Mathf.InverseLerp(countBySpeedRange.x, countBySpeedRange.y, speed));
+            countMult /= scale * scale; //should technically be cubed though
+            var countf = Mathf.Min(countMult * countByImpulse * impulse, maxCount) * weight; //maxRate * dt
             int count = (int)countf;
             if (Random.value < countf - count)
                 count++;
@@ -257,12 +270,14 @@ namespace PrecisionSurfaceEffects
 
             inheritSpreadRange.x = Mathf.Clamp01(inheritSpreadRange.x);
             inheritSpreadRange.y = Mathf.Clamp01(inheritSpreadRange.y);
+
+            scalerByForce.preWrapMode = scalerByForce.postWrapMode = WrapMode.Clamp;
         }
 #endif
 
         private void Start()
         {
-            startSizeCM = particleSystem.main.startSize.curveMultiplier;
+            startSizeM = particleSystem.main.startSizeMultiplier;
             startSpeedMultiplier = particleSystem.main.startSpeedMultiplier;
 
             transform.SetParent(null);
@@ -272,6 +287,7 @@ namespace PrecisionSurfaceEffects
 
             var e = particleSystem.emission;
             e.enabled = false;
+
 
             //Start Color
             var m = particleSystem.main;
@@ -292,6 +308,27 @@ namespace PrecisionSurfaceEffects
 }
 
 /*
+ *
+            // startSize.curveMultiplier;
+ 
+    //var ss = main.startSize;
+            //ss.curveMultiplier = scale * startSizeCM;
+            //main.startSize = ss;
+        private static readonly List<SurfaceParticles> checks = new List<SurfaceParticles>();
+ *             checks.Add(this);
+            while(checks.Count > 0)
+            {
+                for (int i = 0; i < subParticleSystems.Length; i++)
+                {
+                    var sps = subParticleSystems[i];
+
+                    if(sps == )
+
+                    checks.Add(sps);
+                }
+            }
+            
+
  * #if UNITY_EDITOR
                 if (!Application.isPlaying)
                     DestroyImmediate(inst);

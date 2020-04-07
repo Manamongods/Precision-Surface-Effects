@@ -33,7 +33,7 @@ namespace PrecisionSurfaceEffects
     public partial class CollisionEffects : CollisionEffectsMaker
     {
         //Constants
-        private const float ENTER_DT = 0.1f;
+        //private const float COLLISION_ENTER_DT = 0.1f;
 
         public const bool CLAMP_FINAL_ONE_SHOT_VOLUME = true;
 
@@ -54,15 +54,16 @@ namespace PrecisionSurfaceEffects
         [Tooltip("Non-convex MeshCollider submeshes")]
         public bool findMeshColliderSubmesh = true;
 
+        [Header("Sounds")]
+        [Space(30)]
+        public SurfaceSoundSet soundSet;
+
         [Header("Scaling")]
         [Tooltip("To easily make the speed be local/relative")]
         public float speedMultiplier = 1;
         public float forceMultiplier = 1;
         public float totalVolumeMultiplier = 0.3f;
         public float totalPitchMultiplier = 1;
-
-        [Header("Sounds")]
-        public SurfaceSoundSet soundSet;
 
         [Header("Friction Sound")]
         [Space(15)]
@@ -78,14 +79,17 @@ namespace PrecisionSurfaceEffects
         public float impulseChangeToImpact = 100;
 
         [Header("Vibration Sound")]
+        [Space(15)]
         public VibrationSound vibrationSound = new VibrationSound();
 
-        [Space(30)]
         [Header("Particles")]
+        [Space(30)]
+        public float selfHardness = 1;
         public SurfaceParticleSet particleSet;
         public Vector2 particleBySpeedRange = new Vector2(0.01f, 0.1f);
-        public float particleScaler = 1;
         public float particleCountMultiplier = 1;
+        [UnityEngine.Serialization.FormerlySerializedAs("particleScaler ")]
+        public float particleSizeMultiplier = 1;
 
         private float impactCooldownT;
         private readonly SurfaceOutputs averageOutputs = new SurfaceOutputs(); // List<CollisionSound> collisionSounds = new List<CollisionSound>();
@@ -182,7 +186,17 @@ namespace PrecisionSurfaceEffects
                     particles = particleSet.surfaceTypeParticles[o.surfaceTypeID].particles;
 
                 if (particles != null)
-                    particles.GetInstance().PlayParticles(o.color, o.weight, impulse, speed, rot, center, radius, outputs.hitNormal, vel0, vel1, dt);
+                {
+                    particles.GetInstance().PlayParticles
+                    (
+                        o.color, o.particleCountScaler * particleCountMultiplier, o.particleSizeScaler * particleSizeMultiplier,
+                        o.weight,
+                        impulse, speed,
+                        rot, center, radius, outputs.hitNormal,
+                        vel0, vel1,
+                        dt
+                    );
+                }
             }
         }
 
@@ -242,18 +256,20 @@ namespace PrecisionSurfaceEffects
                     var outputs = GetSurfaceTypeOutputs(collision); //, maxc);
                     outputs.Downshift(maxc, impactSound.minimumTypeWeight);
 
+                    float approximateCollisionDuration = 1 / Mathf.Max(0.00000001f, selfHardness * outputs.hardness);
+
                     var c = Mathf.Min(maxc, outputs.Count);
                     for (int i = 0; i < c; i++)
                     {
                         var output = outputs[i];
                         var st = soundSet.surfaceTypeSounds[output.surfaceTypeID];
-                        var voll = vol * output.weight * output.volume;
+                        var voll = vol * output.weight * output.volumeScaler;
                         if (CLAMP_FINAL_ONE_SHOT_VOLUME)
                             voll = Mathf.Min(voll, 1);
-                        st.PlayOneShot(impactSound.audioSources[i], voll, pitch * output.pitch);
+                        st.PlayOneShot(impactSound.audioSources[i], voll, pitch * output.pitchScaler);
                     }
 
-                    DoParticles(collision, outputs, ENTER_DT);
+                    DoParticles(collision, outputs, approximateCollisionDuration); //COLLISION_ENTER_DT
                 }
             }
 
@@ -314,11 +330,20 @@ namespace PrecisionSurfaceEffects
                     for (int ii = 0; ii < averageOutputs.Count; ii++)
                     {
                         var sumOutput = averageOutputs[ii];
-                        if (sumOutput.surfaceTypeID == output.surfaceTypeID)
+                        if (sumOutput.surfaceTypeID == output.surfaceTypeID && sumOutput.particlesOverride == output.particlesOverride)
                         {
-                            sumOutput.weight = invInfluence * sumOutput.weight + influence * output.weight;
-                            sumOutput.volume = invInfluence * sumOutput.volume + influence * output.volume;
-                            sumOutput.pitch = invInfluence * sumOutput.pitch + influence * output.pitch;
+                            void Lerp(ref float from, float to)
+                            {
+                                from = invInfluence * from + influence * to;
+                            }
+
+                            Lerp(ref sumOutput.weight, output.weight); 
+                            Lerp(ref sumOutput.volumeScaler, output.volumeScaler);
+                            Lerp(ref sumOutput.pitchScaler, output.pitchScaler);
+                            Lerp(ref sumOutput.particleSizeScaler, output.particleSizeScaler);
+                            Lerp(ref sumOutput.particleCountScaler, output.particleCountScaler);
+                            sumOutput.color = invInfluence * sumOutput.color + influence * output.color;
+
                             success = true;
                             break;
                         }
@@ -330,10 +355,14 @@ namespace PrecisionSurfaceEffects
                         (
                             new SurfaceOutput()
                             {
-                                surfaceTypeID = output.surfaceTypeID,
                                 weight = output.weight * influence,
-                                volume = output.volume * influence,
-                                pitch = output.pitch * influence,
+
+                                surfaceTypeID = output.surfaceTypeID,
+                                volumeScaler = output.volumeScaler,
+                                pitchScaler = output.pitchScaler,
+                                particleSizeScaler = output.particleSizeScaler,
+                                particleCountScaler = output.particleCountScaler,
+                                color = output.color,
                             }
                         );
                     }
@@ -437,11 +466,11 @@ namespace PrecisionSurfaceEffects
 
 #if UNITY_EDITOR
                 var st = soundSet.surfaceTypeSounds[output.surfaceTypeID];
-                currentFrictionDebug = currentFrictionDebug + st.name + " V: " + output.weight + " P: " + output.pitch + "\n";
+                currentFrictionDebug = currentFrictionDebug + st.name + " V: " + output.weight + " P: " + output.pitchScaler + "\n";
 #endif
 
-                var vm = totalVolumeMultiplier * output.volume;
-                var pm = totalPitchMultiplier * output.pitch;
+                var vm = totalVolumeMultiplier * output.volumeScaler;
+                var pm = totalPitchMultiplier * output.pitchScaler;
                 source.Update(frictionSound, vm, pm, forceSum * output.weight, speed);
             }
 

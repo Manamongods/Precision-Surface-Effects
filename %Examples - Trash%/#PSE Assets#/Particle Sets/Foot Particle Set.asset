@@ -26,5 +26,5 @@ MonoBehaviour:
   - name: Hollow Metal
     particles: {fileID: 0}
   - name: Muddy
-    particles: {fileID: 6917217161448239402, guid: 7b616163bab6af94290e1548cde390db,
+    particles: {fileID: 8990229482467424882, guid: 45d13dc9b6a147a4ea75aae97028a626,
       type: 3}

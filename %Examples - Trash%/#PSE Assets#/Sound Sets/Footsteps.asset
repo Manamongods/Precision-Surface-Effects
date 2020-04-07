@@ -24,7 +24,7 @@ MonoBehaviour:
       volumeMultiplier: 1
       pitchMultiplier: 1
       probabilityWeight: 1
-    loopSound:
+    frictionSound:
       clip: {fileID: 0}
       volumeMultiplier: 1
       pitchMultiplier: 1
@@ -38,7 +38,7 @@ MonoBehaviour:
       volumeMultiplier: 1
       pitchMultiplier: 1
       probabilityWeight: 1
-    loopSound:
+    frictionSound:
       clip: {fileID: 0}
       volumeMultiplier: 1
       pitchMultiplier: 1
@@ -52,12 +52,12 @@ MonoBehaviour:
       volumeMultiplier: 1
       pitchMultiplier: 1
       probabilityWeight: 1
-    loopSound:
+    frictionSound:
       clip: {fileID: 0}
       volumeMultiplier: 1
       pitchMultiplier: 1
   - name: Wood
-    volume: 1
+    volume: 2
     volumeVariation: 0.2
     pitch: 1
     pitchVariation: 0.2
@@ -74,7 +74,7 @@ MonoBehaviour:
       volumeMultiplier: 1
       pitchMultiplier: 1
       probabilityWeight: 1
-    loopSound:
+    frictionSound:
       clip: {fileID: 0}
       volumeMultiplier: 1
       pitchMultiplier: 1
@@ -92,7 +92,7 @@ MonoBehaviour:
       volumeMultiplier: 1
       pitchMultiplier: 1
       probabilityWeight: 1
-    loopSound:
+    frictionSound:
       clip: {fileID: 0}
       volumeMultiplier: 1
       pitchMultiplier: 1
@@ -110,7 +110,7 @@ MonoBehaviour:
       volumeMultiplier: 1
       pitchMultiplier: 1
       probabilityWeight: 1
-    loopSound:
+    frictionSound:
       clip: {fileID: 0}
       volumeMultiplier: 1
       pitchMultiplier: 1

@@ -20,8 +20,8 @@ public class SurfaceEffectsBase : MonoBehaviour
     [Space(20)]
     public SurfaceParticleSet particleSet;
     public float particleRadius = 0;
-    public float particleCountScaler = 1;
-    public float particleSizeScaler = 1;
+    public float particleCountMultiplier = 1;
+    public float particleSizeMultiplier = 1;
     public float particleDeltaTime = 0.25f; //Deltatime allows you to control how many max particles you can accept, because Time.deltaTime is irrelevant for a single shot
 
     [Space(20)]
@@ -33,8 +33,6 @@ public class SurfaceEffectsBase : MonoBehaviour
     //Methods
     public SurfaceOutputs Play(AudioSource[] audioSources, Vector3 pos, Vector3 dir, float impulse, float speed)
     {
-        Debug.Log("Play");
-
         var outputs = soundSet.data.GetRaycastSurfaceTypes(pos, dir);
         outputs.Downshift(audioSources.Length, minimumWeight);
 
@@ -42,14 +40,14 @@ public class SurfaceEffectsBase : MonoBehaviour
         {
             var output = outputs[i];
             soundSet.PlayOneShot(output, audioSources[i], volumeByImpulse * impulse, basePitch + pitchBySpeed * speed);
-        }
 
-        if (particleSet != null)
-            for (int i = 0; i < outputs.Count; i++)
+            if (particleSet != null)
             {
-                var output = outputs[i];
-                particleSet.PlayParticles(outputs, output, impulse, speed * dir, particleRadius, deltaTime: particleDeltaTime); //-speed * outputs.hitNormal
+                output.particleSizeScaler *= particleSizeMultiplier;
+                output.particleCountScaler *= particleCountMultiplier;
+                particleSet.PlayParticles(outputs, output, impulse, speed * dir, radius: particleRadius, deltaTime: particleDeltaTime); //-speed * outputs.hitNormal
             }
+        }
 
         return outputs;
     }

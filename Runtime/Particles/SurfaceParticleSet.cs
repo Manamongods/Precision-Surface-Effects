@@ -60,7 +60,15 @@ namespace PrecisionSurfaceEffects
                 var rot = Quaternion.FromToRotation(Vector3.up, outputs.hitNormal);
                 var otherVel = SurfaceParticles.GetVelocity(outputs.collider.attachedRigidbody, outputs.hitPosition);
                 var speed = (otherVel - vel).magnitude;
-                p.PlayParticles(output.color, 1, impulse, speed, rot, outputs.hitPosition, radius, outputs.hitNormal, vel, otherVel);
+                p.PlayParticles
+                (
+                    output.color, output.particleCountScaler, output.particleSizeScaler, 
+                    1, 
+                    impulse, speed, 
+                    rot, outputs.hitPosition, radius, outputs.hitNormal, 
+                    vel, otherVel,
+                    dt: deltaTime
+                );
             }
         }
 

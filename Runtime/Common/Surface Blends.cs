@@ -79,6 +79,7 @@ namespace PrecisionSurfaceEffects
                 pitch = blend.pitchMultiplier,
                 hardness = blend.hardnessMultiplier,
                 particleSize = blend.particleSizeMultiplier, //particleSpeed = particleSpeedMultiplier,
+                particleCount = blend.particleCountMultiplier,
                 color = blend.color,
                 particlesOverride = blend.particlesOverride
             };
@@ -134,7 +135,8 @@ namespace PrecisionSurfaceEffects
             public Color color;
             public SurfaceParticles particlesOverride;
 
-            public float particleSize; //public float particleSpeed;
+            public float particleSize; 
+            public float particleCount; 
         }
     }
 }
