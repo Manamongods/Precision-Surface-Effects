@@ -95,7 +95,7 @@ PrefabInstance:
     - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}
       propertyPath: scalerByForceMultiplier
-      value: 4
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}

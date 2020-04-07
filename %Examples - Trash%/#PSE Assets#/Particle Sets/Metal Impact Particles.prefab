@@ -87,6 +87,26 @@ PrefabInstance:
       propertyPath: setColor
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: scalerForceRange
+      value: 5000
+      objectReference: {fileID: 0}
+    - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: scalerByForceMultiplier
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: speedMultiplierBySpeed
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: countByImpulse
+      value: 0.01
+      objectReference: {fileID: 0}
     - target: {fileID: 7670574646986875101, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}
       propertyPath: InitialModule.startSize.minMaxState

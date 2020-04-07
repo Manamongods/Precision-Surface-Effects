@@ -398,7 +398,7 @@ MonoBehaviour:
     - {fileID: 8229951337275091168}
     minimumTypeWeight: 0.1
     volumeByForce: 0.2
-    volumeFaderBySpeedRange: {x: 0, y: 0.1}
+    volumeFaderBySpeedRange: {x: 0, y: 0.3}
     basePitch: 0.35
     pitchBySpeed: 0.05
     clipChangeSmoothTime: 0.01

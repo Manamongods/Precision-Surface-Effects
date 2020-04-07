@@ -77,7 +77,8 @@ namespace PrecisionSurfaceEffects
         private static readonly ParticleSystem.Particle[] destinationParticles = new ParticleSystem.Particle[10000];
 
         private float startSpeedMultiplier;
-        private float startSizeCM;
+        private float startSizeM;
+        private Vector3 startSizeM3D;
 
         private Color c;
         private Color c0, c1;
@@ -205,9 +206,14 @@ namespace PrecisionSurfaceEffects
             float force = impulse / dt;
             float scale = baseScaler + scalerByForceMultiplier * scalerByForce.Evaluate(force / scalerForceRange);// Mathf.Min(baseScaler + scalerByImpulse * impulse, maxScale);
             scale *= particleSizeScaler;
-            var ss = main.startSize;
-            ss.curveMultiplier = scale * startSizeCM;
-            main.startSize = ss;
+            if(main.startSize3D)
+            {
+                main.startSizeXMultiplier = startSizeM3D.x * scale;
+                main.startSizeYMultiplier = startSizeM3D.y * scale;
+                main.startSizeZMultiplier = startSizeM3D.z * scale;
+            }
+            else
+                main.startSizeMultiplier = startSizeM * scale;
 
 
             float countMult = particleCountScaler * Mathf.Clamp01(Mathf.InverseLerp(countBySpeedRange.x, countBySpeedRange.y, speed));
@@ -279,8 +285,12 @@ namespace PrecisionSurfaceEffects
 
         private void Start()
         {
-            startSizeCM = particleSystem.main.startSize.curveMultiplier; // startSizeMultiplier;
-            startSpeedMultiplier = particleSystem.main.startSpeedMultiplier;
+            var main = particleSystem.main;
+            if(main.startSize3D)
+                startSizeM3D = new Vector3(main.startSizeXMultiplier, main.startSizeYMultiplier, main.startSizeZMultiplier);
+            else
+                startSizeM = main.startSizeMultiplier;
+            startSpeedMultiplier = main.startSpeedMultiplier;
 
             transform.SetParent(null);
             transform.position = Vector3.zero;
