@@ -35,16 +35,17 @@ namespace PrecisionSurfaceEffects
     [System.Serializable]
     public class STSettings
     {
+        public float hardness = 1;
         public Color defaultColor = Color.white;
         public float volumeMultiplier = 1;
         public float pitchMultiplier = 1;
-        public float hardnessMultiplier = 1;
     }
 
     [CreateAssetMenu(menuName = "Precision Surface Effects/Surface Type")]
     public class SurfaceType : ScriptableObject
     {
-        public float hardness = 1;
+        [UnityEngine.Serialization.FormerlySerializedAs("hardness")]
+        public float hardnessMultiplier = 1;
         public Color defaultColorTint = Color.white;
 
         [Space(30)]

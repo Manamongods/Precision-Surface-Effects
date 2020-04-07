@@ -25,7 +25,7 @@ namespace PrecisionSurfaceEffects
         public class Type
         {
             public Collider[] colliders;
-            public CollisionSounds collisionSounds;
+            public CollisionEffects collisionEffects;
         }
 
 
@@ -42,7 +42,7 @@ namespace PrecisionSurfaceEffects
                 {
                     if (t.colliders[ii] == thisCollider)
                     {
-                        t.collisionSounds.OnCollisionEnter(collision);
+                        t.collisionEffects.OnCollisionEnter(collision);
 
                         return;
                     }
@@ -62,7 +62,7 @@ namespace PrecisionSurfaceEffects
                 {
                     if (t.colliders[ii] == thisCollider)
                     {
-                        t.collisionSounds.OnCollisionStay(collision);
+                        t.collisionEffects.OnCollisionStay(collision);
 
                         return;
                     }

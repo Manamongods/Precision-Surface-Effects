@@ -42,10 +42,23 @@ namespace PrecisionSurfaceEffects
 
 
         //Spherecast
-        public SurfaceOutputs GetSphereCastSurfaceTypes(Vector3 worldPosition, Vector3 downDirection, float radius, float maxDistance = Mathf.Infinity, int layerMask = -1, bool shareList = false)
+        private void PrepareOutputs(Vector3 worldPosition)
         {
             outputs.Clear();
             outputs.hardness = 0;
+            outputs.collider = null;
+            outputs.hitPosition = worldPosition;
+            outputs.hitNormal = Vector3.zero;
+        }
+        private void FillOutputs(RaycastHit rh)
+        {
+            outputs.collider = rh.collider;
+            outputs.hitPosition = rh.point;
+            outputs.hitNormal = rh.normal;
+        }
+        public SurfaceOutputs GetSphereCastSurfaceTypes(Vector3 worldPosition, Vector3 downDirection, float radius, float maxDistance = Mathf.Infinity, int layerMask = -1, bool shareList = false)
+        {
+            PrepareOutputs(worldPosition);
 
             if (Physics.SphereCast(worldPosition, radius, downDirection, out RaycastHit rh, maxDistance, layerMask, QueryTriggerInteraction.Ignore))
             {
@@ -54,6 +67,7 @@ namespace PrecisionSurfaceEffects
                 Debug.DrawLine(worldPosition, bottomCenter, gizmoColor);
                 Debug.DrawLine(bottomCenter, rh.point, gizmoColor);
 #endif
+                FillOutputs(rh);
 
                 AddSurfaceTypes(rh.collider, rh.point, triangleIndex: rh.triangleIndex);
             }
@@ -62,14 +76,14 @@ namespace PrecisionSurfaceEffects
         }
         public SurfaceOutputs GetRaycastSurfaceTypes(Vector3 worldPosition, Vector3 downDirection, float maxDistance = Mathf.Infinity, int layerMask = -1, bool shareList = false)
         {
-            outputs.Clear();
-            outputs.hardness = 0;
+            PrepareOutputs(worldPosition);
 
             if (Physics.Raycast(worldPosition, downDirection, out RaycastHit rh, maxDistance, layerMask, QueryTriggerInteraction.Ignore))
             {
 #if UNITY_EDITOR
                 Debug.DrawLine(worldPosition, rh.point, gizmoColor);
 #endif
+                FillOutputs(rh);
 
                 AddSurfaceTypes(rh.collider, rh.point, triangleIndex: rh.triangleIndex);
             }
@@ -78,10 +92,14 @@ namespace PrecisionSurfaceEffects
         }
         public SurfaceOutputs GetCollisionSurfaceTypes(Collision collision, bool shareList = false)
         {
-            outputs.Clear();
-            outputs.hardness = 0;
+            var con = collision.GetContact(0);
+            var pos = con.point;
 
-            AddSurfaceTypes(collision.collider, collision.GetContact(0).point);
+            PrepareOutputs(pos);
+            outputs.collider = collision.collider;
+            outputs.hitNormal = con.normal; //?
+
+            AddSurfaceTypes(collision.collider, pos);
 
             return GetList(shareList);
         }
@@ -110,7 +128,15 @@ namespace PrecisionSurfaceEffects
             if (share)
                 return outputs;
             else
-                return new SurfaceOutputs(outputs) { hardness = outputs.hardness };
+            {
+                return new SurfaceOutputs(outputs)
+                {
+                    hardness = outputs.hardness,
+                    collider = outputs.collider,
+                    hitNormal = outputs.hitNormal,
+                    hitPosition = outputs.hitPosition,
+                };
+            }
         }
 
         internal void AddSurfaceTypes(Collider collider, Vector3 worldPosition, int triangleIndex = -1)
@@ -144,10 +170,10 @@ namespace PrecisionSurfaceEffects
                     if (terrainAlbedoBlendLookup.TryGetValue(terrainTexture, out SurfaceBlends.NormalizedBlends result))
                     {
                         for (int blendID = 0; blendID < result.result.Count; blendID++)
-                            AddBlend(result.result[blendID], null, null, true, alpha, ref totalWeight);
+                            AddBlend(result.result[blendID], true, alpha, ref totalWeight);
                     }
                     else
-                        AddBlend(defaultBlend, null, null, true, alpha, ref totalWeight);
+                        AddBlend(defaultBlend, true, alpha, ref totalWeight);
                 }
             }
 
@@ -159,18 +185,6 @@ namespace PrecisionSurfaceEffects
             //Markers
             var marker = collider.GetComponent<Marker>();
             bool anyMarkers = marker != null;
-            
-            //Overrides
-            Color? colorOverride = null;
-            SurfaceParticles particlesOverride = null;
-            if (anyMarkers)
-            {
-                if (marker.GetMarker(out SurfaceColorMarker scm))
-                    colorOverride = scm.baseColor;
-
-                if (marker.GetMarker(out SurfaceParticlesMarker spm))
-                    particlesOverride = spm.particles;
-            }
 
             //MeshRenderers
             var mr = collider.GetComponent<MeshRenderer>();
@@ -179,22 +193,12 @@ namespace PrecisionSurfaceEffects
                 //The collider is a non-convex meshCollider. We can find the triangle index.
                 if (triangleIndex != -1 && collider is MeshCollider mc && !mc.convex)
                 {
-                    var mesh = collider.GetComponent<MeshFilter>().sharedMesh;
+                    var mesh = collider.GetComponent<MeshFilter>().sharedMesh; //could use the marker to find this faster
                     int subMeshID = Utility.GetSubmesh(mesh, triangleIndex);
 
                     SurfaceBlends.NormalizedBlends blendResults = null;
                     if (anyMarkers)
                     {
-                        //Color Overrides
-                        if (marker.GetMarker(out SurfaceColorOverridesMarker scom))
-                            if(scom.GetOverride(subMeshID, out ColorOverride o))
-                                colorOverride = o.baseColor;
-
-                        //Particles Overrides
-                        if (marker.GetMarker(out SurfaceParticlesOverridesMarker spom))
-                            if (spom.GetOverride(subMeshID, out ParticlesOverride o))
-                                particlesOverride = o.particles;
-
                         //Blend Map Overrides
                         if (marker.GetMarker(out SurfaceBlendMapMarker blendMap))
                         {
@@ -224,7 +228,7 @@ namespace PrecisionSurfaceEffects
 
                     if (blendResults != null)
                     {
-                        AddSingleBlends(blendResults, colorOverride, particlesOverride);
+                        AddSingleBlends(blendResults); 
                         return;
                     }
                     else
@@ -235,7 +239,7 @@ namespace PrecisionSurfaceEffects
 
                         //Adds based on keywords
                         if (TryGetStringSurfaceType(materials[subMeshID].name, out int stID, out SurfaceType st, out SurfaceType.SubType subType))
-                            AddSingleOutput(stID, st, subType, colorOverride, particlesOverride);
+                            AddSingleOutput(stID, st, subType);
                         return;
                     }
                 }
@@ -248,13 +252,13 @@ namespace PrecisionSurfaceEffects
                 {
                     //Single Type Marker
                     if (TryGetStringSurfaceType(typeMarker.reference, out int stID, out SurfaceType st, out SurfaceType.SubType subType))
-                        AddSingleOutput(stID, st, subType, colorOverride, particlesOverride);
+                        AddSingleOutput(stID, st, subType);
                     return;
                 }
                 else if (marker.GetMarker(out SurfaceBlendMarker blendMarker))
                 {
                     //Single Blend Marker
-                    AddSingleBlends(blendMarker.blends.result, colorOverride, particlesOverride);
+                    AddSingleBlends(blendMarker.blends.result);
                     return;
                 }
             }
@@ -267,18 +271,18 @@ namespace PrecisionSurfaceEffects
                 //Blend Lookup
                 if (materialBlendLookup.TryGetValue(mat, out SurfaceBlends.NormalizedBlends value))
                 {
-                    AddSingleBlends(value, colorOverride, particlesOverride);
+                    AddSingleBlends(value);
                     return;
                 }
 
                 //Name
                 if (TryGetStringSurfaceType(mat.name, out int stID, out SurfaceType st, out SurfaceType.SubType subType))
-                    AddSingleOutput(stID, st, subType, colorOverride, particlesOverride);
+                    AddSingleOutput(stID, st, subType);
                 return;
             }
         }
 
-        private void AddSingleBlends(SurfaceBlends.NormalizedBlends blendResults, Color? colorOverride, SurfaceParticles particlesOverride)
+        private void AddSingleBlends(SurfaceBlends.NormalizedBlends blendResults)
         {
             float totalWeight = 0;
 
@@ -286,31 +290,29 @@ namespace PrecisionSurfaceEffects
             {
                 var blend = blendResults.result[i];
 
-                AddBlend(blend, colorOverride, particlesOverride, false, 1, ref totalWeight);
+                AddBlend(blend, false, 1, ref totalWeight);
             }
 
             outputs.SortDescending();
             NormalizeOutputs(totalWeight);
         }
-        internal void AddBlend(SurfaceBlends.NormalizedBlend blendResult, Color? colorOverride, SurfaceParticles particlesOverride, bool terrain, float weightMultiplier, ref float totalWeight)
+        internal void AddBlend(SurfaceBlends.NormalizedBlend blendResult, bool terrain, float weightMultiplier, ref float totalWeight)
         {
             if (!terrain)
                 blendResult = Settingsify(blendResult);
-            blendResult.baseColor = Override(blendResult.baseColor, colorOverride);
 
             float weight = blendResult.normalizedWeight * weightMultiplier;
-            Color weightedColor = weight * blendResult.baseColor * blendResult.tintColor;
 
             bool success = false;
             for (int outputID = 0; outputID < outputs.Count; outputID++)
             {
                 var output = outputs[outputID];
-                if (output.surfaceTypeID == blendResult.surfaceTypeID && output.particlesOverride == particlesOverride)
+                if (output.surfaceTypeID == blendResult.surfaceTypeID && output.particlesOverride == blendResult.particlesOverride)
                 {
                     output.weight += weight;
                     output.volume += weight * blendResult.volume;
                     output.pitch += weight * blendResult.pitch;
-                    output.color += weightedColor;
+                    output.color += weight * blendResult.color;
                     output.particleSize += weight * blendResult.particleSize; //output.particleSpeed += weight * blendResult.particleSpeed;
 
                     outputs[outputID] = output;
@@ -329,20 +331,20 @@ namespace PrecisionSurfaceEffects
                         weight = weight,
                         volume = weight * blendResult.volume,
                         pitch = weight * blendResult.pitch,
-                        color = weightedColor,
+                        color = weight * blendResult.color,
                         particleSize = weight * blendResult.particleSize,
-                        particlesOverride = particlesOverride,
+                        particlesOverride = blendResult.particlesOverride,
                     }
                 );
             }
 
             totalWeight += weight;
             var st = surfaceTypes[blendResult.surfaceTypeID];
-            outputs.hardness += weight * blendResult.hardness * st.hardness;
+            outputs.hardness += weight * blendResult.hardness * st.hardnessMultiplier;
         }
-        private void AddSingleOutput(int stID, SurfaceType st, SurfaceType.SubType subType, Color? colorOverride, SurfaceParticles particlesOverride)
+        private void AddSingleOutput(int stID, SurfaceType st, SurfaceType.SubType subType)
         {
-            outputs.hardness = st.hardness;
+            outputs.hardness = st.hardnessMultiplier;
             outputs.Add
             (
                 new SurfaceOutput()
@@ -351,16 +353,10 @@ namespace PrecisionSurfaceEffects
                     weight = 1,
                     volume = subType.settings.volumeMultiplier,
                     pitch = subType.settings.pitchMultiplier,
-                    particlesOverride = particlesOverride,
-                    color = Override(subType.settings.defaultColor, colorOverride),
+                    particlesOverride = null,
+                    color = st.defaultColorTint * subType.settings.defaultColor,
                 }
             );
-        }
-        private Color Override(Color c, Color? overrideC)
-        {
-            if (overrideC.HasValue)
-                return overrideC.Value;
-            return c;
         }
 
         private SurfaceBlends.NormalizedBlend Settingsify(SurfaceBlends.NormalizedBlend blendResult)
@@ -382,8 +378,7 @@ namespace PrecisionSurfaceEffects
 
             blendResult.pitch *= settings.pitchMultiplier;
             blendResult.volume *= settings.volumeMultiplier;
-            blendResult.hardness *= settings.hardnessMultiplier;
-            blendResult.baseColor = settings.defaultColor * defaultTint; //It can be overrided though
+            blendResult.hardness *= settings.hardness;
 
             return blendResult;
         }

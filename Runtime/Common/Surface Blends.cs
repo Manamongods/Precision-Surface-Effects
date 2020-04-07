@@ -35,17 +35,6 @@ namespace PrecisionSurfaceEffects
         //Fields
         public string groupName; //header
 
-        [SeperatorLine]
-        public float hardnessMultiplier = 1;
-
-        [Header("Sound")]
-        public float volumeMultiplier = 1;
-        public float pitchMultiplier = 1;
-
-        [Header("Particles")]
-        public float particleSizeMultiplier = 1; //public float particleSpeedMultiplier = 1;
-        public float particleCountMultiplier = 1;
-
         [Tooltip("These are used for multiple surface type weights")]
         [Header("Blends")]
         [Space(10)]
@@ -74,22 +63,25 @@ namespace PrecisionSurfaceEffects
                 blend.normalizedWeight = weight;
 #endif
 
-                var br = new NormalizedBlend()
-                {
-                    reference = blend.reference,
-
-                    normalizedWeight = weight,
-                    volume = volumeMultiplier,
-                    pitch = pitchMultiplier,
-                    hardness = hardnessMultiplier,
-                    particleSize = particleSizeMultiplier, //particleSpeed = particleSpeedMultiplier,
-                    tintColor = blend.tintColor,
-                };
-
-                result.result.Add(br);
+                result.result.Add(GetNormalized(blend, weight));
             }
 
             result.result.Sort((x, y) => y.normalizedWeight.CompareTo(x.normalizedWeight)); //Descending
+        }
+        internal static NormalizedBlend GetNormalized(Blend blend, float weight)
+        {
+            return new NormalizedBlend()
+            {
+                normalizedWeight = weight,
+
+                reference = blend.reference,
+                volume = blend.volumeMultiplier,
+                pitch = blend.pitchMultiplier,
+                hardness = blend.hardnessMultiplier,
+                particleSize = blend.particleSizeMultiplier, //particleSpeed = particleSpeedMultiplier,
+                color = blend.color,
+                particlesOverride = blend.particlesOverride
+            };
         }
 
 
@@ -101,7 +93,19 @@ namespace PrecisionSurfaceEffects
             public string reference = "Grass";
             [Min(0)]
             public float weight = 1;
-            public Color tintColor = Color.white; //if there is a marker override
+
+            [SeperatorLine]
+            public float hardnessMultiplier = 1;
+
+            [Header("Sound")]
+            public float volumeMultiplier = 1;
+            public float pitchMultiplier = 1;
+
+            [Header("Particles")]
+            public float particleSizeMultiplier = 1; //public float particleSpeedMultiplier = 1;
+            public float particleCountMultiplier = 1;
+            public Color color = Color.white;
+            public SurfaceParticles particlesOverride;
 
 #if UNITY_EDITOR
             [SerializeField]
@@ -127,8 +131,9 @@ namespace PrecisionSurfaceEffects
             public float volume;
             public float pitch;
 
-            public Color tintColor; //This is per blend
-            public Color baseColor; //This is per keyword/color override markers (individual ones or one). It will go for the specific and then the total.
+            public Color color;
+            public SurfaceParticles particlesOverride;
+
             public float particleSize; //public float particleSpeed;
         }
     }

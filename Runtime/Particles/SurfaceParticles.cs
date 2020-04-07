@@ -35,6 +35,11 @@ namespace PrecisionSurfaceEffects
         [Header("Quality")]
         public bool inheritVelocities = true;
 
+        [Header("Inherit Velocity")]
+        [Range(0, 1)]
+        public float inheritAmount = 1;
+        public Vector2 inheritSpreadRange = new Vector2(0, 1);
+
         [Header("Color")]
         public bool setColor = true; //this isn't the case for sparks or cartooney white puffs
 
@@ -69,6 +74,11 @@ namespace PrecisionSurfaceEffects
         private float startSpeedMultiplier;
         private float startSizeCM;
 
+        private Color c;
+        private Color c0, c1;
+        private ParticleSystemGradientMode colorMode;
+        private ParticleSystem.MinMaxGradient sc;
+
 
 
         //Methods
@@ -78,18 +88,21 @@ namespace PrecisionSurfaceEffects
                 return this;
 
             if (instance == null)
+            {
                 instance = Instantiate(this);
+                instance.gameObject.hideFlags = HideFlags.DontSave;
+            }
 
             return instance;
         }
 
-        private static Vector3 Vel(Rigidbody r, Vector3 point)
+        public static Vector3 GetVelocity(Rigidbody r, Vector3 point)
         {
             if (r == null)
                 return Vector3.zero;
             return r.GetPointVelocity(point);
         }
-        public static void GetData(Collision c, out float impulse, out float speed, out Vector3 rot, out Vector3 center, out float radius, out Vector3 vel0, out Vector3 vel1)
+        public static void GetData(Collision c, out float impulse, out float speed, out Quaternion rot, out Vector3 center, out float radius, out Vector3 vel0, out Vector3 vel1)
         {
             impulse = c.impulse.magnitude; //speed = c.relativeVelocity.magnitude;
 
@@ -129,23 +142,27 @@ namespace PrecisionSurfaceEffects
                 radius *= invCount;
             }
 
-            rot = Quaternion.FromToRotation(Vector3.up, normal).eulerAngles;
+            rot = Quaternion.FromToRotation(Vector3.up, normal);
 
-            vel0 = Vel(c.GetContact(0).thisCollider.attachedRigidbody, center);
-            vel1 = Vel(c.rigidbody, center);
+            vel0 = GetVelocity(c.GetContact(0).thisCollider.attachedRigidbody, center);
+            vel1 = GetVelocity(c.rigidbody, center);
 
             speed = (vel0 - vel1).magnitude;
         }
 
-        public void PlayParticles(Collision c, float weight, float impulse, float speed, Vector3 rot, Vector3 center, float radius, Vector3 vel0, Vector3 vel1)
+        public void PlayParticles(Color color, float weight, float impulse, float speed, Quaternion rot, Vector3 center, float radius, Vector3 vel0, Vector3 vel1)
         {
             if (inheritVelocities && temporarySystem == null)
             {
                 var inst = Instantiate(this);
                 temporarySystem = inst.GetComponent<ParticleSystem>();
                 Destroy(inst);
+
                 temporarySystem.transform.SetParent(transform);
                 temporarySystem.gameObject.name = "Temporary Buffer System";
+                var em2 = temporarySystem.emission;
+                em2.enabled = false;
+                temporarySystem.gameObject.hideFlags = HideFlags.DontSave;
             }
 
             //TODO: what is the cost of Clear()? or to just set particles, can I just use one particlesystem efficiently?
@@ -163,7 +180,7 @@ namespace PrecisionSurfaceEffects
             var shape = system.shape;
             shape.position = center;
             shape.radius = radius;
-            shape.rotation = rot;
+            shape.rotation = rot.eulerAngles;
 
 
             float scale =  Mathf.Min(baseScaler + scalerByImpulse * impulse, maxScale);
@@ -179,6 +196,21 @@ namespace PrecisionSurfaceEffects
                 count++;
 
 
+            if(setColor)
+            {
+                if (colorMode == ParticleSystemGradientMode.Color)
+                {
+                    sc.color = this.c * color;
+                }
+                else if (colorMode == ParticleSystemGradientMode.TwoColors)
+                {
+                    sc.colorMin = c0 * color;
+                    sc.colorMax = c1 * color;
+                }
+
+                main.startColor = sc;
+            }
+
             system.Emit(count);
 
             if (inheritVelocities)
@@ -192,8 +224,8 @@ namespace PrecisionSurfaceEffects
                 {
                     var particle = sourceParticles[i];
 
-                    float rand = Random.value;
-                    particle.velocity += vel0 * (1 - rand) + vel1 * rand;
+                    float rand = Random.Range(inheritSpreadRange.x, inheritSpreadRange.y);
+                    particle.velocity += inheritAmount * (vel0 * (1 - rand) + vel1 * rand);
 
                     destinationParticles[dstCount] = particle;
                     dstCount++;
@@ -202,6 +234,9 @@ namespace PrecisionSurfaceEffects
                 particleSystem.SetParticles(destinationParticles, dstCount);
                 temporarySystem.Clear(); // SetParticles(destinationParticles, 0);
             }
+
+            if(!particleSystem.isPlaying)
+                particleSystem.Play();
         }
 
 
@@ -212,6 +247,9 @@ namespace PrecisionSurfaceEffects
         {
             if (!particleSystem)
                 particleSystem = GetComponent<ParticleSystem>();
+
+            inheritSpreadRange.x = Mathf.Clamp01(inheritSpreadRange.x);
+            inheritSpreadRange.y = Mathf.Clamp01(inheritSpreadRange.y);
         }
 #endif
 
@@ -227,6 +265,29 @@ namespace PrecisionSurfaceEffects
 
             var e = particleSystem.emission;
             e.enabled = false;
+
+            //Start Color
+            var m = particleSystem.main;
+            sc = m.startColor;
+            colorMode = sc.mode;
+            if (colorMode == ParticleSystemGradientMode.Color)
+            {
+                c = sc.color;
+            }
+            else if (colorMode == ParticleSystemGradientMode.TwoColors)
+            {
+                c0 = sc.colorMin;
+                c1 = sc.colorMax;
+            }
+            //add others?
         }
     }
 }
+
+/*
+ * #if UNITY_EDITOR
+                if (!Application.isPlaying)
+                    DestroyImmediate(inst);
+                else
+#endif
+*/

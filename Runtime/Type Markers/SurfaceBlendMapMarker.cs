@@ -73,7 +73,7 @@ namespace PrecisionSurfaceEffects
             {
                 var blend = blendResults.result[i];
 
-                sd.AddBlend(blend, null, null, false, weightMultiplier, ref totalWeight);
+                sd.AddBlend(blend, false, weightMultiplier, ref totalWeight);
             }
         }
 

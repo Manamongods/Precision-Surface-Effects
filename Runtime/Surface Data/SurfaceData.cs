@@ -139,7 +139,7 @@ namespace PrecisionSurfaceEffects
                 hardness = 1,
                 volume = 1,
                 pitch = 1,
-                tintColor = Color.white,
+                color = surfaceTypes[defaultSurfaceType].defaultColorTint * defaultSurfaceTypeSettings.defaultColor,
                 particleSize = 1,
             };
             defaultBlend = Settingsify(defaultBlend);

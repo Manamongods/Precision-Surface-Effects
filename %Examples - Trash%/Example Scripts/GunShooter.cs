@@ -24,6 +24,13 @@ public class GunShooter : MonoBehaviour
 {
     //Fields
     public SurfaceSoundSet soundSet;
+    public SurfaceParticleSet particleSet;
+
+    public float speed = 100;
+    public float impulse = 100;
+    public float radius = 0;
+    public float countScaler = 1;
+    public float sizeScaler = 1;
 
     public AudioSource[] audioSources;
     public float minimumWeight = 0.1f;
@@ -40,7 +47,11 @@ public class GunShooter : MonoBehaviour
 
         for (int i = 0; i < outputs.Count; i++)
         {
-            soundSet.PlayOneShot(outputs[i], audioSources[i], volumeMultiplier, pitchMultiplier);
+            var output = outputs[i];
+
+            soundSet.PlayOneShot(output, audioSources[i], volumeMultiplier, pitchMultiplier);
+
+            particleSet.PlayParticles(outputs, output, impulse, speed, speed * dir, radius);
         }
     }
 

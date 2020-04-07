@@ -10,6 +10,7 @@ public class BallShooter : MonoBehaviour
     public float speed;
     public Transform axes;
     public int maxCount = 2;
+    public float randomAngular = 100;
 
     private List<GameObject> instances = new List<GameObject>();
 
@@ -25,7 +26,9 @@ public class BallShooter : MonoBehaviour
 
             var g = Instantiate(prefab, axes);
             g.transform.SetParent(null, true);
-            g.GetComponent<Rigidbody>().velocity = axes.forward * speed;
+            var rb = g.GetComponent<Rigidbody>();
+            rb.velocity = axes.forward * speed;
+            rb.angularVelocity = Random.onUnitSphere * Random.value * randomAngular;
 
             instances.Add(g);
         }

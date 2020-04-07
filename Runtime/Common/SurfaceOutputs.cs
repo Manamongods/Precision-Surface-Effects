@@ -43,6 +43,11 @@ namespace PrecisionSurfaceEffects
     {
         //Fields
         public float hardness;
+
+        public Collider collider;
+        public Vector3 hitPosition;
+        public Vector3 hitNormal;
+
         private static readonly SOSorter soSorter = new SOSorter();
 
 

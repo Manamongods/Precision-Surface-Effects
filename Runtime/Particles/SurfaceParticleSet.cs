@@ -39,6 +39,31 @@ namespace PrecisionSurfaceEffects
         public SurfaceTypeParticles[] surfaceTypeParticles = new SurfaceTypeParticles[] { new SurfaceTypeParticles() };
 
 
+        //Methods
+        public void PlayParticles(SurfaceOutputs outputs, SurfaceOutput output, float impulse, float speed, Vector3 vel, float radius = 0)
+        {
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+                return;
+#endif
+
+            SurfaceParticles p;
+            if (output.particlesOverride != null)
+                p = output.particlesOverride;
+            else
+                p = surfaceTypeParticles[output.surfaceTypeID].particles;
+
+            p = p.GetInstance();
+
+            if(p != null)
+            {
+                var rot = Quaternion.FromToRotation(Vector3.up, outputs.hitNormal);
+                var otherVel = SurfaceParticles.GetVelocity(outputs.collider.attachedRigidbody, outputs.hitPosition);
+                p.PlayParticles(output.color, 1, impulse, speed, rot, outputs.hitPosition, radius, vel, otherVel);
+            }
+        }
+
+
         //Lifecycle
 #if UNITY_EDITOR
         private void OnValidate()
