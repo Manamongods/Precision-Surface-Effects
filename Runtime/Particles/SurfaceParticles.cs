@@ -77,7 +77,7 @@ namespace PrecisionSurfaceEffects
         private static readonly ParticleSystem.Particle[] destinationParticles = new ParticleSystem.Particle[10000];
 
         private float startSpeedMultiplier;
-        private float startSizeM;
+        private float startSizeCM;
 
         private Color c;
         private Color c0, c1;
@@ -205,7 +205,9 @@ namespace PrecisionSurfaceEffects
             float force = impulse / dt;
             float scale = baseScaler + scalerByForceMultiplier * scalerByForce.Evaluate(force / scalerForceRange);// Mathf.Min(baseScaler + scalerByImpulse * impulse, maxScale);
             scale *= particleSizeScaler;
-            main.startSizeMultiplier = scale * startSizeM;
+            var ss = main.startSize;
+            ss.curveMultiplier = scale * startSizeCM;
+            main.startSize = ss;
 
 
             float countMult = particleCountScaler * Mathf.Clamp01(Mathf.InverseLerp(countBySpeedRange.x, countBySpeedRange.y, speed));
@@ -277,7 +279,7 @@ namespace PrecisionSurfaceEffects
 
         private void Start()
         {
-            startSizeM = particleSystem.main.startSizeMultiplier;
+            startSizeCM = particleSystem.main.startSize.curveMultiplier; // startSizeMultiplier;
             startSpeedMultiplier = particleSystem.main.startSpeedMultiplier;
 
             transform.SetParent(null);
@@ -311,9 +313,7 @@ namespace PrecisionSurfaceEffects
  *
             // startSize.curveMultiplier;
  
-    //var ss = main.startSize;
-            //ss.curveMultiplier = scale * startSizeCM;
-            //main.startSize = ss;
+    
         private static readonly List<SurfaceParticles> checks = new List<SurfaceParticles>();
  *             checks.Add(this);
             while(checks.Count > 0)

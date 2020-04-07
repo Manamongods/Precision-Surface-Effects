@@ -370,7 +370,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!114 &7768311540337565091
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -386,11 +386,11 @@ MonoBehaviour:
   priority: 0
   currentFrictionDebug: (This only works in playmode)
   findMeshColliderSubmesh: 1
+  soundSet: {fileID: 11400000, guid: 80344998cfdc62548be42ca931b98cce, type: 2}
   speedMultiplier: 1
   forceMultiplier: 0.01
-  totalVolumeMultiplier: 0.3
+  totalVolumeMultiplier: 1
   totalPitchMultiplier: 1
-  soundSet: {fileID: 11400000, guid: 80344998cfdc62548be42ca931b98cce, type: 2}
   doFrictionSounds: 1
   frictionSound:
     audioSources:
@@ -415,17 +415,19 @@ MonoBehaviour:
     volumeFaderBySpeedRange: {x: 0.01, y: 0.1}
     basePitch: 0.5
     pitchBySpeed: -0.0025
-  impactCooldown: 0.01
-  impulseChangeToImpact: 0.25
+  impactCooldown: 0.05
+  impulseChangeRateToImpact: 10
   vibrationSound:
     audioSource: {fileID: 0}
     volumeByForce: 0.1
     basePitch: 0.5
     pitchBySpeed: 0.035
+  selfHardness: 1
   particleSet: {fileID: 11400000, guid: ba419fd3c5da39648b19eb10694ec9c9, type: 2}
-  particleBySpeedRange: {x: 0.01, y: 0.1}
   particleCountMultiplier: 1
   particleSizeMultiplier: 1
+  minimumParticleShapeRadius: 0
+  frictionCountMultiplier: 1
 --- !u!1 &7768311541134257655
 GameObject:
   m_ObjectHideFlags: 0

@@ -76,7 +76,7 @@ namespace PrecisionSurfaceEffects
         [Space(15)]
         public Sound impactSound = new Sound();
         public float impactCooldown = 0.1f; //public FrictionTypeChangeImpact frictionTypeChangeImpact = new FrictionTypeChangeImpact();
-        public float impulseChangeToImpact = 100;
+        public float impulseChangeRateToImpact = 10;
 
         [Header("Vibration Sound")]
         [Space(15)]
@@ -85,11 +85,12 @@ namespace PrecisionSurfaceEffects
         [Header("Particles")]
         [Space(30)]
         public float selfHardness = 1;
-        public SurfaceParticleSet particleSet;
-        public Vector2 particleBySpeedRange = new Vector2(0.01f, 0.1f);
+        public SurfaceParticleSet particleSet; //public Vector2 particleBySpeedRange = new Vector2(0.01f, 0.1f);
         public float particleCountMultiplier = 1;
         [UnityEngine.Serialization.FormerlySerializedAs("particleScaler ")]
         public float particleSizeMultiplier = 1;
+        public float minimumParticleShapeRadius = 0;
+        public float frictionCountMultiplier = 1; //Essentially how destructive friction is, how rough the surface is
 
         private float impactCooldownT;
         private readonly SurfaceOutputs averageOutputs = new SurfaceOutputs(); // List<CollisionSound> collisionSounds = new List<CollisionSound>();
@@ -192,7 +193,7 @@ namespace PrecisionSurfaceEffects
                         o.color, o.particleCountScaler * particleCountMultiplier, o.particleSizeScaler * particleSizeMultiplier,
                         o.weight,
                         impulse, speed,
-                        rot, center, radius, outputs.hitNormal,
+                        rot, center, radius + minimumParticleShapeRadius, outputs.hitNormal,
                         vel0, vel1,
                         dt
                     );
@@ -281,8 +282,18 @@ namespace PrecisionSurfaceEffects
                 return;
 
             var imp = collision.impulse;
-            var impMag = imp.magnitude;
+            var impMag = forceMultiplier * imp.magnitude;
             var normImp = imp.normalized;
+
+            if ((impMag - previousImpulse) / Time.deltaTime >= impulseChangeRateToImpact)
+            {
+                //Debug.Log(impMag - previousImpulse);
+                OnCollisionEnter(collision);
+            }
+            previousImpulse = impMag;
+
+            if (!doFrictionSounds)
+                return;
 
             float speed = 0;
             float impulse = 0;
@@ -296,21 +307,11 @@ namespace PrecisionSurfaceEffects
                 speed += CurrentRelativeVelocity(contact).magnitude;
             }
             float invCount = 1 / contactCount;
-            impulse *= forceMultiplier * invCount;
+            impulse *= invCount;
             speed *= speedMultiplier * invCount; // Vector3.ProjectOnPlane(CurrentRelativeVelocity(collision), contact.normal).magnitude; // collision.relativeVelocity.magnitude;
 
             var force = impulse / Time.deltaTime; //force = Mathf.Max(0, Mathf.Min(frictionSound.maxForce, force) - frictionSound.minForce);
             force *= frictionSound.SpeedFader(speed); //So that it is found the maximum with this in mind
-
-            if (impulse - previousImpulse >= impulseChangeToImpact)
-            {
-                //Debug.Log(impulse - previousImpulse);
-                OnCollisionEnter(collision);
-            }
-            previousImpulse = impulse;
-
-            if (!doFrictionSounds)
-                return;
 
             if (force > 0)
             {

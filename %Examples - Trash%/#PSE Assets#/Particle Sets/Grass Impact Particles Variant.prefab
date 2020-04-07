@@ -89,15 +89,25 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}
-      propertyPath: speedMultiplierBySpeed
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
-        type: 3}
       propertyPath: children.Array.data[0]
       value: 
       objectReference: {fileID: 9083717482369182543, guid: 4c70f3681a909ff4a891c5cd0319c60c,
         type: 3}
+    - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: scalerForceRange
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: scalerByForceMultiplier
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: speedMultiplierBySpeed
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 7670574646986875101, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}
       propertyPath: InitialModule.startRotationX.minMaxState
@@ -147,6 +157,21 @@ PrefabInstance:
         type: 3}
       propertyPath: InitialModule.startSize.minScalar
       value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 7670574646986875101, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: ClampVelocityModule.drag.scalar
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7670574646986875101, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: InitialModule.startColor.minColor.a
+      value: 0.14901961
+      objectReference: {fileID: 0}
+    - target: {fileID: 7670574646986875101, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: ShapeModule.randomDirectionAmount
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8104508447486059129, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}
