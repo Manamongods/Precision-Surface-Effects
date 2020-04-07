@@ -150,7 +150,7 @@ namespace PrecisionSurfaceEffects
             speed = (vel0 - vel1).magnitude;
         }
 
-        public void PlayParticles(Color color, float weight, float impulse, float speed, Quaternion rot, Vector3 center, float radius, Vector3 vel0, Vector3 vel1)
+        public void PlayParticles(Color color, float weight, float impulse, float speed, Quaternion rot, Vector3 center, float radius, Vector3 normal, Vector3 vel0, Vector3 vel1, float dt = 0.25f)
         {
             if (inheritVelocities && temporarySystem == null)
             {
@@ -163,6 +163,13 @@ namespace PrecisionSurfaceEffects
                 var em2 = temporarySystem.emission;
                 em2.enabled = false;
                 temporarySystem.gameObject.hideFlags = HideFlags.DontSave;
+
+                if(normal != Vector3.zero)
+                {
+                    var averageVel = (vel0 + vel1) * 0.5f;
+                    vel0 = Vector3.Reflect(vel0 - averageVel, normal) + averageVel;
+                    vel1 = Vector3.Reflect(vel1 - averageVel, normal) + averageVel;
+                }
             }
 
             //TODO: what is the cost of Clear()? or to just set particles, can I just use one particlesystem efficiently?
@@ -190,7 +197,7 @@ namespace PrecisionSurfaceEffects
 
 
             float countMult = Mathf.Clamp01(Mathf.InverseLerp(countBySpeedRange.x, countBySpeedRange.y, speed));
-            var countf = Mathf.Min(countByImpulse * impulse, maxRate * Time.deltaTime) * weight;
+            var countf = Mathf.Min(countByImpulse * impulse, maxRate * dt) * weight;
             int count = (int)countf;
             if (Random.value < countf - count)
                 count++;

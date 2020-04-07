@@ -45,13 +45,21 @@ public class GunShooter : MonoBehaviour
         var outputs = soundSet.data.GetRaycastSurfaceTypes(pos, dir);
         outputs.Downshift(audioSources.Length, minimumWeight);
 
+        if (outputs.collider != null)
+        {
+            var rb = outputs.collider.attachedRigidbody;
+            if (rb != null)
+                rb.AddForceAtPosition(-outputs.hitNormal * impulse, outputs.hitPosition, ForceMode.Impulse); //dir 
+        }
+
         for (int i = 0; i < outputs.Count; i++)
         {
             var output = outputs[i];
 
             soundSet.PlayOneShot(output, audioSources[i], volumeMultiplier, pitchMultiplier);
 
-            particleSet.PlayParticles(outputs, output, impulse, speed, speed * dir, radius);
+            particleSet.PlayParticles(outputs, output, impulse, speed * dir, radius, deltaTime: 0.25f); //-speed * outputs.hitNormal
+            //Deltatime allows you to control how many max particles you can accept, because Time.deltaTime is irrelevant for a single shot
         }
     }
 

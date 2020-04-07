@@ -41,20 +41,14 @@ namespace PrecisionSurfaceEffects
         internal static readonly SurfaceOutputs outputs = new SurfaceOutputs();
 
 
-        //Spherecast
-        private void PrepareOutputs(Vector3 worldPosition)
+        //Methods
+        public SurfaceOutputs GetRHSurfaceTypes(RaycastHit rh, bool shareList = false)
         {
             outputs.Clear();
             outputs.hardness = 0;
-            outputs.collider = null;
-            outputs.hitPosition = worldPosition;
-            outputs.hitNormal = Vector3.zero;
-        }
-        private void FillOutputs(RaycastHit rh)
-        {
-            outputs.collider = rh.collider;
-            outputs.hitPosition = rh.point;
-            outputs.hitNormal = rh.normal;
+            FillOutputs(rh);
+            AddSurfaceTypes(rh.collider, rh.point, triangleIndex: rh.triangleIndex);
+            return GetList(shareList);
         }
         public SurfaceOutputs GetSphereCastSurfaceTypes(Vector3 worldPosition, Vector3 downDirection, float radius, float maxDistance = Mathf.Infinity, int layerMask = -1, bool shareList = false)
         {
@@ -102,6 +96,21 @@ namespace PrecisionSurfaceEffects
             AddSurfaceTypes(collision.collider, pos);
 
             return GetList(shareList);
+        }
+
+        private void PrepareOutputs(Vector3 worldPosition)
+        {
+            outputs.Clear();
+            outputs.hardness = 0;
+            outputs.collider = null;
+            outputs.hitPosition = worldPosition;
+            outputs.hitNormal = Vector3.zero;
+        }
+        private void FillOutputs(RaycastHit rh)
+        {
+            outputs.collider = rh.collider;
+            outputs.hitPosition = rh.point;
+            outputs.hitNormal = rh.normal;
         }
 
         private void NormalizeOutputs(float totalWeight)

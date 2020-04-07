@@ -33,6 +33,8 @@ namespace PrecisionSurfaceEffects
     public partial class CollisionEffects : CollisionEffectsMaker
     {
         //Constants
+        private const float ENTER_DT = 0.1f;
+
         public const bool CLAMP_FINAL_ONE_SHOT_VOLUME = true;
 
         private const float EXTRA_SEARCH_THICKNESS = 0.01f; //private const int MAX_OUTPUT_MULT = 2; //because they will be blended, I can't be sure they have been sorted and culled properly yet
@@ -161,7 +163,7 @@ namespace PrecisionSurfaceEffects
             return false;
         }
 
-        private void DoParticles(Collision c, SurfaceOutputs outputs)
+        private void DoParticles(Collision c, SurfaceOutputs outputs, float dt)
         {
             if (particleSet == null || outputs.Count == 0)
                 return;
@@ -179,7 +181,7 @@ namespace PrecisionSurfaceEffects
                     particles = particleSet.surfaceTypeParticles[o.surfaceTypeID].particles;
 
                 if (particles != null)
-                    particles.GetInstance().PlayParticles(o.color, o.weight, impulse, speed, rot, center, radius, vel0, vel1);
+                    particles.GetInstance().PlayParticles(o.color, o.weight, impulse, speed, rot, center, radius, outputs.hitNormal, vel0, vel1, dt);
             }
         }
 
@@ -250,7 +252,7 @@ namespace PrecisionSurfaceEffects
                         st.PlayOneShot(impactSound.audioSources[i], voll, pitch * output.pitch);
                     }
 
-                    DoParticles(collision, outputs);
+                    DoParticles(collision, outputs, ENTER_DT);
                 }
             }
 
@@ -334,7 +336,7 @@ namespace PrecisionSurfaceEffects
                 }
 
                 outputs.Downshift();
-                DoParticles(collision, outputs);
+                DoParticles(collision, outputs, Time.deltaTime);
             }
         }
 

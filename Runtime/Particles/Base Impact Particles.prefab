@@ -4834,7 +4834,7 @@ MonoBehaviour:
   baseSpeedMultiplier: 1
   speedMultiplierBySpeed: 1
   countBySpeedRange: {x: 0, y: 15}
-  countByImpulse: 1
+  countByImpulse: 5
   maxRate: 1000
   baseScaler: 1
   scalerByImpulse: 0.01

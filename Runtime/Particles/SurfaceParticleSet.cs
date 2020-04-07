@@ -40,7 +40,7 @@ namespace PrecisionSurfaceEffects
 
 
         //Methods
-        public void PlayParticles(SurfaceOutputs outputs, SurfaceOutput output, float impulse, float speed, Vector3 vel, float radius = 0)
+        public void PlayParticles(SurfaceOutputs outputs, SurfaceOutput output, float impulse, Vector3 vel, float radius = 0, float deltaTime = 0.25f)
         {
 #if UNITY_EDITOR
             if (!Application.isPlaying)
@@ -59,7 +59,8 @@ namespace PrecisionSurfaceEffects
             {
                 var rot = Quaternion.FromToRotation(Vector3.up, outputs.hitNormal);
                 var otherVel = SurfaceParticles.GetVelocity(outputs.collider.attachedRigidbody, outputs.hitPosition);
-                p.PlayParticles(output.color, 1, impulse, speed, rot, outputs.hitPosition, radius, vel, otherVel);
+                var speed = (otherVel - vel).magnitude;
+                p.PlayParticles(output.color, 1, impulse, speed, rot, outputs.hitPosition, radius, outputs.hitNormal, vel, otherVel);
             }
         }
 
