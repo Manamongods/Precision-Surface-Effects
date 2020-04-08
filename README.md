@@ -5,13 +5,14 @@ MOST OF THIS IS OUTDATED
 
 Allows different sounds for footsteps and collisions depending on Terrain splats or MeshRenderer materials.
 
-This is designed for smooth transitions and sort of automatic (albeit imperfect) support for any situation, without using cutoff points, without thresholds. It's not physically accurate, or very performant, but it is quite easily made extensible for a large variety of situations if you put in some initial effort. The settings probably seem esoteric, especially for the CollisionEffects component, but the example scene has been set up properly and you can probably learn using it, but otherwise I have filled the Wiki with what I could. Just tell me if there is an area I haven't thought of that is missing support. (Except for rolling. I don't want to add the complexity and performance impact of rolling vs sliding distinction).
-
 Should easierly work much better for stylized art styles, where the size of a fragment particle doesn't change how it should look.
 
 Uses: https://github.com/garettbass/UnityExtensions.ArrayDrawer for some reorderability
 
 It's possible that you'll need to import this into an empty project if you want to try the Example Scene, as the free assets I've taken from MicroSplat and Unity's Standard Assets might conflict if you already have them in your project.
+
+    This is designed for smooth transitions and sort of automatic (albeit imperfect) support for any situation, without using cutoff points, without thresholds. It's not physically accurate, or very performant, but it is quite easily made extensible for a large variety of situations if you put in some initial effort. The settings probably seem esoteric, especially for the CollisionEffects component, but the example scene has been set up properly and you can probably learn using it, but otherwise I have filled the Wiki with what I could. Just tell me if there is an area I haven't thought of that is missing support. (Except for rolling. I don't want to add the complexity and performance impact of rolling vs sliding distinction). 
+    Although I did put a lot of love into it, there is a lot I don't like (albeit if I were to do it differently, it would need a more physically based physics system than PhysX, such as one that, for one, resolves quicker or slower according to hardnesses, instead of perfect rigidity, and also internally understands the concept of damage (such concepts as brittleness, hardness, elasticity), which could then be more accurately converted to damage particles. It would also need a better ParticleSystem than Shuriken). So just enjoy it if you can, modify it if you want, or trash it if you must.
 
 ## Usage
 
