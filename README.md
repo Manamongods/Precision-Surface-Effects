@@ -7,7 +7,7 @@ Allows different sounds for footsteps and collisions depending on Terrain splats
 
 This is designed for smooth transitions and sort of automatic (albeit imperfect) support for any situation, without using cutoff points, without thresholds. It's not physically accurate, or very performant, but it is quite easily made extensible for a large variety of situations if you put in some initial effort. The settings probably seem esoteric, especially for the CollisionEffects component, but the example scene has been set up properly and you can probably learn using it, but otherwise I have filled the Wiki with what I could.
 
-Should easierly work much better for stylized art styles, where the size of a fragment particle doesn't change how it should look. However, you can make variants and overrides which can make things look alright with a realistic art style.
+Should easierly work much better for stylized art styles, where the size of a fragment particle doesn't change how it should look.
 
 Uses: https://github.com/garettbass/UnityExtensions.ArrayDrawer for some reorderability
 
