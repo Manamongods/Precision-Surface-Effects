@@ -5,13 +5,20 @@ MOST OF THIS IS OUTDATED
 
 Allows different sounds for footsteps and collisions depending on Terrain splats or MeshRenderer materials.
 
-This is designed for smooth transitions and sort of automatic (albeit imperfect) support for any situation, without using cutoff points, without thresholds. It's not physically accurate, or very performant, but it is quite easily made extensible for a large variety of situations if you put in some initial effort. The settings probably seem esoteric, especially for the CollisionEffects component, but the example scene has been set up properly and you can probably learn using it, but otherwise I have filled the Wiki with what I could.
-
 Should easierly work much better for stylized art styles, where the size of a fragment particle doesn't change how it should look.
+
+If you use the system frequently, it should only be used on PC, not mobile. Infrequent use is perfectly fine performance wise.
 
 Uses: https://github.com/garettbass/UnityExtensions.ArrayDrawer for some reorderability
 
 It's possible that you'll need to import this into an empty project if you want to try the Example Scene, as the free assets I've taken from MicroSplat and Unity's Standard Assets might conflict if you already have them in your project.
+
+  This is designed for smooth transitions and sort of automatic (albeit imperfect) support for any situation, without using cutoff points, without thresholds. It's not physically accurate, or very performant, but it is quite easily made extensible for a large variety of situations if you put in some initial effort. The settings probably seem esoteric, especially for the CollisionEffects component, but the example scene has been set up properly and you can probably learn using it, but otherwise I have filled the Wiki with what I could. Just tell me if there is an area I haven't thought of that is missing support. (Except for rolling. I don't want to add the complexity and performance impact of rolling vs sliding distinction).
+  Although I did put a lot of love into it, there is a lot I don't like (albeit if I were to do it differently, it would need a more physically based physics system than PhysX, such as one that, for one, resolves quicker or slower according to hardnesses, instead of perfect rigidity, and also internally understands the concept of damage (such concepts as brittleness, hardness, elasticity), which could then be more accurately converted to damage particles. It would also need a better ParticleSystem than Shuriken, a better Materials system (one that incorporates physics properties as well), and a better audio system than AudioSources (one that is easier to code things such as doppler into than a basic native audio plugin)). 
+So just enjoy it if you can, modify it if you want, or trash it if you must.
+  
+The biggest performance problem is the decision to not be strict when it comes to finding a SurfaceType. So it's designed around searching strings for keywords. Although it is made quicker using a dictionary, it could be quicker if I required you to add a Marker. The second biggest performance problem was the decision to give the freedom of having multiple SurfaceData assets, in case a large project could use more control. This means there is some information which can't be precomputed, but considering the former performance problem (not enforcing a component be attached to every sound/particle producing object) the performance gain wouldn't really apply in the case of NOT using a Marker component.
+When it comes to CollisionSounds, I can't imagine it's performant at all, however it can be ok especially if they are culled or if their Rigidbody is sleeping. Make your own performance conclusions. I don't think it's possible to get much better performance from a system that is limited in how it can interact with Unity's systems (for example I can't even disable the OnCollision callbacks if I wanted to. Why, Unity).
 
 ## Usage
 
