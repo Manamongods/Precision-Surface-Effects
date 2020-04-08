@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#define USE_DICTIONARY_SEARCH
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -247,7 +249,7 @@ namespace PrecisionSurfaceEffects
                         mr.GetSharedMaterials(materials);
 
                         //Adds based on keywords
-                        if (TryGetStringSurfaceType(materials[subMeshID].name, out int stID, out SurfaceType st, out SurfaceType.SubType subType))
+                        if (TryGetStringSurfaceType(materials[subMeshID].name, out int stID, out SurfaceType st, out SurfaceType.SubType subType, false))
                             AddSingleOutput(stID, st, subType);
                         return;
                     }
@@ -260,7 +262,7 @@ namespace PrecisionSurfaceEffects
                 if (marker.GetMarker(out SurfaceTypeMarker typeMarker))
                 {
                     //Single Type Marker
-                    if (TryGetStringSurfaceType(typeMarker.reference, out int stID, out SurfaceType st, out SurfaceType.SubType subType))
+                    if (TryGetStringSurfaceType(typeMarker.lowerReference, out int stID, out SurfaceType st, out SurfaceType.SubType subType, true))
                         AddSingleOutput(stID, st, subType);
                     return;
                 }
@@ -285,7 +287,7 @@ namespace PrecisionSurfaceEffects
                 }
 
                 //Name
-                if (TryGetStringSurfaceType(mat.name, out int stID, out SurfaceType st, out SurfaceType.SubType subType))
+                if (TryGetStringSurfaceType(mat.name, out int stID, out SurfaceType st, out SurfaceType.SubType subType, false))
                     AddSingleOutput(stID, st, subType);
                 return;
             }
@@ -377,7 +379,7 @@ namespace PrecisionSurfaceEffects
             Color defaultTint = Color.white;
 
             STSettings settings;
-            if (TryGetStringSurfaceType(blendResult.reference, out int stID, out SurfaceType st, out SurfaceType.SubType stst))
+            if (TryGetStringSurfaceType(blendResult.lowerReference, out int stID, out SurfaceType st, out SurfaceType.SubType stst, true))
             {
                 blendResult.surfaceTypeID = stID;
                 settings = stst.settings;
@@ -396,11 +398,33 @@ namespace PrecisionSurfaceEffects
             return blendResult;
         }
 
-        public bool TryGetStringSurfaceType(string checkName, out int stID, out SurfaceType st, out SurfaceType.SubType subType)
+#if USE_DICTIONARY_SEARCH
+        private struct SearchResult
+        {
+            public int stID;
+            public SurfaceType st;
+            public SurfaceType.SubType subType;
+        }
+        private readonly Dictionary<string, SearchResult> searches = new Dictionary<string, SearchResult>();
+#endif
+
+        public bool TryGetStringSurfaceType(string checkName, out int stID, out SurfaceType st, out SurfaceType.SubType subType, bool isLower = false)
         {
             if (!System.String.IsNullOrEmpty(checkName))
             {
-                checkName = checkName.ToLowerInvariant();
+#if USE_DICTIONARY_SEARCH
+                if (searches.TryGetValue(checkName, out SearchResult result))
+                {
+                    stID = result.stID;
+                    st = result.st;
+                    subType = result.subType;
+                    return true;
+                }
+#endif
+
+                string realCheckName = checkName;
+                if(!isLower)
+                    checkName = checkName.ToLowerInvariant();
 
                 for (int i = 0; i < surfaceTypes.Length; i++)
                 {
@@ -410,9 +434,14 @@ namespace PrecisionSurfaceEffects
                     for (int ii = 0; ii < st.subTypes.Length; ii++)
                     {
                         var stst = st.subTypes[ii];
-                        if (checkName.Contains(stst.lowerKeyword)) //check if the material name contains the keyword
+                        if (checkName.Contains(stst.lowerKeyword))
                         {
                             subType = stst;
+
+#if USE_DICTIONARY_SEARCH
+                            searches.Add(realCheckName, new SearchResult() { stID = stID, st = st, subType = subType });
+#endif
+
                             return true;
                         }
                     }
@@ -428,6 +457,46 @@ namespace PrecisionSurfaceEffects
 }
 
 /*
+                            FastIndexOf(checkName, stst.lowerKeyword) != -1) // checkName.IndexOf(stst.lowerKeyword, System.StringComparison.Ordinal) != -1) // Contains(stst.lowerKeyword)) //check if the material name contains the keyword
+ * 
+        private static int FastIndexOf(string source, string pattern)
+        {
+            if (pattern == null) throw new System.ArgumentNullException();
+            if (pattern.Length == 0) return 0;
+            if (pattern.Length == 1) return source.IndexOf(pattern[0]);
+            bool found;
+            int limit = source.Length - pattern.Length + 1;
+            if (limit < 1) return -1;
+            // Store the first 2 characters of "pattern"
+            char c0 = pattern[0];
+            char c1 = pattern[1];
+            // Find the first occurrence of the first character
+            int first = source.IndexOf(c0, 0, limit);
+            while (first != -1)
+            {
+                // Check if the following character is the same like
+                // the 2nd character of "pattern"
+                if (source[first + 1] != c1)
+                {
+                    first = source.IndexOf(c0, ++first, limit - first);
+                    continue;
+                }
+                // Check the rest of "pattern" (starting with the 3rd character)
+                found = true;
+                for (int j = 2; j < pattern.Length; j++)
+                    if (source[first + j] != pattern[j])
+                    {
+                        found = false;
+                        break;
+                    }
+                // If the whole word was found, return its index, otherwise try again
+                if (found) return first;
+                first = source.IndexOf(c0, ++first, limit - first);
+            }
+            return -1;
+        }
+
+ * 
  *             //if (outputs.Count == 0)
             //    AddSingleOutput(defaultSurfaceType);
      

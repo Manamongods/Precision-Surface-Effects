@@ -74,7 +74,7 @@ namespace PrecisionSurfaceEffects
             {
                 normalizedWeight = weight,
 
-                reference = blend.reference,
+                lowerReference = blend.reference.ToLowerInvariant(),
                 volume = blend.volumeMultiplier,
                 pitch = blend.pitchMultiplier,
                 hardness = blend.hardnessMultiplier,
@@ -123,7 +123,7 @@ namespace PrecisionSurfaceEffects
         [System.Serializable]
         internal struct NormalizedBlend
         {
-            public string reference;
+            public string lowerReference;
             public int surfaceTypeID;
 
             public float normalizedWeight;

@@ -268,6 +268,7 @@ GameObject:
   - component: {fileID: 7768311540337565089}
   - component: {fileID: 7768311540337565090}
   - component: {fileID: 7768311540337565091}
+  - component: {fileID: 6898083943534699691}
   m_Layer: 0
   m_Name: Sound Sphere
   m_TagString: Untagged
@@ -428,6 +429,21 @@ MonoBehaviour:
   particleSizeMultiplier: 1
   minimumParticleShapeRadius: 0
   frictionCountMultiplier: 1
+--- !u!114 &6898083943534699691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7768311540337565116}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba47779963191f748a95a48b8bcfbd88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cullType: {fileID: 11400000, guid: f7a60ae6607b4b744880993ca99af65f, type: 2}
+  disableScripts:
+  - {fileID: 7768311540337565091}
 --- !u!1 &7768311541134257655
 GameObject:
   m_ObjectHideFlags: 0

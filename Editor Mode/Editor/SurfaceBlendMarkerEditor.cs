@@ -12,8 +12,6 @@ public class SurfaceBlendMarkerEditor : Editor
 
         var blends = serializedObject.FindProperty("blends");
 
-        EditorGUILayout.PropertyField(blends.FindPropertyRelative("volumeMultiplier"));
-        EditorGUILayout.PropertyField(blends.FindPropertyRelative("pitchMultiplier"));
         EditorGUILayout.PropertyField(blends.FindPropertyRelative("blends"));
 
         serializedObject.ApplyModifiedProperties();

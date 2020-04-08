@@ -12,24 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17a939634c7ae3a4197d571c0df6eb35, type: 3}
   m_Name: Wood
   m_EditorClassIdentifier: 
-  hardness: 1
+  hardnessMultiplier: 1
   defaultColorTint: {r: 0.509434, g: 0.36551157, b: 0.18960641, a: 1}
   subTypes:
   - keyword: Wood
     settings:
+      hardness: 1
       defaultColor: {r: 1, g: 1, b: 1, a: 1}
       volumeMultiplier: 1
       pitchMultiplier: 1
-      hardnessMultiplier: 1
   - keyword: Planks
     settings:
+      hardness: 1
       defaultColor: {r: 1, g: 1, b: 1, a: 1}
       volumeMultiplier: 1
       pitchMultiplier: 1
-      hardnessMultiplier: 1
   - keyword: Trunk
     settings:
+      hardness: 1
       defaultColor: {r: 0.3301887, g: 0.3301887, b: 0.3301887, a: 1}
       volumeMultiplier: 1
       pitchMultiplier: 1
-      hardnessMultiplier: 1

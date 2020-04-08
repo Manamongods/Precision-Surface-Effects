@@ -234,6 +234,9 @@ namespace PrecisionSurfaceEffects
 
         internal void OnCollisionEnter(Collision collision)
         {
+            if (!isActiveAndEnabled) //enabled
+                return;
+
             //Debug.Log(collision.collider.gameObject.name + " " + collision.impulse.magnitude);
 
             //Impact Sound
@@ -278,6 +281,8 @@ namespace PrecisionSurfaceEffects
         }
         internal void OnCollisionStay(Collision collision)
         {
+            if (!isActiveAndEnabled) //enabled
+                return;
             if (Stop(collision))
                 return;
 
@@ -372,6 +377,12 @@ namespace PrecisionSurfaceEffects
                 outputs.Downshift();
                 DoParticles(collision, outputs, Time.deltaTime);
             }
+        }
+
+        private void OnDisable()
+        {
+            for (int i = 0; i < frictionSound.audioSources.Length; i++)
+                frictionSound.audioSources[i].Pause();
         }
 
         private void Update()
