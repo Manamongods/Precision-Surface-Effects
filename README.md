@@ -5,7 +5,7 @@ MOST OF THIS IS OUTDATED
 
 Allows different sounds for footsteps and collisions depending on Terrain splats or MeshRenderer materials.
 
-This is designed for smooth transitions and sort of automatic (albeit imperfect) support for any situation, without using cutoff points, without thresholds. It's not physically accurate, or very performant, but it is quite easily made extensible for a large variety of situations if you put in some initial effort. The settings probably seem esoteric, especially for the CollisionEffects component, but the example scene has been set up properly and you can probably learn using it, but otherwise I have filled the Wiki with what I could.
+This is designed for smooth transitions and sort of automatic (albeit imperfect) support for any situation, without using cutoff points, without thresholds. It's not physically accurate, or very performant, but it is quite easily made extensible for a large variety of situations if you put in some initial effort. The settings probably seem esoteric, especially for the CollisionEffects component, but the example scene has been set up properly and you can probably learn using it, but otherwise I have filled the Wiki with what I could. Just tell me if there is an area I haven't thought of that is missing support. (Except for rolling. I don't want to add the complexity and performance impact of rolling vs sliding distinction).
 
 Should easierly work much better for stylized art styles, where the size of a fragment particle doesn't change how it should look.
 
