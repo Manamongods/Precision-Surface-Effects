@@ -390,109 +390,112 @@ namespace PrecisionSurfaceEffects
             impactCooldownT -= Time.deltaTime;
 
 
-            //Downshifts and reroutes
-            if (!downShifted)
+            if (doFrictionSounds)
             {
-                downShifted = true;
-
-                //Re-sorts them
-                averageOutputs.SortDescending();
-
-                //Downshifts
-                var maxCount = frictionSound.sources.Length;
-                averageOutputs.Downshift(maxCount, frictionSound.minimumTypeWeight);
-
-                //Clears Givens
-                for (int i = 0; i < maxCount; i++)
-                    frictionSound.sources[i].given = false;
-                givenSources.Clear();
-
-                //Sees if any of them are aligned
-                for (int outputID = 0; outputID < averageOutputs.Count; outputID++)
+                //Downshifts and reroutes
+                if (!downShifted)
                 {
-                    var c = Mathf.Min(maxCount, averageOutputs.Count); //?
+                    downShifted = true;
 
-                    var output = averageOutputs[outputID];
-                    var clip = soundSet.surfaceTypeSounds[output.surfaceTypeID].frictionSound;
+                    //Re-sorts them
+                    averageOutputs.SortDescending();
 
-                    //Finds and assigns sources that match the clip already
-                    int givenSource = -1;
-                    for (int sourceID = 0; sourceID < frictionSound.sources.Length; sourceID++)
+                    //Downshifts
+                    var maxCount = frictionSound.sources.Length;
+                    averageOutputs.Downshift(maxCount, frictionSound.minimumTypeWeight);
+
+                    //Clears Givens
+                    for (int i = 0; i < maxCount; i++)
+                        frictionSound.sources[i].given = false;
+                    givenSources.Clear();
+
+                    //Sees if any of them are aligned
+                    for (int outputID = 0; outputID < averageOutputs.Count; outputID++)
                     {
-                        var source = frictionSound.sources[sourceID];
+                        var c = Mathf.Min(maxCount, averageOutputs.Count); //?
 
-                        if (source.clip == clip || source.Silent || source.clip == null || source.clip.clip == null)
-                        {
-                            source.ChangeClip(clip, this);
-
-                            givenSource = sourceID;
-                            source.given = true;
-                            break;
-                        }
-                    }
-                    givenSources.Add(givenSource);
-                }
-
-                //Changes Clips
-                for (int outputID = 0; outputID < averageOutputs.Count; outputID++)
-                {
-                    var output = averageOutputs[outputID];
-
-                    //If it wasn't given a source
-                    if (givenSources[outputID] == -1)
-                    {
+                        var output = averageOutputs[outputID];
                         var clip = soundSet.surfaceTypeSounds[output.surfaceTypeID].frictionSound;
-          
+
+                        //Finds and assigns sources that match the clip already
+                        int givenSource = -1;
                         for (int sourceID = 0; sourceID < frictionSound.sources.Length; sourceID++)
                         {
                             var source = frictionSound.sources[sourceID];
 
-                            if (!source.given)
+                            if (source.clip == clip || source.Silent || source.clip == null || source.clip.clip == null)
                             {
-                                source.given = true;
-
                                 source.ChangeClip(clip, this);
-                                givenSources[outputID] = sourceID;
 
+                                givenSource = sourceID;
+                                source.given = true;
                                 break;
+                            }
+                        }
+                        givenSources.Add(givenSource);
+                    }
+
+                    //Changes Clips
+                    for (int outputID = 0; outputID < averageOutputs.Count; outputID++)
+                    {
+                        var output = averageOutputs[outputID];
+
+                        //If it wasn't given a source
+                        if (givenSources[outputID] == -1)
+                        {
+                            var clip = soundSet.surfaceTypeSounds[output.surfaceTypeID].frictionSound;
+
+                            for (int sourceID = 0; sourceID < frictionSound.sources.Length; sourceID++)
+                            {
+                                var source = frictionSound.sources[sourceID];
+
+                                if (!source.given)
+                                {
+                                    source.given = true;
+
+                                    source.ChangeClip(clip, this);
+                                    givenSources[outputID] = sourceID;
+
+                                    break;
+                                }
                             }
                         }
                     }
                 }
-            }
 
 
 #if UNITY_EDITOR
-            currentFrictionDebug = "";
+                currentFrictionDebug = "";
 #endif
 
-            float speed = 0;
-            if (forceSum > 0) //prevents a divide by zero
-                speed = weightedSpeed / forceSum;
+                float speed = 0;
+                if (forceSum > 0) //prevents a divide by zero
+                    speed = weightedSpeed / forceSum;
 
-            //Updates the sources which have been given
-            for (int outputID = 0; outputID < averageOutputs.Count; outputID++)
-            {
-                var output = averageOutputs[outputID];
-                var source = frictionSound.sources[givenSources[outputID]];
-
-#if UNITY_EDITOR
-                var st = soundSet.surfaceTypeSounds[output.surfaceTypeID];
-                currentFrictionDebug = currentFrictionDebug + st.name + " V: " + output.weight + " P: " + output.pitchScaler + "\n";
-#endif
-
-                var vm = totalVolumeMultiplier * output.volumeScaler;
-                var pm = totalPitchMultiplier * output.pitchScaler;
-                source.Update(frictionSound, vm, pm, forceSum * output.weight, speed);
-            }
-
-            //Updates the sources which haven't been given
-            for (int i = 0; i < frictionSound.sources.Length; i++)
-            {
-                var source = frictionSound.sources[i];
-                if (!source.given)
+                //Updates the sources which have been given
+                for (int outputID = 0; outputID < averageOutputs.Count; outputID++)
                 {
-                    source.Update(frictionSound, totalVolumeMultiplier, totalPitchMultiplier, 0, 0);
+                    var output = averageOutputs[outputID];
+                    var source = frictionSound.sources[givenSources[outputID]];
+
+#if UNITY_EDITOR
+                    var st = soundSet.surfaceTypeSounds[output.surfaceTypeID];
+                    currentFrictionDebug = currentFrictionDebug + st.name + " V: " + output.weight + " P: " + output.pitchScaler + "\n";
+#endif
+
+                    var vm = totalVolumeMultiplier * output.volumeScaler;
+                    var pm = totalPitchMultiplier * output.pitchScaler;
+                    source.Update(frictionSound, vm, pm, forceSum * output.weight, speed);
+                }
+
+                //Updates the sources which haven't been given
+                for (int i = 0; i < frictionSound.sources.Length; i++)
+                {
+                    var source = frictionSound.sources[i];
+                    if (!source.given)
+                    {
+                        source.Update(frictionSound, totalVolumeMultiplier, totalPitchMultiplier, 0, 0);
+                    }
                 }
             }
         }
