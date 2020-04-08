@@ -5,25 +5,26 @@ MOST OF THIS IS OUTDATED
 
 Allows different sounds for footsteps and collisions depending on Terrain splats or MeshRenderer materials.
 
+This is designed for smooth transitions and sort of automatic (albeit imperfect) support for any situation, without using cutoff points, without thresholds. It's not physically accurate, or very performant, but it is quite easily made extensible for a large variety of situations if you put in some initial effort. The settings probably seem esoteric, especially for the CollisionEffects component, but the example scene has been set up properly and you can probably learn using it, but otherwise I have filled the Wiki with what I could.
+
 Uses: https://github.com/garettbass/UnityExtensions.ArrayDrawer for some reorderability
 
-The test scene requires MicroSplat's Examples
+It's possible that you'll need to import this into an empty project if you want to try the Example Scene, as the free assets I've taken from MicroSplat and Unity's Standard Assets might conflict if you already have them in your project.
 
 ## Usage
 
 ### Steps
 
-Create a SurfaceData asset in Unity's project window (by right clicking -> Create -> Precision Surface Effects/Surface Data)
-Create SurfaceType asset for each surface type, such as Grassy, Rocky, Dirt, Gravel, Sand, Snow. Assign them to the SurfaceData asset.
-Fill the 
+- Create a SurfaceData asset in Unity's project window (by right clicking -> Create -> Precision Surface Effects/Surface Data)
+- Create SurfaceType asset for each surface type, such as Grassy, Rocky, Dirt, Gravel, Sand, Snow. Assign them to the SurfaceData asset.
+- Fill the keywords. These will be searched for in a variety of locations, such as the Material names or blend overrides, to find which surface/s a Raycast/RaycastHit/SphereCast/Collision has touched. 
 
-Create a SurfaceSoundSet asset
+- Create a SurfaceSoundSet asset. Assign the SurfaceData asset.
+- Fill the list with the clips you want to play using this SurfaceSoundSet against the SurfaceTypes that are auto-populated in the asset
 
-Assign the SurfaceTypes to the SurfaceSoundSet asset
+- The component `SurfaceSoundTester.cs` can be used to test it out.
 
-The component `SurfaceSoundTester.cs` can be used to test it out.
-
-Delete the folder "%Microsplat Demo - Trash%" after you have tried it out (if you want to try it out)
+Delete the folder "%Example - Trash%" after you have tried it out (if you want to try it out, although I highly advise you do.)
 
 For footstep sounds you can use these for Animation Events:
 `SphereCastAnimatorFeet.cs`
