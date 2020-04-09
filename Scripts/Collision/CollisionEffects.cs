@@ -31,7 +31,6 @@ using UnityEngine;
 
 namespace PrecisionSurfaceEffects
 {
-    [RequireComponent(typeof(OnCollisionStayer))]
     public sealed partial class CollisionEffects : CollisionEffectsMaker, INeedOnCollisionStay
     {
         //Constants
@@ -398,6 +397,8 @@ namespace PrecisionSurfaceEffects
         private void OnValidate()
         {
             stayer = GetComponent<OnCollisionStayer>();
+            if (stayer == null && NeedOnCollisionStay)
+                stayer = gameObject.AddComponent<OnCollisionStayer>();
 
             if (!Application.isPlaying)
                 currentFrictionDebug = "(This only works in playmode)";

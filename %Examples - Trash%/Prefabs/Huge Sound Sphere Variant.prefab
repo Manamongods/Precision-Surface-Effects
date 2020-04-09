@@ -132,15 +132,5 @@ PrefabInstance:
       propertyPath: m_Name
       value: Huge Sound Sphere Variant
       objectReference: {fileID: 0}
-    - target: {fileID: 7768311541134257654, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
-        type: 3}
-      propertyPath: MinDistance
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 7768311542087541603, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
-        type: 3}
-      propertyPath: MinDistance
-      value: 50
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0fef6295de871454aa2b87ddf8fbd3c8, type: 3}
