@@ -415,10 +415,10 @@ MonoBehaviour:
     volumeFaderBySpeedRange: {x: 0, y: 0.3}
     basePitch: 0.35
     pitchBySpeed: 0.05
-    clipChangeSmoothTime: 0.01
+    clipChangeSmoothTime: 0.025
     smoothTimes:
-      up: 0.06
-      down: 0.18
+      up: 0.08
+      down: 0.16
     frictionNormalForceMultiplier: 0.1
   doVibrationSound: 1
   vibrationSound:
