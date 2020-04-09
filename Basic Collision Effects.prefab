@@ -184,8 +184,8 @@ MonoBehaviour:
   impulseChangeRateToImpact: 10
   soundSet: {fileID: 11400000, guid: 80344998cfdc62548be42ca931b98cce, type: 2}
   speedMultiplier: 1
-  forceMultiplier: 1
-  totalVolumeMultiplier: 0.3
+  forceMultiplier: 0.01
+  totalVolumeMultiplier: 1
   totalPitchMultiplier: 1
   impactSound:
     audioSources:

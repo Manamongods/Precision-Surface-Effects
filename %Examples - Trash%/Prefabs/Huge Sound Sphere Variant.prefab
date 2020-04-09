@@ -29,11 +29,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
         type: 3}
-      propertyPath: totalVolumeMultiplier
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
-        type: 3}
       propertyPath: forceMultiplier
       value: 0.0005
       objectReference: {fileID: 0}
