@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface INeedOnCollisionStay
+public interface IMayNeedOnCollisionStay
 {
     bool NeedOnCollisionStay { get; }
 }
@@ -34,7 +34,7 @@ public sealed class OnCollisionStayer : MonoBehaviour
         //hideFlags = HideFlags.HideInInspector;
         hideFlags = HideFlags.None;
 
-        var inocss = GetComponents<INeedOnCollisionStay>();
+        var inocss = GetComponents<IMayNeedOnCollisionStay>();
         if (inocss.Length == 0)
         {
             DestroyImmediate(this);

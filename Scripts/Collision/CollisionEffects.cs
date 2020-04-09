@@ -31,7 +31,7 @@ using UnityEngine;
 
 namespace PrecisionSurfaceEffects
 {
-    public sealed partial class CollisionEffects : CollisionEffectsMaker, INeedOnCollisionStay
+    public sealed partial class CollisionEffects : CollisionEffectsMaker, IMayNeedOnCollisionStay
     {
         //Constants
         public const bool CLAMP_FINAL_ONE_SHOT_VOLUME = true;

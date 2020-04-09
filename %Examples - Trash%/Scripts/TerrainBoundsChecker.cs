@@ -34,7 +34,7 @@ public class TerrainBoundsChecker : MonoBehaviour
         int xx = (int)mapX;
         int zz = (int)mapZ;
 
-        int ww = 1;
+        int ww = 3;
         for (int x = -ww; x <= ww; x++)
         {
             for (int z = -ww; z <= ww; z++)
