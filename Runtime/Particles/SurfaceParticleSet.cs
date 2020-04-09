@@ -35,7 +35,6 @@ namespace PrecisionSurfaceEffects
         //Fields
         [Space(30)]
         [ReorderableList()]
-        //[UnityEngine.Serialization.FormerlySerializedAs("surfaceTypes")]
         public SurfaceTypeParticles[] surfaceTypeParticles = new SurfaceTypeParticles[] { new SurfaceTypeParticles() };
 
 

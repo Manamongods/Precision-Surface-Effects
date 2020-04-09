@@ -81,9 +81,7 @@ namespace PrecisionSurfaceEffects
         public ShotClip[] clipVariants = new ShotClip[1] { new ShotClip() };
 
         [Header("Friction/Rolling")]
-        [Tooltip("This can be used for friction/rolling sounds, or just ignore it")]
         [Space(20)]
-        [UnityEngine.Serialization.FormerlySerializedAs("loopSound")]
         public Clip frictionSound = new Clip(); //(no randomization should be used for this clip)
 
 

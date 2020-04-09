@@ -44,7 +44,6 @@ namespace PrecisionSurfaceEffects
     [CreateAssetMenu(menuName = "Precision Surface Effects/Surface Type")]
     public class SurfaceType : ScriptableObject
     {
-        [UnityEngine.Serialization.FormerlySerializedAs("hardness")]
         public float hardnessMultiplier = 1;
         public Color defaultColorTint = Color.white;
 

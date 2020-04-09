@@ -6,7 +6,6 @@ using PrecisionSurfaceEffects;
 public class SurfaceEffectsBase : MonoBehaviour
 {
     //Fields
-    [UnityEngine.Serialization.FormerlySerializedAs("minWeight")]
     public float minimumWeight = 0.1f;
     
     [Header("Sound")]
