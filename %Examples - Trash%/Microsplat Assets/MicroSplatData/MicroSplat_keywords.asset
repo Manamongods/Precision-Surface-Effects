@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   keywords:
   - _MICROSPLAT
+  - _DISABLEHEIGHTBLENDING
   - _MAX8TEXTURES
   - _MSRENDERLOOP_SURFACESHADER
   drawOrder: 100
