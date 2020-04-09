@@ -34,12 +34,10 @@ using System.Linq;
 //has to be readable
 //make it use list for uv instead?
 
+//This gives a smooth control similar to Terrain, to MeshRenderers 
+
 namespace PrecisionSurfaceEffects
 {
-    //This gives a smooth control similar to Terrain, to MeshRenderers 
-
-
-
     [System.Serializable]
     public class SubMaterial
     {
@@ -53,7 +51,11 @@ namespace PrecisionSurfaceEffects
     public sealed class SurfaceBlendMapMarker : Marker
     {
         //Fields
-        public Color lastSampledColor;
+#if UNITY_EDITOR
+        [ReadOnly]
+        [SerializeField]
+        private List<Color> lastSampledColors = new List<Color>();
+#endif
 
         [Space(30)]
         [SerializeField]
@@ -69,6 +71,9 @@ namespace PrecisionSurfaceEffects
         //Methods
         private void Add(SurfaceData sd, SurfaceBlends.NormalizedBlends blendResults, float weightMultiplier, ref float totalWeight)
         {
+            if (weightMultiplier <= 0.0000000001f)
+                return;
+
             for (int i = 0; i < blendResults.result.Count; i++)
             {
                 var blend = blendResults.result[i];
@@ -92,18 +97,15 @@ namespace PrecisionSurfaceEffects
             point = transform.InverseTransformPoint(point);
             var bary = new Barycentric(a, b, c, point);
 
+#if UNITY_EDITOR
+            lastSampledColors.Clear();
+#endif
+
             float totalTotalWeight = 0;
             for (int i = 0; i < blendMaps.Length; i++)
             {
                 var bm = blendMaps[i];
-                for (int ii = 0; ii < bm.subMaterials.Length; ii++)
-                    if (bm.subMaterials[ii].materialID == submeshID)
-                        totalTotalWeight += bm.weight;
-            }
-
-            for (int i = 0; i < blendMaps.Length; i++)
-            {
-                var bm = blendMaps[i];
+                bm.sampled = false;
 
                 for (int ii = 0; ii < bm.subMaterials.Length; ii++)
                 {
@@ -111,31 +113,46 @@ namespace PrecisionSurfaceEffects
                     {
                         var uv = bary.Interpolate(bm.uvs[t0], bm.uvs[t1], bm.uvs[t2]);
                         uv = uv * new Vector2(bm.uvScaleOffset.x, bm.uvScaleOffset.y) + new Vector2(bm.uvScaleOffset.z, bm.uvScaleOffset.w); //?
+
                         Color color = bm.map.GetPixelBilinear(uv.x, uv.y); //this only works for clamp or repeat btw (not mirror etc.)
+                        bm.sampledColor = color;
+
+                        totalTotalWeight += bm.weight * (color.r + color.g + color.b + color.a);
 
 #if UNITY_EDITOR
-                        lastSampledColor = color; //Debug.Log(color);
+                        lastSampledColors.Add(color);
 #endif
 
-
-                        float rgbaSum = color.r + color.g + color.b + color.a;
-                        var sum = Mathf.Max(1, rgbaSum) * totalTotalWeight;
-                        //if (sum > 0)
-                        {
-                            float invTotal = bm.weight / sum;
-
-                            Add(sd, bm.r.result, color.r * invTotal, ref totalWeight);
-                            Add(sd, bm.g.result, color.g * invTotal, ref totalWeight);
-                            Add(sd, bm.b.result, color.b * invTotal, ref totalWeight);
-                            Add(sd, bm.a.result, color.a * invTotal, ref totalWeight);
-
-                            break;
-                        }
+                        bm.sampled = true;
+                        break;
                     }
                 }
             }
 
-            return totalTotalWeight > 0;
+            if (totalTotalWeight > 0)
+            {
+                float invTotalTotal = 1f / totalTotalWeight;
+
+                for (int i = 0; i < blendMaps.Length; i++)
+                {
+                    var bm = blendMaps[i];
+
+                    if (bm.sampled)
+                    {
+                        float invTotal = bm.weight * invTotalTotal;
+
+                        var color = bm.sampledColor;
+                        Add(sd, bm.r.result, color.r * invTotal, ref totalWeight);
+                        Add(sd, bm.g.result, color.g * invTotal, ref totalWeight);
+                        Add(sd, bm.b.result, color.b * invTotal, ref totalWeight);
+                        Add(sd, bm.a.result, color.a * invTotal, ref totalWeight);
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         public void Refresh()
@@ -150,7 +167,7 @@ namespace PrecisionSurfaceEffects
             }
         }
 
-       
+        
 
         //Datatypes
         [System.Serializable]
@@ -176,6 +193,9 @@ namespace PrecisionSurfaceEffects
             public SurfaceBlends a = new SurfaceBlends();
 
             internal Vector2[] uvs;
+
+            internal bool sampled;
+            internal Color sampledColor;
         }
 
 
@@ -186,17 +206,9 @@ namespace PrecisionSurfaceEffects
         {
             base.OnValidate();
 
+            lastSampledColors.Clear();
+
             Refresh();
-
-
-            //var mf = GetComponent<MeshFilter>();
-            //var m = mf.sharedMesh;
-
-            //for (int i = 0; i < blendMaps.Length; i++)
-            //{
-            //    var bm = blendMaps[i];
-            //    bm.uvChannel = Mathf.Min(bm.uvChannel, m.)
-            //}
 
             Awake();
         }
@@ -236,3 +248,17 @@ namespace PrecisionSurfaceEffects
         }
     }
 }
+
+/*
+ * 
+
+            //var mf = GetComponent<MeshFilter>();
+            //var m = mf.sharedMesh;
+
+            //for (int i = 0; i < blendMaps.Length; i++)
+            //{
+            //    var bm = blendMaps[i];
+            //    bm.uvChannel = Mathf.Min(bm.uvChannel, m.)
+            //}
+
+*/

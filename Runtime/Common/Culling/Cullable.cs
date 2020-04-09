@@ -4,24 +4,15 @@ using UnityEngine;
 
 namespace Culling
 {
-    public class Cullable : MonoBehaviour
+    public abstract class Cullable : MonoBehaviour
     {
         //Fields
         public float importance = 1;
         public CullType cullType;
-        public MonoBehaviour[] disableScripts;
 
 
         //Methods
-        public virtual void SetCullEnabled(bool active)
-        {
-            for (int i = 0; i < disableScripts.Length; i++)
-            {
-                var ds = disableScripts[i];
-                if (ds.enabled != active)
-                    ds.enabled = active;
-            }
-        }
+        public abstract void SetCullEnabled(bool active);
 
 
         //Lifecycle

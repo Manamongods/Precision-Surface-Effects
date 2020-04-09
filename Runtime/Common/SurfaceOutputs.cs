@@ -55,6 +55,17 @@ namespace PrecisionSurfaceEffects
 
 
         //Methods
+        public void CopyTo(SurfaceOutputs to)
+        {
+            to.Clear();
+            to.AddRange(this);
+
+            to.hardness = hardness;
+            to.collider = collider;
+            to.hitPosition = hitPosition;
+            to.hitNormal = hitNormal;
+        }
+
         public void Downshift(int maxCount = 1, float minWeight = 0) //, float mult = 1)
         {
             //This (in theory) pushes the weights downward from anchor so that there is never any "popping". It should bias itself to the remaining highest weights

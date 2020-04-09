@@ -31,15 +31,19 @@ namespace PrecisionSurfaceEffects
     [RequireComponent(typeof(ParticleSystem))]
     public class SurfaceParticles : MonoBehaviour
     {
+        //Constants
+        public static int maxAttemptParticleCount = 1000; //This is to prevent excessive numbers such as from perhaps a bug
+
+
+
         //Fields
         public SurfaceParticles[] children; //subParticleSystems
 
         [Header("Quality")]
-        public bool inheritVelocities = true;
+        [SerializeField]
+        private bool inheritVelocities = true;
 
         [Header("Inherit Velocity")]
-        [Range(0, 1)]
-        public float inheritAmount = 1;
         public Vector2 inheritSpreadRange = new Vector2(0, 1);
 
         [Header("Color")]
@@ -57,8 +61,8 @@ namespace PrecisionSurfaceEffects
         [Header("Count")]
         public Vector2 countBySpeedRange = new Vector2(0, 5);
         public float countByImpulse;
-        [Tooltip("This is to prevent excessive numbers such as from perhaps a bug")]
-        public int maxCount = 1000; //maxRate //
+        [Min(0)]
+        public float countByInverseScaleExponent = 2;
 
         [Header("Size")]
         public float baseScaler = 0.5f;
@@ -217,8 +221,8 @@ namespace PrecisionSurfaceEffects
 
 
             float countMult = particleCountScaler * Mathf.Clamp01(Mathf.InverseLerp(countBySpeedRange.x, countBySpeedRange.y, speed));
-            countMult /= scale * scale; //should technically be cubed though
-            var countf = Mathf.Min(countMult * countByImpulse * impulse, maxCount) * weight; //maxRate * dt
+            countMult /= Mathf.Pow(scale, countByInverseScaleExponent); // * scale; //should technically be cubed though
+            var countf = Mathf.Min(countMult * countByImpulse * impulse, maxAttemptParticleCount) * weight; //maxRate * dt
             int count = (int)countf;
             if (Random.value < countf - count)
                 count++;
@@ -241,26 +245,32 @@ namespace PrecisionSurfaceEffects
 
             system.Emit(count);
 
+            var par = new ParticleSystem.EmitParams();
+
             if (inheritVelocities)
             {
-                int dstCount = particleSystem.GetParticles(destinationParticles);
+                //int dstCount = particleSystem.GetParticles(destinationParticles);
 
-                int maxDst = Mathf.Min(destinationParticles.Length, main.maxParticles);
-                var dstPC = particleSystem.particleCount;
-                int takingCount = Mathf.Min(maxDst - dstPC, temporarySystem.GetParticles(sourceParticles));
+                //int maxDst = Mathf.Min(destinationParticles.Length, main.maxParticles);
+                //var dstPC = particleSystem.particleCount;
+                //int takingCount = Mathf.Min(maxDst - dstPC, temporarySystem.GetParticles(sourceParticles));
+                int takingCount = temporarySystem.GetParticles(sourceParticles);
                 for (int i = 0; i < takingCount; i++)
                 {
                     var particle = sourceParticles[i];
 
-                    float rand = Random.Range(inheritSpreadRange.x, inheritSpreadRange.y);
-                    particle.velocity += inheritAmount * (vel0 * (1 - rand) + vel1 * rand);
+                    float rand = Random.Range(inheritSpreadRange.x, inheritSpreadRange.y); //is there a faster version of this?
+                    particle.velocity += (vel0 * (1 - rand) + vel1 * rand);
 
-                    destinationParticles[dstCount] = particle;
-                    dstCount++;
+                    //destinationParticles[dstCount] = particle;
+                    //dstCount++;
+
+                    par.particle = particle;
+                    particleSystem.Emit(par, 1);
                 }
 
-                particleSystem.SetParticles(destinationParticles, dstCount);
-                temporarySystem.Clear(); // SetParticles(destinationParticles, 0);
+                //particleSystem.SetParticles(destinationParticles, dstCount);
+                temporarySystem.Clear(false); // SetParticles(destinationParticles, 0);
             }
 
             if(!particleSystem.isPlaying)

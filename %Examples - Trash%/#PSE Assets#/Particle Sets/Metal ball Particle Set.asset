@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4973eda8f7d637e4bb284950496c17a9, type: 3}
+  m_Name: Metal ball Particle Set
+  m_EditorClassIdentifier: 
+  data: {fileID: 11400000, guid: b902d9bfcde7bee47b786803851a1b91, type: 2}
+  surfaceTypeParticles:
+  - name: None
+    particles: {fileID: 0}
+  - name: Grassy
+    particles: {fileID: 7491325751417348753, guid: f36799db7697aa04c968d42c3a43b7e3,
+      type: 3}
+  - name: Rocky
+    particles: {fileID: 6917217161448239402, guid: 7b616163bab6af94290e1548cde390db,
+      type: 3}
+  - name: Wood
+    particles: {fileID: 1354068138572865173, guid: c4fa8904db86a4c4f86a0b6ca862ba6f,
+      type: 3}
+  - name: Hollow Metal
+    particles: {fileID: 8494628303865124500, guid: b950e3cba0b0e2c488d34e42357fe985,
+      type: 3}
+  - name: Muddy
+    particles: {fileID: 8990229482467424882, guid: 45d13dc9b6a147a4ea75aae97028a626,
+      type: 3}

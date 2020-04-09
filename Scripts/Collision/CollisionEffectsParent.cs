@@ -35,6 +35,24 @@ namespace PrecisionSurfaceEffects
         private void OnValidate()
         {
             defaultType = Mathf.Clamp(defaultType, -1, types.Length - 1);
+
+            var rb = GetComponent<Rigidbody>();
+
+            for (int i = 0; i < types.Length; i++)
+            {
+                var t = types[i];
+
+                for (int ii = 0; ii < t.colliders.Length; ii++)
+                {
+                    var c = t.colliders[ii];
+                    if (c.attachedRigidbody != rb)
+                    {
+                        t.colliders[ii] = null;
+
+                        Debug.Log(c.gameObject.name + " is not a part of the Rigidbody: " + rb.gameObject.name);
+                    }
+                }
+            }
         }
 #endif
 
@@ -76,7 +94,7 @@ namespace PrecisionSurfaceEffects
                 {
                     if (t.colliders[ii] == thisCollider)
                     {
-                        t.collisionEffects.OnCollisionStay(collision);
+                        t.collisionEffects.OnOnCollisionStay(collision);
 
                         return;
                     }
@@ -85,7 +103,7 @@ namespace PrecisionSurfaceEffects
 
             if (defaultType != -1)
             {
-                types[defaultType].collisionEffects.OnCollisionStay(collision);
+                types[defaultType].collisionEffects.OnOnCollisionStay(collision);
                 return;
             }
         }

@@ -137,6 +137,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2428953931281557233}
   - component: {fileID: 2428953931281557236}
+  - component: {fileID: 8565344869816102546}
   - component: {fileID: 3759882418448924321}
   m_Layer: 0
   m_Name: Basic Collision Effects
@@ -178,12 +179,24 @@ MonoBehaviour:
   priority: 0
   currentFrictionDebug: (This only works in playmode)
   findMeshColliderSubmesh: 1
+  impactCooldown: 0.05
+  doImpactByImpulseChangeRate: 1
+  impulseChangeRateToImpact: 10
   soundSet: {fileID: 11400000, guid: 80344998cfdc62548be42ca931b98cce, type: 2}
   speedMultiplier: 1
   forceMultiplier: 1
   totalVolumeMultiplier: 0.3
   totalPitchMultiplier: 1
-  doFrictionSounds: 1
+  impactSound:
+    audioSources:
+    - {fileID: 2428953930486503073}
+    - {fileID: 1161368321261731346}
+    minimumTypeWeight: 0.1
+    volumeByForce: 0.2
+    volumeFaderBySpeedRange: {x: 0.01, y: 0.1}
+    basePitch: 0.5
+    pitchBySpeed: -0.0025
+  doFrictionSound: 1
   frictionSound:
     audioSources:
     - {fileID: 2428953931402041396}
@@ -197,29 +210,36 @@ MonoBehaviour:
     smoothTimes:
       up: 0.06
       down: 0.18
-  frictionNormalForceMultiplier: 0.1
-  impactSound:
-    audioSources:
-    - {fileID: 2428953930486503073}
-    - {fileID: 1161368321261731346}
-    minimumTypeWeight: 0.1
-    volumeByForce: 0.2
-    volumeFaderBySpeedRange: {x: 0.01, y: 0.1}
-    basePitch: 0.5
-    pitchBySpeed: -0.0025
-  impactCooldown: 0.01
-  impulseChangeRateToImpact: 10
+    frictionNormalForceMultiplier: 0.1
+  doVibrationSound: 1
   vibrationSound:
     audioSource: {fileID: 0}
     volumeByForce: 0.1
     basePitch: 0.5
     pitchBySpeed: 0.035
-  selfHardness: 1
+  particlesType: 0
   particleSet: {fileID: 11400000, guid: ba419fd3c5da39648b19eb10694ec9c9, type: 2}
-  particleCountMultiplier: 1
-  particleSizeMultiplier: 1
-  minimumParticleShapeRadius: 0
-  frictionCountMultiplier: 1
+  particles:
+    minimumTypeWeight: 0.1
+    selfHardness: 1
+    particleCountMultiplier: 1
+    particleSizeMultiplier: 1
+    minimumParticleShapeRadius: 0
+    frictionCountMultiplier: 1
+  stayer: {fileID: 8565344869816102546}
+--- !u!114 &8565344869816102546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2428953931281557227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f03846853e4023241b7cc2f868dc4d4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  needed: 1
 --- !u!114 &3759882418448924321
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -232,6 +252,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba47779963191f748a95a48b8bcfbd88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  importance: 1
   cullType: {fileID: 11400000, guid: f7a60ae6607b4b744880993ca99af65f, type: 2}
   disableScripts:
   - {fileID: 2428953931281557236}

@@ -27,23 +27,24 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //Make the speeds and forces be individual to each surface type, so that you can slide on multiple? but that's unfair to both STs of different collisions being the same
+//TODO: move the particles to always work?
 
 namespace PrecisionSurfaceEffects
 {
-    public partial class CollisionEffects : CollisionEffectsMaker
+    [RequireComponent(typeof(OnCollisionStayer))]
+    public sealed partial class CollisionEffects : CollisionEffectsMaker, INeedOnCollisionStay
     {
         //Constants
-        //private const float COLLISION_ENTER_DT = 0.1f;
-
         public const bool CLAMP_FINAL_ONE_SHOT_VOLUME = true;
-
-        private const float EXTRA_SEARCH_THICKNESS = 0.01f; //private const int MAX_OUTPUT_MULT = 2; //because they will be blended, I can't be sure they have been sorted and culled properly yet
+        private const float EXTRA_SEARCH_THICKNESS = 0.01f;
+        private const int MAX_PARTICLE_TYPE_COUNT = 10;
 
 
 
         //Fields
 #if UNITY_EDITOR
         [Header("Debug")]
+        [Space(30)]
         [TextArea(1, 10)]
         //[ReadOnly]
         public string currentFrictionDebug;
@@ -54,45 +55,49 @@ namespace PrecisionSurfaceEffects
         [Tooltip("Non-convex MeshCollider submeshes")]
         public bool findMeshColliderSubmesh = true;
 
+        [Header("Impacts")]
+        [Space(30)]
+        public float impactCooldown = 0.1f;
+        [Space(5)]
+        public bool doImpactByImpulseChangeRate = true;
+        public float impulseChangeRateToImpact = 10;
+
+        [SeperatorLine]
         [Header("Sounds")]
         [Space(30)]
         public SurfaceSoundSet soundSet;
 
         [Header("Scaling")]
+        [Space(5)]
         [Tooltip("To easily make the speed be local/relative")]
         public float speedMultiplier = 1;
         public float forceMultiplier = 1;
         public float totalVolumeMultiplier = 0.3f;
         public float totalPitchMultiplier = 1;
 
-        [Header("Friction Sound")]
-        [Space(15)]
-        public bool doFrictionSounds = true;
-        public FrictionSound frictionSound = new FrictionSound(); //[Tooltip("When the friction soundType changes, this can be used to play impactSound")]
-        [Min(0)]
-        public float frictionNormalForceMultiplier = 0.3f;
-
         [Header("Impact Sound")]
-        [Space(15)]
+        [Space(5)]
         public Sound impactSound = new Sound();
-        public float impactCooldown = 0.1f; //public FrictionTypeChangeImpact frictionTypeChangeImpact = new FrictionTypeChangeImpact();
-        public float impulseChangeRateToImpact = 10;
+
+        [Header("Friction Sound")]
+        [Space(5)]
+        public bool doFrictionSound = true;
+        public FrictionSound frictionSound = new FrictionSound(); //[Tooltip("When the friction soundType changes, this can be used to play impactSound")]
 
         [Header("Vibration Sound")]
-        [Space(15)]
+        [Space(5)]
+        public bool doVibrationSound = true;
         public VibrationSound vibrationSound = new VibrationSound();
 
+        [SeperatorLine]
         [Header("Particles")]
         [Space(30)]
-        public float selfHardness = 1;
-        public SurfaceParticleSet particleSet; //public Vector2 particleBySpeedRange = new Vector2(0.01f, 0.1f);
-        public float particleCountMultiplier = 1;
-        [UnityEngine.Serialization.FormerlySerializedAs("particleScaler ")]
-        public float particleSizeMultiplier = 1;
-        public float minimumParticleShapeRadius = 0;
-        public float frictionCountMultiplier = 1; //Essentially how destructive friction is, how rough the surface is
+        public ParticlesType particlesType = ParticlesType.ImpactAndFriction;
+        public SurfaceParticleSet particleSet;
+        public Particles particles = new Particles();
 
         private float impactCooldownT;
+        private SurfaceOutputs outputs2 = new SurfaceOutputs();
         private readonly SurfaceOutputs averageOutputs = new SurfaceOutputs(); // List<CollisionSound> collisionSounds = new List<CollisionSound>();
         private readonly List<int> givenSources = new List<int>();
         private float weightedSpeed;
@@ -100,11 +105,38 @@ namespace PrecisionSurfaceEffects
         private bool downShifted;
         private float previousImpulse;
 
+        [SerializeField]
+        [HideInInspector]
+        private OnCollisionStayer stayer;
+
+
+
+        //Properties
+#if UNITY_EDITOR
+        public bool NeedOnCollisionStay
+        {
+            get
+            {
+                return particlesType == ParticlesType.ImpactAndFriction || doFrictionSound || doImpactByImpulseChangeRate;
+            }
+        }
+#endif
+
 
 
         //Methods
-        private SurfaceOutputs GetSurfaceTypeOutputs(Collision c) //, int maxOutputs)
+        private void GetSurfaceTypeOutputs(Collision c, bool doSound, bool doParticle, out SurfaceOutputs soundOutputs, out SurfaceOutputs particleOutputs)
         {
+            soundOutputs = particleOutputs = null;
+
+            SurfaceOutputs GetFlipFlopOutputs()
+            {
+                var temp = SurfaceData.outputs;
+                SurfaceData.outputs = outputs2;
+                outputs2 = temp;
+                return temp;
+            }
+
             if (findMeshColliderSubmesh && c.collider is MeshCollider mc && !mc.convex)
             {
                 var contact = c.GetContact(0);
@@ -120,13 +152,34 @@ namespace PrecisionSurfaceEffects
                     Debug.DrawLine(pos + norm * debugSize, pos - norm * debugSize, Color.white, 0);
 #endif
 
-                    SurfaceData.outputs.Clear();
-                    soundSet.data.AddSurfaceTypes(c.collider, pos, triangleIndex: rh.triangleIndex);
-                    return SurfaceData.outputs;
+                    SurfaceOutputs GetOutputs(SurfaceData data)
+                    {
+                        SurfaceData.outputs.Clear();
+                        data.AddSurfaceTypes(c.collider, pos, triangleIndex: rh.triangleIndex);
+                        return GetFlipFlopOutputs();
+                    }
+
+                    //Sound Outputs
+                    if (doSound)
+                        soundOutputs = GetOutputs(soundSet.data);
+                    if (doParticle)
+                        particleOutputs = GetOutputs(particleSet.data);
+
+                    return;
                 }
             }
 
-            return soundSet.data.GetCollisionSurfaceTypes(c);
+            if (doSound)
+            {
+                soundSet.data.GetCollisionSurfaceTypes(c);
+                soundOutputs = GetFlipFlopOutputs();
+            }
+
+            if (doParticle)
+            {
+                particleSet.data.GetCollisionSurfaceTypes(c);
+                particleOutputs = GetFlipFlopOutputs();
+            }
         }
 
         private Vector3 CurrentRelativeVelocity(ContactPoint contact)
@@ -180,126 +233,28 @@ namespace PrecisionSurfaceEffects
             {
                 var o = outputs[i];
 
-                SurfaceParticles particles;
+                SurfaceParticles sp;
                 if (o.particlesOverride != null)
-                    particles = o.particlesOverride;
+                    sp = o.particlesOverride;
                 else
-                    particles = particleSet.surfaceTypeParticles[o.surfaceTypeID].particles;
+                    sp = particleSet.surfaceTypeParticles[o.surfaceTypeID].particles;
 
-                if (particles != null)
+                if (sp != null)
                 {
-                    particles.GetInstance().PlayParticles
+                    sp.GetInstance().PlayParticles
                     (
-                        o.color, o.particleCountScaler * particleCountMultiplier, o.particleSizeScaler * particleSizeMultiplier,
+                        o.color, o.particleCountScaler * particles.particleCountMultiplier, o.particleSizeScaler * particles.particleSizeMultiplier,
                         o.weight,
                         impulse, speed,
-                        rot, center, radius + minimumParticleShapeRadius, outputs.hitNormal,
+                        rot, center, radius + particles.minimumParticleShapeRadius, outputs.hitNormal,
                         vel0, vel1,
                         dt
                     );
                 }
             }
         }
-
-
-
-        //Lifecycle
-        private void Awake()
+        private void DoFrictionSound(Collision collision, SurfaceOutputs outputs, float impMag, Vector3 normImp)
         {
-            frictionSound.sources = new FrictionSound.Source[frictionSound.audioSources.Length];
-            for (int i = 0; i < frictionSound.sources.Length; i++)
-            {
-                frictionSound.sources[i] = new FrictionSound.Source() { audioSource = frictionSound.audioSources[i] };
-            }
-        }
-
-#if UNITY_EDITOR
-        private void OnValidate()
-        {
-            if(!Application.isPlaying)
-                currentFrictionDebug = "(This only works in playmode)";
-
-            impactSound.Validate(false);
-            frictionSound.Validate(true);
-        }
-#endif
-
-        private void FixedUpdate()
-        {
-            averageOutputs.Clear(); // collisionSounds.Clear();
-            downShifted = false;
-            weightedSpeed = 0;
-            forceSum = 0;
-        }
-
-        internal void OnCollisionEnter(Collision collision)
-        {
-            if (!isActiveAndEnabled) //enabled
-                return;
-
-            //Debug.Log(collision.collider.gameObject.name + " " + collision.impulse.magnitude);
-
-            //Impact Sound
-            if (impactCooldownT <= 0)
-            {
-                //This prevents multiple sounds for one collision
-                if(Stop(collision))
-                    return;
-
-                var speed = speedMultiplier * collision.relativeVelocity.magnitude; //Can't consistently use CurrentRelativeVelocity(collision);, probably maybe because it's too late to get that speed (already resolved)
-                var force = forceMultiplier * collision.impulse.magnitude;//Here "force" is actually an impulse
-                var vol = totalVolumeMultiplier * impactSound.Volume(force) * impactSound.SpeedFader(speed);
-
-                if (vol > 0.00000000000001f)
-                {
-                    impactCooldownT = impactCooldown;
-
-                    var pitch = totalPitchMultiplier * impactSound.Pitch(speed);
-
-                    int maxc = impactSound.audioSources.Length;
-                    var outputs = GetSurfaceTypeOutputs(collision); //, maxc);
-                    outputs.Downshift(maxc, impactSound.minimumTypeWeight);
-
-                    float approximateCollisionDuration = 1 / Mathf.Max(0.00000001f, selfHardness * outputs.hardness);
-
-                    var c = Mathf.Min(maxc, outputs.Count);
-                    for (int i = 0; i < c; i++)
-                    {
-                        var output = outputs[i];
-                        var st = soundSet.surfaceTypeSounds[output.surfaceTypeID];
-                        var voll = vol * output.weight * output.volumeScaler;
-                        if (CLAMP_FINAL_ONE_SHOT_VOLUME)
-                            voll = Mathf.Min(voll, 1);
-                        st.PlayOneShot(impactSound.audioSources[i], voll, pitch * output.pitchScaler);
-                    }
-
-                    DoParticles(collision, outputs, approximateCollisionDuration); //COLLISION_ENTER_DT
-                }
-            }
-
-            //TODO: move the particles to always work?
-        }
-        internal void OnCollisionStay(Collision collision)
-        {
-            if (!isActiveAndEnabled) //enabled
-                return;
-            if (Stop(collision))
-                return;
-
-            var imp = collision.impulse;
-            var impMag = forceMultiplier * imp.magnitude;
-            var normImp = imp.normalized;
-
-            if ((impMag - previousImpulse) / Time.deltaTime >= impulseChangeRateToImpact)
-            {
-                //Debug.Log(impMag - previousImpulse);
-                OnCollisionEnter(collision);
-            }
-            previousImpulse = impMag;
-
-            if (!doFrictionSounds)
-                return;
-
             float speed = 0;
             float impulse = 0;
             int contactCount = collision.contactCount;
@@ -307,7 +262,7 @@ namespace PrecisionSurfaceEffects
             {
                 var contact = collision.GetContact(0);
                 var norm = contact.normal;
-                impulse += impMag * Mathf.Lerp(1, frictionNormalForceMultiplier, Mathf.Abs(Vector3.Dot(normImp, norm)));
+                impulse += impMag * Mathf.Lerp(1, frictionSound.frictionNormalForceMultiplier, Mathf.Abs(Vector3.Dot(normImp, norm))); //I'm not sure if this works
 
                 speed += CurrentRelativeVelocity(contact).magnitude;
             }
@@ -320,8 +275,6 @@ namespace PrecisionSurfaceEffects
 
             if (force > 0)
             {
-                var outputs = GetSurfaceTypeOutputs(collision); //, frictionSound.sources.Length * MAX_OUTPUT_MULT);
-
                 forceSum += force;
                 weightedSpeed += force * speed;
 
@@ -343,7 +296,7 @@ namespace PrecisionSurfaceEffects
                                 from = invInfluence * from + influence * to;
                             }
 
-                            Lerp(ref sumOutput.weight, output.weight); 
+                            Lerp(ref sumOutput.weight, output.weight);
                             Lerp(ref sumOutput.volumeScaler, output.volumeScaler);
                             Lerp(ref sumOutput.pitchScaler, output.pitchScaler);
                             Lerp(ref sumOutput.particleSizeScaler, output.particleSizeScaler);
@@ -373,24 +326,152 @@ namespace PrecisionSurfaceEffects
                         );
                     }
                 }
-
-                outputs.Downshift();
-                DoParticles(collision, outputs, Time.deltaTime);
             }
         }
 
+        internal void OnOnCollisionStay(Collision collision)
+        {
+            if (!isActiveAndEnabled)
+                return;
+            if (Stop(collision))
+                return;
+
+            var doParticles = particlesType == ParticlesType.ImpactAndFriction;
+            GetSurfaceTypeOutputs(collision, doFrictionSound, doParticles, out SurfaceOutputs soundOutputs, out SurfaceOutputs particleOutputs);
+
+            var imp = collision.impulse;
+            var impMag = forceMultiplier * imp.magnitude;
+            var normImp = imp.normalized;
+
+            //Impact By Impulse ChangeRate
+            if (doImpactByImpulseChangeRate)
+            {
+                if ((impMag - previousImpulse) / Time.deltaTime >= impulseChangeRateToImpact)
+                    OnCollisionEnter(collision);
+                previousImpulse = impMag;
+            }
+
+            //Friction Sounds
+            if (doFrictionSound)
+                DoFrictionSound(collision, soundOutputs, impMag, normImp);
+
+            //Particles
+            if (doParticles)
+            {
+                particleOutputs.Downshift(MAX_PARTICLE_TYPE_COUNT, particles.minimumTypeWeight);
+                DoParticles(collision, particleOutputs, Time.deltaTime);
+            }
+        }
+
+
+
+        //Datatypes
+        public enum ParticlesType { None, ImpactOnly, ImpactAndFriction }
+
+
+
+        //Lifecycle
+        private void Awake()
+        {
+            frictionSound.sources = new FrictionSound.Source[frictionSound.audioSources.Length];
+            for (int i = 0; i < frictionSound.sources.Length; i++)
+            {
+                frictionSound.sources[i] = new FrictionSound.Source() { audioSource = frictionSound.audioSources[i] };
+            }
+        }
+
+        private void OnEnable()
+        {
+            if (stayer != null)
+                stayer.onOnCollisionStay += OnOnCollisionStay;
+        }
         private void OnDisable()
         {
+            if (stayer != null)
+                stayer.onOnCollisionStay -= OnOnCollisionStay;
+
             for (int i = 0; i < frictionSound.audioSources.Length; i++)
                 frictionSound.audioSources[i].Pause();
+        }
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            stayer = GetComponent<OnCollisionStayer>();
+
+            if (!Application.isPlaying)
+                currentFrictionDebug = "(This only works in playmode)";
+
+            impactSound.Validate(false);
+            frictionSound.Validate(true);
+        }
+#endif
+
+        private void FixedUpdate()
+        {
+            averageOutputs.Clear(); // collisionSounds.Clear();
+            downShifted = false;
+            weightedSpeed = 0;
+            forceSum = 0;
+        }
+
+        internal void OnCollisionEnter(Collision collision)
+        {
+            if (!isActiveAndEnabled)
+                return;
+
+            //Impact Sound
+            if (impactCooldownT <= 0)
+            {
+                //This prevents multiple sounds for one collision
+                if (Stop(collision))
+                    return;
+
+                var speed = speedMultiplier * collision.relativeVelocity.magnitude; //Can't consistently use CurrentRelativeVelocity(collision);, probably maybe because it's too late to get that speed (already resolved)
+                var force = forceMultiplier * collision.impulse.magnitude;//Here "force" is actually an impulse
+                var vol = totalVolumeMultiplier * impactSound.Volume(force) * impactSound.SpeedFader(speed);
+
+                if (vol > 0.00000000000001f)
+                {
+                    impactCooldownT = impactCooldown;
+
+                    bool doParticles = particlesType != ParticlesType.None;
+                    GetSurfaceTypeOutputs(collision, true, doParticles, out SurfaceOutputs soundOutputs, out SurfaceOutputs particleOutputs); //, maxc);
+
+                    //Impact Sound
+                    var pitch = totalPitchMultiplier * impactSound.Pitch(speed);
+
+                    int maxc = impactSound.audioSources.Length;
+                    soundOutputs.Downshift(maxc, impactSound.minimumTypeWeight);
+
+                    var c = Mathf.Min(maxc, soundOutputs.Count);
+                    for (int i = 0; i < c; i++)
+                    {
+                        var output = soundOutputs[i];
+                        var st = soundSet.surfaceTypeSounds[output.surfaceTypeID];
+                        var voll = vol * output.weight * output.volumeScaler;
+                        if (CLAMP_FINAL_ONE_SHOT_VOLUME)
+                            voll = Mathf.Min(voll, 1);
+                        st.PlayOneShot(impactSound.audioSources[i], voll, pitch * output.pitchScaler);
+                    }
+
+                    //Impact Particles
+                    if (doParticles)
+                    {
+                        float approximateCollisionDuration = 1 / Mathf.Max(0.00000001f, particles.selfHardness * soundOutputs.hardness);
+
+                        particleOutputs.Downshift(MAX_PARTICLE_TYPE_COUNT, particles.minimumTypeWeight);
+                        DoParticles(collision, particleOutputs, approximateCollisionDuration);
+                    }
+                }
+            }
         }
 
         private void Update()
         {
             impactCooldownT -= Time.deltaTime;
 
-
-            if (doFrictionSounds)
+            if (doFrictionSound)
             {
                 //Downshifts and reroutes
                 if (!downShifted)
@@ -511,4 +592,5 @@ namespace PrecisionSurfaceEffects
         //var force = Vector3.ProjectOnPlane(collision.impulse, norm).magnitude / Time.deltaTime; //Finds tangent force
         //var impulse = collision.impulse;
         //var force = (1 - Vector3.Dot(impulse.normalized, norm)) * impulse.magnitude / Time.deltaTime; //Finds tangent force
+            //Debug.Log(collision.collider.gameObject.name + " " + collision.impulse.magnitude);
 */

@@ -46,6 +46,18 @@ namespace PrecisionSurfaceEffects
         //}
 
         [System.Serializable]
+        public class Particles
+        {
+            [Min(0)]
+            public float minimumTypeWeight = 0.1f;
+            public float selfHardness = 1;
+            public float particleCountMultiplier = 1;
+            public float particleSizeMultiplier = 1;
+            public float minimumParticleShapeRadius = 0;
+            public float frictionCountMultiplier = 1; //Essentially how destructive friction is, how rough the surface is
+        }
+
+        [System.Serializable]
         public class VibrationSound
         {
             public AudioSource audioSource;
@@ -62,7 +74,8 @@ namespace PrecisionSurfaceEffects
             //Fields
             [Tooltip("The more, the more surface types can be heard at once")]
             public AudioSource[] audioSources;
-            public float minimumTypeWeight = 0.2f; // minimumTypeForce = 0.2f; //any surface type contribution*forceSum lower than this will be ignored
+            [Min(0)]
+            public float minimumTypeWeight = 0.1f;
 
             [Header("Volume")]
             public float volumeByForce = 0.1f; //public float baseVolume = 0;
@@ -117,6 +130,9 @@ namespace PrecisionSurfaceEffects
             public float clipChangeSmoothTime = 0.001f;
             [Tooltip("This is used in smoothing the volume and pitch")]
             public SmoothTimes smoothTimes = SmoothTimes.Default(); //make it be smoothtime instead?
+            [Space(20)]
+            [Min(0)]
+            public float frictionNormalForceMultiplier = 0.1f;
 
             internal Source[] sources;
 

@@ -1,0 +1,220 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!64 &240894985
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4585813275243575622}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -5495902117074765545, guid: ecd1de837c7ec004690062ce0b97a92a, type: 3}
+--- !u!114 &240894984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4585813275243575622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4aac69064a16db34e948e94408a40014, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  markerFamily:
+  - {fileID: 240894984}
+  lastSampledColors: []
+  blendMaps:
+  - weight: 1
+    subMaterials:
+    - materialID: 0
+      material: {fileID: 2100000, guid: 8ec6edb974c32314382f3727b1beea6b, type: 2}
+    map: {fileID: 2800000, guid: fba3125edf26b294faac5042f65a6a34, type: 3}
+    uvChannel: 0
+    uvScaleOffset: {x: 1, y: 1, z: 0, w: 0}
+    r:
+      groupName: Wood
+      blends:
+      - reference: Wood
+        weight: 1
+        hardnessMultiplier: 1
+        volumeMultiplier: 1
+        pitchMultiplier: 1
+        particleSizeMultiplier: 1
+        particleCountMultiplier: 1
+        color: {r: 0.4339623, g: 0.31673, b: 0.2065504, a: 1}
+        particlesOverride: {fileID: 0}
+        normalizedWeight: 1
+    g:
+      groupName: Metal
+      blends:
+      - reference: Steel
+        weight: 1
+        hardnessMultiplier: 1
+        volumeMultiplier: 1
+        pitchMultiplier: 1
+        particleSizeMultiplier: 1
+        particleCountMultiplier: 1
+        color: {r: 1, g: 1, b: 1, a: 1}
+        particlesOverride: {fileID: 0}
+        normalizedWeight: 1
+    b:
+      groupName: Stone
+      blends:
+      - reference: Stone
+        weight: 1
+        hardnessMultiplier: 1
+        volumeMultiplier: 1
+        pitchMultiplier: 1
+        particleSizeMultiplier: 1
+        particleCountMultiplier: 1
+        color: {r: 0.4811321, g: 0.4811321, b: 0.4811321, a: 1}
+        particlesOverride: {fileID: 0}
+        normalizedWeight: 1
+    a:
+      groupName: Grass
+      blends:
+      - reference: Grass
+        weight: 1
+        hardnessMultiplier: 1
+        volumeMultiplier: 1
+        pitchMultiplier: 1
+        particleSizeMultiplier: 1
+        particleCountMultiplier: 1
+        color: {r: 0.23488578, g: 0.5471698, b: 0.17267944, a: 1}
+        particlesOverride: {fileID: 0}
+        normalizedWeight: 1
+  - weight: 1
+    subMaterials:
+    - materialID: 0
+      material: {fileID: 2100000, guid: 8ec6edb974c32314382f3727b1beea6b, type: 2}
+    map: {fileID: 2800000, guid: 6124b9ed746feb64e9f2881b5e6f25e3, type: 3}
+    uvChannel: 0
+    uvScaleOffset: {x: 1, y: 1, z: 0, w: 0}
+    r:
+      groupName: Magenta - Null/None
+      blends: []
+    g:
+      groupName: Marshy swampy muddy muck
+      blends:
+      - reference: Mud
+        weight: 1
+        hardnessMultiplier: 1
+        volumeMultiplier: 1
+        pitchMultiplier: 1
+        particleSizeMultiplier: 1
+        particleCountMultiplier: 1
+        color: {r: 1, g: 0.9168164, b: 0.15520924, a: 1}
+        particlesOverride: {fileID: 0}
+        normalizedWeight: 1
+    b:
+      groupName: 
+      blends: []
+    a:
+      groupName: 
+      blends: []
+--- !u!1001 &5514088157553270863
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 587
+      objectReference: {fileID: 0}
+    - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 418
+      objectReference: {fileID: 0}
+    - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 430
+      objectReference: {fileID: 0}
+    - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.66247356
+      objectReference: {fileID: 0}
+    - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.24724261
+      objectReference: {fileID: 0}
+    - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.2472426
+      objectReference: {fileID: 0}
+    - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.66247344
+      objectReference: {fileID: 0}
+    - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 40.932
+      objectReference: {fileID: 0}
+    - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 32.942997
+      objectReference: {fileID: 0}
+    - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 32.943
+      objectReference: {fileID: 0}
+    - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 32.943
+      objectReference: {fileID: 0}
+    - target: {fileID: -1504981713932161579, guid: ecd1de837c7ec004690062ce0b97a92a,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8ec6edb974c32314382f3727b1beea6b, type: 2}
+    - target: {fileID: -927199367670048503, guid: ecd1de837c7ec004690062ce0b97a92a,
+        type: 3}
+      propertyPath: m_Name
+      value: Complex Blend Map Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: ecd1de837c7ec004690062ce0b97a92a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ecd1de837c7ec004690062ce0b97a92a, type: 3}
+--- !u!1 &4585813275243575622 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: ecd1de837c7ec004690062ce0b97a92a,
+    type: 3}
+  m_PrefabInstance: {fileID: 5514088157553270863}
+  m_PrefabAsset: {fileID: 0}

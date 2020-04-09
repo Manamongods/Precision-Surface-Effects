@@ -9,6 +9,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 83522031641595680, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}
+      propertyPath: m_VertexStreams.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 83522031641595680, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 29527f14e22998a4d9aaba0345bff494, type: 2}
@@ -26,6 +31,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SortingFudge
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 83522031641595680, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: m_VertexStreams.Array.data[5]
+      value: 23
       objectReference: {fileID: 0}
     - target: {fileID: 871911225595251929, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}

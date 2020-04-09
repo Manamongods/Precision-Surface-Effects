@@ -40,7 +40,7 @@ namespace PrecisionSurfaceEffects
 
         //Fields
         private static readonly List<Material> materials = new List<Material>();
-        internal static readonly SurfaceOutputs outputs = new SurfaceOutputs();
+        internal static SurfaceOutputs outputs = new SurfaceOutputs(); //readonly 
 
 
         //Methods
