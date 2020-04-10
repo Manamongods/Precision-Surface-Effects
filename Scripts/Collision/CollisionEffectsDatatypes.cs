@@ -58,6 +58,7 @@ namespace PrecisionSurfaceEffects
             public float pitchBySpeed = 0.035f;
             public float smoothTime = 0.05f;
             public float maxForce = 10000;
+            public float maxVolume = 0.5f;
             [Header("Decay")]
             [Min(0)]
             public float exponentialDecay = 1;
@@ -103,7 +104,7 @@ namespace PrecisionSurfaceEffects
 
 
                 currentVolume = Mathf.SmoothDamp(currentVolume, volumeByForce * force, ref volumeVelocity, smoothTime);
-                audioSource.volume = totalVolumeMultiplier * currentVolume;
+                audioSource.volume = Mathf.Min(totalVolumeMultiplier * currentVolume, maxVolume);
 
                 float speed = 0;
                 float targetPitch = basePitch + speed * pitchBySpeed;
@@ -137,6 +138,7 @@ namespace PrecisionSurfaceEffects
             [Header("Volume")]
             public float volumeByForce = 0.1f; //public float baseVolume = 0;
             public Vector2 volumeFaderBySpeedRange = new Vector2(0.01f, 0.1f);
+            public float maxVolume = 0.5f;
 
             [Header("Pitch")]
             public float basePitch = 0.5f;
@@ -303,6 +305,11 @@ namespace PrecisionSurfaceEffects
 
                 public void Update(FrictionSound fs, float totalVolumeMultiplier, float totalPitchMultiplier, float force, float speed)
                 {
+                    void SetVolume()
+                    {
+                        audioSource.volume = Mathf.Min(totalVolumeMultiplier * currentVolume, fs.maxVolume);
+                    }
+
                     if (clip == null)
                         return;
 
@@ -320,7 +327,7 @@ namespace PrecisionSurfaceEffects
 
                         //Fades the volume to change the clip
                         SmoothDamp(ref currentVolume, 0, ref volumeVelocity, new SmoothTimes() { down = fs.clipChangeSmoothTime });
-                        audioSource.volume = currentVolume;
+                        SetVolume();
                     }
                     else
                     {
@@ -333,7 +340,7 @@ namespace PrecisionSurfaceEffects
                         {
                             //Smoothly fades the pitch and volume
                             SmoothDamp(ref currentVolume, clip.volumeMultiplier * fs.Volume(force), ref volumeVelocity, fs.smoothTimes); //float lerpedAmount = 
-                            audioSource.volume = totalVolumeMultiplier * currentVolume;
+                            SetVolume();
 
                             if (speed != 0)
                                 SmoothDamp(ref currentPitch, targetPitch, ref pitchVelocity, fs.smoothTimes); // Mathf.LerpUnclamped(currentPitch, targetPitch, lerpedAmount);

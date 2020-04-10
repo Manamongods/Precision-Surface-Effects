@@ -531,6 +531,7 @@ MonoBehaviour:
     minimumTypeWeight: 0.1
     volumeByForce: 0.2
     volumeFaderBySpeedRange: {x: 0.01, y: 0.1}
+    maxVolume: 0.5
     basePitch: 0.5
     pitchBySpeed: -0.0025
   doFrictionSound: 1
@@ -541,6 +542,7 @@ MonoBehaviour:
     minimumTypeWeight: 0.1
     volumeByForce: 0.2
     volumeFaderBySpeedRange: {x: 0, y: 0.3}
+    maxVolume: 0.5
     basePitch: 0.35
     pitchBySpeed: 0.05
     clipChangeSmoothTime: 0.025
@@ -556,6 +558,7 @@ MonoBehaviour:
     pitchBySpeed: 0.035
     smoothTime: 0.05
     maxForce: 10000
+    maxVolume: 0.25
     exponentialDecay: 3
     linearDecay: 1
     frictionForceMultiplier: 1
@@ -571,6 +574,7 @@ MonoBehaviour:
     particleSizeMultiplier: 1
     minimumParticleShapeRadius: 0
     frictionCountMultiplier: 1
+    faderBySpeedRange: {x: 0.05, y: 0.25}
   stayer: {fileID: 3965173349232124045}
 --- !u!114 &6898083943534699691
 MonoBehaviour:

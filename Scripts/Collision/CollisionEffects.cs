@@ -34,7 +34,6 @@ namespace PrecisionSurfaceEffects
     public sealed partial class CollisionEffects : CollisionEffectsMaker, IMayNeedOnCollisionStay
     {
         //Constants
-        public const bool CLAMP_FINAL_ONE_SHOT_VOLUME = true;
         private const float EXTRA_SEARCH_THICKNESS = 0.01f;
         private const int MAX_PARTICLE_TYPE_COUNT = 10;
 
@@ -503,9 +502,7 @@ namespace PrecisionSurfaceEffects
                         var output = soundOutputs[i];
                         var st = soundSet.surfaceTypeSounds[output.surfaceTypeID];
                         var voll = vol * output.weight * output.volumeMultiplier;
-                        if (CLAMP_FINAL_ONE_SHOT_VOLUME)
-                            voll = Mathf.Min(voll, 1);
-                        st.PlayOneShot(impactSound.audioSources[i], voll, pitch * output.pitchMultiplier);
+                        st.PlayOneShot(impactSound.audioSources[i], Mathf.Min(voll, impactSound.maxVolume), pitch * output.pitchMultiplier);
                     }
 
                     if (onEnterSound != null)
@@ -651,7 +648,11 @@ namespace PrecisionSurfaceEffects
 }
 
 /*
- * 
+        public const bool CLAMP_FINAL_ONE_SHOT_VOLUME = true;
+ *             
+ *             //if (CLAMP_FINAL_ONE_SHOT_VOLUME)
+                        //    voll = Mathf.Min(voll, 1);
+
             float impulse = 0;
             for (int i = 0; i < contactCount; i++)
             {
