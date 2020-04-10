@@ -39,11 +39,11 @@ namespace PrecisionSurfaceEffects
 
 
         //Methods
-        public SurfaceParticles GetSurfaceParticles(SurfaceOutput o)
+        public SurfaceParticles GetSurfaceParticles(ref SurfaceOutput o)
         {
             if (o.particleOverrides != null)
             {
-                var sp = o.particleOverrides.Get(this);
+                var sp = o.particleOverrides.Get(ref o, this);
                 if (sp != null)
                     return sp;
             }
@@ -58,7 +58,7 @@ namespace PrecisionSurfaceEffects
                 return;
 #endif
 
-            SurfaceParticles p = GetSurfaceParticles(output);
+            SurfaceParticles p = GetSurfaceParticles(ref output);
 
             if(p != null)
             {
@@ -69,7 +69,7 @@ namespace PrecisionSurfaceEffects
                 var speed = (otherVel - vel).magnitude;
                 p.PlayParticles
                 (
-                    output.color, output.particleCountScaler, output.particleSizeScaler, 
+                    output.color, output.particleCountMultiplier, output.particleSizeMultiplier, 
                     1, 
                     impulse, speed, 
                     rot, outputs.hitPosition, radius, outputs.hitNormal, 

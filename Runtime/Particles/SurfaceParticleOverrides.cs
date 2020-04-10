@@ -32,17 +32,21 @@ namespace PrecisionSurfaceEffects
     public class SurfaceParticleOverrides : ScriptableObject
     {
         //Fields
-        public Override[] overrides = new Override[0];
+        public Override[] overrides = new Override[1] { new Override() };
 
 
         //Methods
-        public SurfaceParticles Get(SurfaceParticleSet particleSet)
+        public SurfaceParticles Get(ref SurfaceOutput output, SurfaceParticleSet particleSet)
         {
             for (int i = 0; i < overrides.Length; i++)
             {
                 var o = overrides[i];
                 if (o.particleSet == particleSet)
+                {
+                    output.particleCountMultiplier *= o.countMultiplier;
+                    output.particleSizeMultiplier *= o.sizeMultiplier;
                     return o.particles;
+                }
             }
 
             return null;
@@ -53,8 +57,27 @@ namespace PrecisionSurfaceEffects
         [System.Serializable]
         public class Override
         {
+            [HideInInspector]
+            [SerializeField]
+            internal string autoHeader;
             public SurfaceParticleSet particleSet;
             public SurfaceParticles particles;
+            public float sizeMultiplier = 1;
+            public float countMultiplier = 1;
+        }
+
+
+        //Lifecycle
+        private void OnValidate()
+        {
+            for (int i = 0; i < overrides.Length; i++)
+            {
+                var o = overrides[i];
+                if (o.particleSet != null)
+                    o.autoHeader = o.particleSet.name;
+                else
+                    o.autoHeader = "";
+            }
         }
     }
 }

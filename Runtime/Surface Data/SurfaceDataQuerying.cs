@@ -126,10 +126,10 @@ namespace PrecisionSurfaceEffects
                 if (o.weight > 0)
                 {
                     float invW = 1f / o.weight;
-                    o.volumeScaler *= invW;
-                    o.pitchScaler *= invW;
+                    o.volumeMultiplier *= invW;
+                    o.pitchMultiplier *= invW;
                     o.color *= invW;
-                    o.particleSizeScaler *= invW;
+                    o.particleSizeMultiplier *= invW;
                 }
                 outputs[i] = o;
             }
@@ -321,11 +321,11 @@ namespace PrecisionSurfaceEffects
                 if (output.surfaceTypeID == blendResult.surfaceTypeID && output.particleOverrides == blendResult.particleOverrides)
                 {
                     output.weight += weight;
-                    output.volumeScaler += weight * blendResult.volume;
-                    output.pitchScaler += weight * blendResult.pitch;
+                    output.volumeMultiplier += weight * blendResult.volume;
+                    output.pitchMultiplier += weight * blendResult.pitch;
                     output.color += weight * blendResult.color;
-                    output.particleCountScaler  += weight * blendResult.particleCount;
-                    output.particleSizeScaler += weight * blendResult.particleSize;
+                    output.particleCountMultiplier  += weight * blendResult.particleCount;
+                    output.particleSizeMultiplier += weight * blendResult.particleSize;
 
                     outputs[outputID] = output;
                     success = true;
@@ -341,11 +341,11 @@ namespace PrecisionSurfaceEffects
                     {
                         surfaceTypeID = blendResult.surfaceTypeID,
                         weight = weight,
-                        volumeScaler = weight * blendResult.volume,
-                        pitchScaler = weight * blendResult.pitch,
+                        volumeMultiplier = weight * blendResult.volume,
+                        pitchMultiplier = weight * blendResult.pitch,
                         color = weight * blendResult.color,
-                        particleCountScaler = weight * blendResult.particleCount,
-                        particleSizeScaler = weight * blendResult.particleSize,
+                        particleCountMultiplier = weight * blendResult.particleCount,
+                        particleSizeMultiplier = weight * blendResult.particleSize,
                         particleOverrides = blendResult.particleOverrides,
                     }
                 );
@@ -364,12 +364,12 @@ namespace PrecisionSurfaceEffects
                 {
                     surfaceTypeID = stID,
                     weight = 1,
-                    volumeScaler = subType.settings.volumeMultiplier,
-                    pitchScaler = subType.settings.pitchMultiplier,
+                    volumeMultiplier = subType.settings.volumeMultiplier,
+                    pitchMultiplier = subType.settings.pitchMultiplier,
                     particleOverrides = null,
                     color = st.defaultColorTint * subType.settings.defaultColor,
-                    particleCountScaler = 1,
-                    particleSizeScaler = 1,
+                    particleCountMultiplier = 1,
+                    particleSizeMultiplier = 1,
                 }
             );
         }

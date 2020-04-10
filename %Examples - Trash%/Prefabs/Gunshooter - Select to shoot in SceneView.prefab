@@ -178,7 +178,7 @@ MonoBehaviour:
   volumeByImpulse: 0.01
   basePitch: 2
   pitchBySpeed: 0
-  particleSet: {fileID: 11400000, guid: ba419fd3c5da39648b19eb10694ec9c9, type: 2}
+  particleSet: {fileID: 11400000, guid: 62a6441a19f2db644bda9edf40c5b1b4, type: 2}
   particleRadius: 0
   particleCountMultiplier: 4
   particleSizeMultiplier: 1

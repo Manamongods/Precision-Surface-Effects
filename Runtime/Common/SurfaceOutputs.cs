@@ -36,10 +36,10 @@ namespace PrecisionSurfaceEffects
         public SurfaceParticleOverrides particleOverrides;
         public Color color;
 
-        public float volumeScaler;
-        public float pitchScaler;
-        public float particleSizeScaler;
-        public float particleCountScaler;
+        public float volumeMultiplier;
+        public float pitchMultiplier;
+        public float particleSizeMultiplier;
+        public float particleCountMultiplier;
     }
 
     public class SurfaceOutputs : List<SurfaceOutput>

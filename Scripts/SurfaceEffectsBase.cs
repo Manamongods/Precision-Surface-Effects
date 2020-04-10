@@ -42,8 +42,8 @@ public class SurfaceEffectsBase : MonoBehaviour
 
             if (particleSet != null)
             {
-                output.particleSizeScaler *= particleSizeMultiplier;
-                output.particleCountScaler *= particleCountMultiplier;
+                output.particleSizeMultiplier *= particleSizeMultiplier;
+                output.particleCountMultiplier *= particleCountMultiplier;
                 particleSet.PlayParticles(outputs, output, impulse, speed * dir, radius: particleRadius, deltaTime: particleDeltaTime); //-speed * outputs.hitNormal
             }
         }

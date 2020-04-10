@@ -19,3 +19,6 @@ MonoBehaviour:
   - particleSet: {fileID: 11400000, guid: ba419fd3c5da39648b19eb10694ec9c9, type: 2}
     particles: {fileID: 1354068138572865173, guid: c4fa8904db86a4c4f86a0b6ca862ba6f,
       type: 3}
+  - particleSet: {fileID: 11400000, guid: 62a6441a19f2db644bda9edf40c5b1b4, type: 2}
+    particles: {fileID: 9083717482369182543, guid: 4c70f3681a909ff4a891c5cd0319c60c,
+      type: 3}

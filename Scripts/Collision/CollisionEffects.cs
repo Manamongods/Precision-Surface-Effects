@@ -232,13 +232,13 @@ namespace PrecisionSurfaceEffects
             {
                 var o = outputs[i];
 
-                var sp = particleSet.GetSurfaceParticles(o);
+                var sp = particleSet.GetSurfaceParticles(ref o);
                 
                 if (sp != null)
                 {
                     sp.GetInstance().PlayParticles
                     (
-                        o.color, o.particleCountScaler * particles.particleCountMultiplier, o.particleSizeScaler * particles.particleSizeMultiplier,
+                        o.color, o.particleCountMultiplier * particles.particleCountMultiplier, o.particleSizeMultiplier * particles.particleSizeMultiplier,
                         o.weight,
                         impulse, speed,
                         rot, center, radius + particles.minimumParticleShapeRadius, outputs.hitNormal,
@@ -292,10 +292,10 @@ namespace PrecisionSurfaceEffects
                             }
 
                             Lerp(ref sumOutput.weight, output.weight);
-                            Lerp(ref sumOutput.volumeScaler, output.volumeScaler);
-                            Lerp(ref sumOutput.pitchScaler, output.pitchScaler);
-                            Lerp(ref sumOutput.particleSizeScaler, output.particleSizeScaler);
-                            Lerp(ref sumOutput.particleCountScaler, output.particleCountScaler);
+                            Lerp(ref sumOutput.volumeMultiplier, output.volumeMultiplier);
+                            Lerp(ref sumOutput.pitchMultiplier, output.pitchMultiplier);
+                            Lerp(ref sumOutput.particleSizeMultiplier, output.particleSizeMultiplier);
+                            Lerp(ref sumOutput.particleCountMultiplier, output.particleCountMultiplier);
                             sumOutput.color = invInfluence * sumOutput.color + influence * output.color;
 
                             success = true;
@@ -312,10 +312,10 @@ namespace PrecisionSurfaceEffects
                                 weight = output.weight * influence,
 
                                 surfaceTypeID = output.surfaceTypeID,
-                                volumeScaler = output.volumeScaler,
-                                pitchScaler = output.pitchScaler,
-                                particleSizeScaler = output.particleSizeScaler,
-                                particleCountScaler = output.particleCountScaler,
+                                volumeMultiplier = output.volumeMultiplier,
+                                pitchMultiplier = output.pitchMultiplier,
+                                particleSizeMultiplier = output.particleSizeMultiplier,
+                                particleCountMultiplier = output.particleCountMultiplier,
                                 color = output.color,
                             }
                         );
@@ -446,10 +446,10 @@ namespace PrecisionSurfaceEffects
                     {
                         var output = soundOutputs[i];
                         var st = soundSet.surfaceTypeSounds[output.surfaceTypeID];
-                        var voll = vol * output.weight * output.volumeScaler;
+                        var voll = vol * output.weight * output.volumeMultiplier;
                         if (CLAMP_FINAL_ONE_SHOT_VOLUME)
                             voll = Mathf.Min(voll, 1);
-                        st.PlayOneShot(impactSound.audioSources[i], voll, pitch * output.pitchScaler);
+                        st.PlayOneShot(impactSound.audioSources[i], voll, pitch * output.pitchMultiplier);
                     }
 
                     //Impact Particles
@@ -558,11 +558,11 @@ namespace PrecisionSurfaceEffects
 
 #if UNITY_EDITOR
                     var st = soundSet.surfaceTypeSounds[output.surfaceTypeID];
-                    currentFrictionDebug = currentFrictionDebug + st.name + " V: " + output.weight + " P: " + output.pitchScaler + "\n";
+                    currentFrictionDebug = currentFrictionDebug + st.name + " V: " + output.weight + " P: " + output.pitchMultiplier + "\n";
 #endif
 
-                    var vm = totalVolumeMultiplier * output.volumeScaler;
-                    var pm = totalPitchMultiplier * output.pitchScaler;
+                    var vm = totalVolumeMultiplier * output.volumeMultiplier;
+                    var pm = totalPitchMultiplier * output.pitchMultiplier;
                     source.Update(frictionSound, vm, pm, forceSum * output.weight, speed);
                 }
 
