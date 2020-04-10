@@ -180,9 +180,10 @@ MonoBehaviour:
   pitchBySpeed: 0
   particleSet: {fileID: 11400000, guid: 62a6441a19f2db644bda9edf40c5b1b4, type: 2}
   particleRadius: 0
-  particleCountMultiplier: 4
+  particleCountMultiplier: 1
   particleSizeMultiplier: 1
   particleDeltaTime: 0.25
+  mass: 1
   layerMask:
     serializedVersion: 2
     m_Bits: 4294967295
