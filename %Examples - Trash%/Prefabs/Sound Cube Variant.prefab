@@ -33,7 +33,7 @@ PrefabInstance:
     - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
         type: 3}
       propertyPath: impactSound.volumeFaderBySpeedRange.y
-      value: 0.25
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
         type: 3}
@@ -44,6 +44,16 @@ PrefabInstance:
         type: 3}
       propertyPath: impactCooldown
       value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: frictionSound.volumeFaderBySpeedRange.y
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: frictionSound.volumeFaderBySpeedRange.x
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 7768311540337565094, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
         type: 3}

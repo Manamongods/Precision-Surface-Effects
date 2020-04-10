@@ -112,6 +112,9 @@ namespace PrecisionSurfaceEffects
         public OnSurfaceCallback onEnterParticles; //should I remove these?
         public OnSurfaceCallback onEnterSound;
 
+        private static readonly ContactPoint[] contacts = new ContactPoint[64];
+
+
 
 
         //Properties
@@ -188,27 +191,6 @@ namespace PrecisionSurfaceEffects
             }
         }
 
-        private Vector3 CurrentRelativeVelocity(ContactPoint contact)
-        {
-            //return collision.relativeVelocity.magnitude;
-
-            Vector3 Vel(Rigidbody rb, Vector3 pos)
-            {
-                if (rb == null)
-                    return Vector3.zero;
-                return rb.GetPointVelocity(pos);
-            }
-
-            //This version takes into account angular, I believe Unity's doesn't
-
-            //TODO: make it use multiple contacts?
-
-            var vel = Vel(contact.thisCollider.attachedRigidbody, contact.point);
-            var ovel = Vel(contact.otherCollider.attachedRigidbody, contact.point);
-
-            return (vel - ovel); //.magnitude;
-        }
-
         private bool Stop(Collision collision)
         {
             Transform target;
@@ -228,53 +210,8 @@ namespace PrecisionSurfaceEffects
             return false;
         }
 
-        private void DoParticles(Collision c, SurfaceOutputs outputs, float dt)
+        private void DoFrictionSound(Collision collision, SurfaceOutputs outputs, float impulse, float speed)
         {
-            if (particleSet == null || outputs.Count == 0)
-                return;
-
-            SurfaceParticles.GetData(c, out float impulse, out float speed, out Quaternion rot, out Vector3 center, out float radius, out Vector3 vel0, out Vector3 vel1, out float mass0, out float mass1);
-
-            float speedFader = particles.SpeedFader(speed);
-
-            for (int i = 0; i < outputs.Count; i++)
-            {
-                var o = outputs[i];
-
-                var sp = particleSet.GetSurfaceParticles(ref o);
-                
-                if (sp != null)
-                {
-                    sp.GetInstance().PlayParticles
-                    (
-                        o.color, o.particleCountMultiplier * particles.particleCountMultiplier, o.particleSizeMultiplier * particles.particleSizeMultiplier,
-                        o.weight * speedFader,
-                        impulse, speed,
-                        rot, center, radius + particles.minimumParticleShapeRadius, outputs.hitNormal,
-                        vel0, vel1,
-                        mass0, mass1,
-                        dt
-                    );
-                }
-            }
-        }
-        private void DoFrictionSound(Collision collision, SurfaceOutputs outputs, float impMag, Vector3 normImp)
-        {
-            float speed = 0;
-            float impulse = 0;
-            int contactCount = collision.contactCount;
-            for (int i = 0; i < contactCount; i++)
-            {
-                var contact = collision.GetContact(0);
-                var norm = contact.normal;
-                impulse += impMag * Mathf.Lerp(1, frictionSound.frictionNormalForceMultiplier, Mathf.Abs(Vector3.Dot(normImp, norm))); //I'm not sure if this works
-
-                speed += CurrentRelativeVelocity(contact).magnitude;
-            }
-            float invCount = 1 / contactCount;
-            impulse *= invCount;
-            speed *= speedMultiplier * invCount; // Vector3.ProjectOnPlane(CurrentRelativeVelocity(collision), contact.normal).magnitude; // collision.relativeVelocity.magnitude;
-
             var force = impulse / Time.deltaTime; //force = Mathf.Max(0, Mathf.Min(frictionSound.maxForce, force) - frictionSound.minForce);
             force *= frictionSound.SpeedFader(speed); //So that it is found the maximum with this in mind
 
@@ -298,20 +235,22 @@ namespace PrecisionSurfaceEffects
                     bool success = false;
                     for (int ii = 0; ii < averageOutputs.Count; ii++)
                     {
-                        var sumOutput = averageOutputs[ii];
-                        if (sumOutput.surfaceTypeID == output.surfaceTypeID && sumOutput.particleOverrides == output.particleOverrides)
+                        var o = averageOutputs[ii];
+                        if (o.surfaceTypeID == output.surfaceTypeID && o.particleOverrides == output.particleOverrides)
                         {
                             void Lerp(ref float from, float to)
                             {
                                 from = invInfluence * from + influence * to;
                             }
 
-                            Lerp(ref sumOutput.weight, output.weight);
-                            Lerp(ref sumOutput.volumeMultiplier, output.volumeMultiplier);
-                            Lerp(ref sumOutput.pitchMultiplier, output.pitchMultiplier);
-                            Lerp(ref sumOutput.particleSizeMultiplier, output.particleSizeMultiplier);
-                            Lerp(ref sumOutput.particleCountMultiplier, output.particleCountMultiplier);
-                            sumOutput.color = invInfluence * sumOutput.color + influence * output.color;
+                            Lerp(ref o.weight, output.weight);
+                            Lerp(ref o.volumeMultiplier, output.volumeMultiplier);
+                            Lerp(ref o.pitchMultiplier, output.pitchMultiplier);
+                            Lerp(ref o.particleSizeMultiplier, output.particleSizeMultiplier);
+                            Lerp(ref o.particleCountMultiplier, output.particleCountMultiplier);
+                            o.color = invInfluence * o.color + influence * output.color;
+
+                            averageOutputs[ii] = o;
 
                             success = true;
                             break;
@@ -339,6 +278,80 @@ namespace PrecisionSurfaceEffects
             }
         }
 
+        private void Calculate(Collision collision, out int contactCount, out Vector3 center, out Vector3 normal, out float radius, out Vector3 vel0, out Vector3 vel1, out float mass0, out float mass1)
+        {
+            radius = 0;
+
+            contactCount = collision.GetContacts(contacts);
+            if (contactCount == 1)
+            {
+                var contact = collision.contacts[0];
+                center = contact.point;
+                normal = contact.normal;
+            }
+            else
+            {
+                normal = new Vector3();
+                center = new Vector3();
+
+                for (int i = 0; i < contactCount; i++)
+                {
+                    var contact = collision.contacts[i];
+                    normal += contact.normal;
+                    center += contact.point;
+                }
+
+                normal.Normalize();
+                float invCount = 1f / contactCount;
+                center *= invCount;
+
+                for (int i = 0; i < contactCount; i++)
+                {
+                    var contact = collision.contacts[i];
+                    radius += (contact.point - center).magnitude; //this doesn't care if it is lateral to normal, but should it?
+                }
+
+                radius *= invCount;
+            }
+
+
+            vel0 = Utility.GetVelocityMass(collision.GetContact(0).thisCollider.attachedRigidbody, center, out mass0);
+            vel1 = Utility.GetVelocityMass(collision.rigidbody, center, out mass1);
+        }
+
+        private void DoParticles(Collision c, SurfaceOutputs particleOutputs, float dt, Vector3 center, Vector3 normal, float radius, Vector3 vel0, Vector3 vel1, float mass0, float mass1, float impulse, float speed)
+        {
+            if (particleSet != null && particleOutputs.Count != 0)
+            {
+                var rot = Quaternion.FromToRotation(Vector3.forward, normal); //Vector3.up
+
+                particleOutputs.Downshift(MAX_PARTICLE_TYPE_COUNT, particles.minimumTypeWeight);
+
+                float speedFader = particles.SpeedFader(speed);
+
+                for (int i = 0; i < particleOutputs.Count; i++)
+                {
+                    var o = particleOutputs[i];
+
+                    var sp = particleSet.GetSurfaceParticles(ref o);
+
+                    if (sp != null)
+                    {
+                        sp.GetInstance().PlayParticles
+                        (
+                            o.color, o.particleCountMultiplier * particles.particleCountMultiplier, o.particleSizeMultiplier * particles.particleSizeMultiplier,
+                            o.weight * speedFader,
+                            impulse, speed,
+                            rot, center, radius + particles.minimumParticleShapeRadius, particleOutputs.hitNormal,
+                            vel0, vel1,
+                            mass0, mass1,
+                            dt
+                        );
+                    }
+                }
+            }
+        }
+
         internal void OnOnCollisionStay(Collision collision)
         {
             if (!isActiveAndEnabled)
@@ -349,11 +362,14 @@ namespace PrecisionSurfaceEffects
             var doParticles = particlesType == ParticlesType.ImpactAndFriction;
             GetSurfaceTypeOutputs(collision, doFrictionSound, doParticles, out SurfaceOutputs soundOutputs, out SurfaceOutputs particleOutputs);
 
-            var imp = collision.impulse;
-            var impMag = forceMultiplier * imp.magnitude;
-            var normImp = imp.normalized;
 
             //Impact By Impulse ChangeRate
+            Vector3 normImp = collision.impulse;
+            float impMag = normImp.magnitude;
+            if (impMag != 0)
+                normImp /= impMag;
+            impMag *= forceMultiplier;
+
             if (doImpactByImpulseChangeRate)
             {
                 if ((impMag - previousImpulse) / Time.deltaTime >= impulseChangeRateToImpact)
@@ -361,16 +377,23 @@ namespace PrecisionSurfaceEffects
                 previousImpulse = impMag;
             }
 
+
+            //Calculation
+            Calculate(collision, out int contactCount, out Vector3 center, out Vector3 normal, out float radius, out Vector3 vel0, out Vector3 vel1, out float mass0, out float mass1);
+
+
+            float speed = Vector3.ProjectOnPlane(vel1 - vel0, normal).magnitude;
+            float impulse = impMag * Mathf.Lerp(1, frictionSound.frictionNormalForceMultiplier, Mathf.Abs(Vector3.Dot(normImp, normal))); //I'm not sure if this works
+
+
             //Friction Sounds
             if (doFrictionSound)
-                DoFrictionSound(collision, soundOutputs, impMag, normImp);
+                DoFrictionSound(collision, soundOutputs, impulse, speed);
+
 
             //Particles
             if (doParticles)
-            {
-                particleOutputs.Downshift(MAX_PARTICLE_TYPE_COUNT, particles.minimumTypeWeight);
-                DoParticles(collision, particleOutputs, Time.deltaTime);
-            }
+                DoParticles(collision, particleOutputs, Time.deltaTime, center, normal, radius, vel0, vel1, mass0, mass1, impulse, speed);
         }
 
         //public void ResetSounds()
@@ -454,15 +477,15 @@ namespace PrecisionSurfaceEffects
                     return;
 
                 var speed = speedMultiplier * collision.relativeVelocity.magnitude; //Can't consistently use CurrentRelativeVelocity(collision);, probably maybe because it's too late to get that speed (already resolved)
-                var force = forceMultiplier * collision.impulse.magnitude;//Here "force" is actually an impulse
+                var impulse = forceMultiplier * collision.impulse.magnitude; //force //Here "force" is actually an impulse
                 float speedFade = impactSound.SpeedFader(speed);
-                var vol = totalVolumeMultiplier * impactSound.Volume(force) * speedFade;
+                var vol = totalVolumeMultiplier * impactSound.Volume(impulse) * speedFade;
 
                 if (vol > 0.00000000000001f)
                 {
                     if (doVibrationSound)
                     {
-                        vibrationSound.Add(force * vibrationSound.impactForceMultiplier * speedFade, speed * vibrationSound.impactSpeedMultiplier); //Remove speedFade?
+                        vibrationSound.Add(impulse * vibrationSound.impactForceMultiplier * speedFade, speed * vibrationSound.impactSpeedMultiplier); //Remove speedFade?
                     }
 
                     impactCooldownT = impactCooldown;
@@ -497,7 +520,9 @@ namespace PrecisionSurfaceEffects
                         float approximateCollisionDuration = 1 / Mathf.Max(0.00000001f, particles.selfHardness * soundOutputs.hardness);
 
                         particleOutputs.Downshift(MAX_PARTICLE_TYPE_COUNT, particles.minimumTypeWeight);
-                        DoParticles(collision, particleOutputs, approximateCollisionDuration);
+
+                        Calculate(collision, out int contactCount, out Vector3 center, out Vector3 normal, out float radius, out Vector3 vel0, out Vector3 vel1, out float mass0, out float mass1);
+                        DoParticles(collision, particleOutputs, approximateCollisionDuration, center, normal, radius, vel0, vel1, mass0, mass1, impulse, speed);
 
                         if (onEnterParticles != null)
                             onEnterParticles(collision, particleOutputs);
@@ -628,6 +653,42 @@ namespace PrecisionSurfaceEffects
 }
 
 /*
+ * 
+            float impulse = 0;
+            for (int i = 0; i < contactCount; i++)
+            {
+                var contact = contacts[i];
+                var norm = contact.normal;
+                impulse += impMag * Mathf.Lerp(1, frictionSound.frictionNormalForceMultiplier, Mathf.Abs(Vector3.Dot(normImp, norm))); //I'm not sure if this works
+
+                speed += Vector3.ProjectOnPlane(CurrentRelativeVelocity(contact), norm).magnitude;
+            }
+            float invCount = 1f / contactCount;
+            impulse *= invCount;
+            speed *= speedMultiplier * invCount; // Vector3.ProjectOnPlane(CurrentRelativeVelocity(collision), contact.normal).magnitude; // collision.relativeVelocity.magnitude;
+
+
+        private Vector3 CurrentRelativeVelocity(ContactPoint contact)
+        {
+            //return collision.relativeVelocity.magnitude;
+
+            Vector3 Vel(Rigidbody rb, Vector3 pos)
+            {
+                if (rb == null)
+                    return Vector3.zero;
+                return rb.GetPointVelocity(pos);
+            }
+
+            //This version takes into account angular, I believe Unity's doesn't
+
+            //TODO: make it use multiple contacts?
+
+            var vel = Vel(contact.thisCollider.attachedRigidbody, contact.point);
+            var ovel = Vel(contact.otherCollider.attachedRigidbody, contact.point);
+
+            return (vel - ovel); //.magnitude;
+        }
+
  *         //var norm = collision.GetContact(0).normal;
 
         //Debug.DrawRay(collision.GetContact(0).point, collision.impulse.normalized * 3);

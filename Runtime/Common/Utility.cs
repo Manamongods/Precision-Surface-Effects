@@ -71,6 +71,21 @@ namespace PrecisionSurfaceEffects
             if (children == null || children.Length == 0)
                 children = g.GetComponentsInChildren<T>();
         }
+
+
+        public static Vector3 GetVelocityMass(Rigidbody r, Vector3 point, out float mass)
+        {
+            if (r == null)
+            {
+                mass = 1E32f; // float.MaxValue; // Mathf.Infinity;
+                return Vector3.zero;
+            }
+            else
+            {
+                mass = r.mass;
+                return r.GetPointVelocity(point);
+            }
+        }
     }
 }
 
