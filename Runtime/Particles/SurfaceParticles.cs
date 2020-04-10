@@ -109,7 +109,7 @@ namespace PrecisionSurfaceEffects
         {
             if (r == null)
             {
-                mass = Mathf.Infinity;
+                mass = 1E32f; // float.MaxValue; // Mathf.Infinity;
                 return Vector3.zero;
             }
             else
@@ -158,7 +158,7 @@ namespace PrecisionSurfaceEffects
                 radius *= invCount;
             }
 
-            rot = Quaternion.FromToRotation(Vector3.up, normal);
+            rot = Quaternion.FromToRotation(Vector3.forward, normal); //Vector3.up
 
             vel0 = GetVelocityMass(c.GetContact(0).thisCollider.attachedRigidbody, center, out mass0);
             vel1 = GetVelocityMass(c.rigidbody, center, out mass1);
@@ -187,31 +187,35 @@ namespace PrecisionSurfaceEffects
                 temporarySystem.gameObject.name = "Temporary Buffer System";
                 var em2 = temporarySystem.emission;
                 em2.enabled = false;
-
-                if (normal != Vector3.zero)
-                {
-                    var averageVel = (vel0 + vel1) * 0.5f;
-                    //vel0 = Vector3.Reflect(vel0 - vel1, normal) + vel1;
-                    //vel1 = Vector3.Reflect(vel1 - vel0, normal) + vel0;
-
-                    float massSum = mass0 + mass1;
-                    Vector3 mixVel;
-                    if (massSum == 0)
-                        mixVel = (vel0 + vel1) * 0.5f;
-                    else
-                        mixVel = (mass0 * vel0 + mass1 * vel1) / massSum;
-
-                    vel0 = Vector3.Reflect(vel0 - mixVel, normal) + mixVel;
-                    vel1 = Vector3.Reflect(vel1 - mixVel, normal) + mixVel;
-
-                    //vel0 = Vector3.ProjectOnPlane(vel0, normal) + averageVel;
-                    //vel1 = Vector3.ProjectOnPlane(vel1, normal);
-                }
-                else
-                    Debug.Log("Empty normal");
             }
 
-            //TODO: what is the cost of Clear()? or to just set particles, can I just use one particlesystem efficiently?
+            if (normal != Vector3.zero)
+            {
+                //var averageVel = (vel0 + vel1) * 0.5f;
+                //vel0 = Vector3.Reflect(vel0 - vel1, normal) + vel1;
+                //vel1 = Vector3.Reflect(vel1 - vel0, normal) + vel0;
+
+                float massSum = mass0 + mass1;
+                Vector3 mixVel;
+                if (massSum == 0)
+                    mixVel = (vel0 + vel1) * 0.5f;
+                else
+                {
+                    float t = mass1 / massSum;
+                    mixVel = (1 - t) * vel0 + t * vel1;
+                }
+
+                mixVel = Vector3.zero;
+
+                vel0 = Vector3.Reflect(vel0 - mixVel, normal) + mixVel;
+                vel1 = Vector3.Reflect(vel1 - mixVel, normal) + mixVel;
+
+                //vel0 = Vector3.ProjectOnPlane(vel0, normal) + averageVel;
+                //vel1 = Vector3.ProjectOnPlane(vel1, normal);
+            }
+            else
+                Debug.Log("Empty normal");
+
 
             ParticleSystem system = inheritVelocities ? temporarySystem : particleSystem;
 
@@ -226,13 +230,14 @@ namespace PrecisionSurfaceEffects
             var shape = system.shape;
             shape.position = center;
             shape.radius = radius;
-            shape.rotation = rot.eulerAngles + shapeRotationOffset;
+            shape.rotation = (rot * Quaternion.Euler(shapeRotationOffset)).eulerAngles;
 
 
             float force = impulse / dt;
             float scale = baseScaler + scalerByForceMultiplier * scalerByForce.Evaluate(force / scalerForceRange);// Mathf.Min(baseScaler + scalerByImpulse * impulse, maxScale);
             scale *= particleSizeScaler;
-            if(main.startSize3D)
+            //Hopefully this actually works, and that the editor is broken
+            if (main.startSize3D)
             {
                 main.startSizeXMultiplier = startSizeM3D.x * scale;
                 main.startSizeYMultiplier = startSizeM3D.y * scale;
@@ -295,8 +300,8 @@ namespace PrecisionSurfaceEffects
                 temporarySystem.Clear(false); // SetParticles(destinationParticles, 0);
             }
 
-            if(!particleSystem.isPlaying)
-                particleSystem.Play();
+            //if(!particleSystem.isPlaying)
+            //    particleSystem.Play();
         }
 
 
@@ -315,7 +320,7 @@ namespace PrecisionSurfaceEffects
         }
 #endif
 
-        private void Start()
+        private void Awake()
         {
             var main = particleSystem.main;
             if(main.startSize3D)

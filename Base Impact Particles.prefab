@@ -4835,12 +4835,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   children: []
-  inheritVelocities: 1
+  inheritVelocities: 0
   inheritSpreadRange: {x: 0, y: 1}
   setColor: 1
   shapeRadiusScaler: 1
   constantShapeRadius: 0.2
-  shapeRotationOffset: {x: -90, y: 0, z: 0}
+  shapeRotationOffset: {x: 0, y: 0, z: 0}
   baseSpeedMultiplier: 0
   speedMultiplierBySpeed: 1
   countBySpeedRange: {x: -0.5, y: 2}

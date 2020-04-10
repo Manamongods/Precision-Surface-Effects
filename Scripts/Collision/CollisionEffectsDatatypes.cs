@@ -173,22 +173,6 @@ namespace PrecisionSurfaceEffects
 #endif
         }
 
-        [System.Serializable]
-        public struct SmoothTimes
-        {
-            public float up;
-            public float down;
-
-            public static SmoothTimes Default()
-            {
-                return new SmoothTimes()
-                {
-                    up = 0.05f,
-                    down = .15f
-                };
-            }
-        }
-
         public class LoopSource
         {
             //Fields
@@ -202,29 +186,6 @@ namespace PrecisionSurfaceEffects
 
 
             //Methods
-            protected static void SmoothDamp(ref float value, float target, ref float velocity, SmoothTimes rates) //float 
-            {
-                float smoothTime;
-                if (target > value)
-                    smoothTime = rates.up;
-                else
-                    smoothTime = rates.down;
-
-                float maxChange = Time.deltaTime * smoothTime;
-
-                var wantedChange = target - value;
-                //var clampedChange = Mathf.Clamp(wantedChange, -maxChange, maxChange);
-                //value += clampedChange;
-
-                var before = value;
-                value = Mathf.SmoothDamp(value, target, ref velocity, smoothTime);
-                float clampedChange = value - before;
-
-                //if (wantedChange == 0)
-                //    return 1;
-                //else
-                //    return clampedChange / wantedChange; //returns the amount it has lerped, basically what the t would be in a Mathf.Lerp(value, target, t);
-            }
             protected static bool Audible(float vol)
             {
                 return vol > 0.00000001f;
@@ -260,6 +221,22 @@ namespace PrecisionSurfaceEffects
 
 
             //Datatypes
+            [System.Serializable]
+            public struct SmoothTimes
+            {
+                public float up;
+                public float down;
+
+                public static SmoothTimes Default()
+                {
+                    return new SmoothTimes()
+                    {
+                        up = 0.05f,
+                        down = .15f
+                    };
+                }
+            }
+
             internal class Source : LoopSource
             {
                 public bool given;
@@ -292,6 +269,30 @@ namespace PrecisionSurfaceEffects
 
                         this.clip = clip;
                     }
+                }
+
+                protected static void SmoothDamp(ref float value, float target, ref float velocity, SmoothTimes rates) //float 
+                {
+                    float smoothTime;
+                    if (target > value)
+                        smoothTime = rates.up;
+                    else
+                        smoothTime = rates.down;
+
+                    float maxChange = Time.deltaTime * smoothTime;
+
+                    var wantedChange = target - value;
+                    //var clampedChange = Mathf.Clamp(wantedChange, -maxChange, maxChange);
+                    //value += clampedChange;
+
+                    var before = value;
+                    value = Mathf.SmoothDamp(value, target, ref velocity, smoothTime);
+                    float clampedChange = value - before;
+
+                    //if (wantedChange == 0)
+                    //    return 1;
+                    //else
+                    //    return clampedChange / wantedChange; //returns the amount it has lerped, basically what the t would be in a Mathf.Lerp(value, target, t);
                 }
 
                 public void Update(FrictionSound fs, float totalVolumeMultiplier, float totalPitchMultiplier, float force, float speed)
