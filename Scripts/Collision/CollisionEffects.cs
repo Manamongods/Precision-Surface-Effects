@@ -97,6 +97,7 @@ namespace PrecisionSurfaceEffects
 
         private float impactCooldownT;
         private SurfaceOutputs outputs2 = new SurfaceOutputs();
+        private SurfaceOutputs outputs3 = new SurfaceOutputs();
         private readonly SurfaceOutputs averageOutputs = new SurfaceOutputs(); // List<CollisionSound> collisionSounds = new List<CollisionSound>();
         private readonly List<int> givenSources = new List<int>();
         private float weightedSpeed;
@@ -107,6 +108,9 @@ namespace PrecisionSurfaceEffects
         [SerializeField]
         [HideInInspector]
         private OnCollisionStayer stayer;
+
+        public OnSurfaceCallback onEnterParticles; //should I remove these?
+        public OnSurfaceCallback onEnterSound;
 
 
 
@@ -128,56 +132,59 @@ namespace PrecisionSurfaceEffects
         {
             soundOutputs = particleOutputs = null;
 
-            SurfaceOutputs GetFlipFlopOutputs()
+            if (doSound || doParticle)
             {
-                var temp = SurfaceData.outputs;
-                SurfaceData.outputs = outputs2;
-                outputs2 = temp;
-                return temp;
-            }
-
-            if (findMeshColliderSubmesh && c.collider is MeshCollider mc && !mc.convex)
-            {
-                var contact = c.GetContact(0);
-                var pos = contact.point;
-                var norm = contact.normal; //this better be normalized!
-
-                float searchThickness = EXTRA_SEARCH_THICKNESS + Mathf.Abs(contact.separation);
-
-                if (mc.Raycast(new Ray(pos + norm * searchThickness, -norm), out RaycastHit rh, Mathf.Infinity)) //searchThickness * 2
+                SurfaceOutputs GetFlipFlopOutputs()
                 {
+                    var temp = SurfaceData.outputs;
+                    SurfaceData.outputs = outputs2;
+                    outputs2 = temp;
+                    return temp;
+                }
+
+                if (findMeshColliderSubmesh && c.collider is MeshCollider mc && !mc.convex)
+                {
+                    var contact = c.GetContact(0);
+                    var pos = contact.point;
+                    var norm = contact.normal; //this better be normalized!
+
+                    float searchThickness = EXTRA_SEARCH_THICKNESS + Mathf.Abs(contact.separation);
+
+                    if (mc.Raycast(new Ray(pos + norm * searchThickness, -norm), out RaycastHit rh, Mathf.Infinity)) //searchThickness * 2
+                    {
 #if UNITY_EDITOR
-                    float debugSize = 3;
-                    Debug.DrawLine(pos + norm * debugSize, pos - norm * debugSize, Color.white, 0);
+                        float debugSize = 3;
+                        Debug.DrawLine(pos + norm * debugSize, pos - norm * debugSize, Color.white, 0);
 #endif
 
-                    SurfaceOutputs GetOutputs(SurfaceData data)
-                    {
-                        SurfaceData.outputs.Clear();
-                        data.AddSurfaceTypes(c.collider, pos, triangleIndex: rh.triangleIndex);
-                        return GetFlipFlopOutputs();
+                        SurfaceOutputs GetOutputs(SurfaceData data)
+                        {
+                            SurfaceData.outputs.Clear();
+                            data.AddSurfaceTypes(c.collider, pos, triangleIndex: rh.triangleIndex);
+                            return GetFlipFlopOutputs();
+                        }
+
+                        //Sound Outputs
+                        if (doSound)
+                            soundOutputs = GetOutputs(soundSet.data);
+                        if (doParticle)
+                            particleOutputs = GetOutputs(particleSet.data);
+
+                        return;
                     }
-
-                    //Sound Outputs
-                    if (doSound)
-                        soundOutputs = GetOutputs(soundSet.data);
-                    if (doParticle)
-                        particleOutputs = GetOutputs(particleSet.data);
-
-                    return;
                 }
-            }
 
-            if (doSound)
-            {
-                soundSet.data.GetCollisionSurfaceTypes(c);
-                soundOutputs = GetFlipFlopOutputs();
-            }
+                if (doSound)
+                {
+                    soundSet.data.GetCollisionSurfaceTypes(c);
+                    soundOutputs = GetFlipFlopOutputs();
+                }
 
-            if (doParticle)
-            {
-                particleSet.data.GetCollisionSurfaceTypes(c);
-                particleOutputs = GetFlipFlopOutputs();
+                if (doParticle)
+                {
+                    particleSet.data.GetCollisionSurfaceTypes(c);
+                    particleOutputs = GetFlipFlopOutputs();
+                }
             }
         }
 
@@ -226,7 +233,7 @@ namespace PrecisionSurfaceEffects
             if (particleSet == null || outputs.Count == 0)
                 return;
 
-            SurfaceParticles.GetData(c, out float impulse, out float speed, out Quaternion rot, out Vector3 center, out float radius, out Vector3 vel0, out Vector3 vel1);
+            SurfaceParticles.GetData(c, out float impulse, out float speed, out Quaternion rot, out Vector3 center, out float radius, out Vector3 vel0, out Vector3 vel1, out float mass0, out float mass1);
 
             for (int i = 0; i < outputs.Count; i++)
             {
@@ -243,6 +250,7 @@ namespace PrecisionSurfaceEffects
                         impulse, speed,
                         rot, center, radius + particles.minimumParticleShapeRadius, outputs.hitNormal,
                         vel0, vel1,
+                        mass0, mass1,
                         dt
                     );
                 }
@@ -363,6 +371,8 @@ namespace PrecisionSurfaceEffects
         //Datatypes
         public enum ParticlesType { None, ImpactOnly, ImpactAndFriction }
 
+        public delegate void OnSurfaceCallback(Collision collision, SurfaceOutputs outputs);
+
 
 
         //Lifecycle
@@ -417,6 +427,7 @@ namespace PrecisionSurfaceEffects
             if (!isActiveAndEnabled)
                 return;
 
+
             //Impact Sound
             if (impactCooldownT <= 0)
             {
@@ -452,6 +463,10 @@ namespace PrecisionSurfaceEffects
                         st.PlayOneShot(impactSound.audioSources[i], voll, pitch * output.pitchMultiplier);
                     }
 
+                    if (onEnterSound != null)
+                        onEnterSound(collision, soundOutputs);
+
+
                     //Impact Particles
                     if (doParticles)
                     {
@@ -459,6 +474,9 @@ namespace PrecisionSurfaceEffects
 
                         particleOutputs.Downshift(MAX_PARTICLE_TYPE_COUNT, particles.minimumTypeWeight);
                         DoParticles(collision, particleOutputs, approximateCollisionDuration);
+
+                        if (onEnterParticles != null)
+                            onEnterParticles(collision, particleOutputs);
                     }
                 }
             }

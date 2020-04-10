@@ -22,6 +22,8 @@ public class SurfaceEffectsBase : MonoBehaviour
     public float particleCountMultiplier = 1;
     public float particleSizeMultiplier = 1;
     public float particleDeltaTime = 0.25f; //Deltatime allows you to control how many max particles you can accept, because Time.deltaTime is irrelevant for a single shot
+    [Tooltip("This is used to calculate the (reflected) inherited particle velocity")]
+    public float mass = 1;
 
     [Space(20)]
     public LayerMask layerMask = -1;
@@ -44,7 +46,7 @@ public class SurfaceEffectsBase : MonoBehaviour
             {
                 output.particleSizeMultiplier *= particleSizeMultiplier;
                 output.particleCountMultiplier *= particleCountMultiplier;
-                particleSet.PlayParticles(outputs, output, impulse, speed * dir, radius: particleRadius, deltaTime: particleDeltaTime); //-speed * outputs.hitNormal
+                particleSet.PlayParticles(outputs, output, impulse, speed * dir, mass, radius: particleRadius, deltaTime: particleDeltaTime); //-speed * outputs.hitNormal
             }
         }
 

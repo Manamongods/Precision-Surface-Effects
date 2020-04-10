@@ -51,7 +51,7 @@ namespace PrecisionSurfaceEffects
             return surfaceTypeParticles[o.surfaceTypeID].particles;
         }
 
-        public void PlayParticles(SurfaceOutputs outputs, SurfaceOutput output, float impulse, Vector3 vel, float radius = 0, float deltaTime = 0.25f)
+        public void PlayParticles(SurfaceOutputs outputs, SurfaceOutput output, float impulse, Vector3 vel, float mass, float radius = 0, float deltaTime = 0.25f)
         {
 #if UNITY_EDITOR
             if (!Application.isPlaying)
@@ -65,15 +65,16 @@ namespace PrecisionSurfaceEffects
                 p = p.GetInstance();
 
                 var rot = Quaternion.FromToRotation(Vector3.up, outputs.hitNormal);
-                var otherVel = SurfaceParticles.GetVelocity(outputs.collider.attachedRigidbody, outputs.hitPosition);
+                var otherVel = SurfaceParticles.GetVelocityMass(outputs.collider.attachedRigidbody, outputs.hitPosition, out float mass1);
                 var speed = (otherVel - vel).magnitude;
                 p.PlayParticles
                 (
                     output.color, output.particleCountMultiplier, output.particleSizeMultiplier, 
                     1, 
-                    impulse, speed, 
-                    rot, outputs.hitPosition, radius, outputs.hitNormal, 
+                    impulse, speed,
+                    rot, outputs.hitPosition, radius, outputs.hitNormal,
                     vel, otherVel,
+                    mass, mass1,
                     dt: deltaTime
                 );
             }

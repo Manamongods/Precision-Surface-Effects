@@ -105,13 +105,20 @@ namespace PrecisionSurfaceEffects
             return instance;
         }
 
-        public static Vector3 GetVelocity(Rigidbody r, Vector3 point)
+        public static Vector3 GetVelocityMass(Rigidbody r, Vector3 point, out float mass)
         {
             if (r == null)
+            {
+                mass = Mathf.Infinity;
                 return Vector3.zero;
-            return r.GetPointVelocity(point);
+            }
+            else
+            {
+                mass = r.mass;
+                return r.GetPointVelocity(point);
+            }
         }
-        public static void GetData(Collision c, out float impulse, out float speed, out Quaternion rot, out Vector3 center, out float radius, out Vector3 vel0, out Vector3 vel1)
+        public static void GetData(Collision c, out float impulse, out float speed, out Quaternion rot, out Vector3 center, out float radius, out Vector3 vel0, out Vector3 vel1, out float mass0, out float mass1)
         {
             impulse = c.impulse.magnitude; //speed = c.relativeVelocity.magnitude;
 
@@ -153,20 +160,20 @@ namespace PrecisionSurfaceEffects
 
             rot = Quaternion.FromToRotation(Vector3.up, normal);
 
-            vel0 = GetVelocity(c.GetContact(0).thisCollider.attachedRigidbody, center);
-            vel1 = GetVelocity(c.rigidbody, center);
+            vel0 = GetVelocityMass(c.GetContact(0).thisCollider.attachedRigidbody, center, out mass0);
+            vel1 = GetVelocityMass(c.rigidbody, center, out mass1);
 
             speed = (vel0 - vel1).magnitude;
         }
 
-        public void PlayParticles(Color color, float particleCountScaler, float particleSizeScaler, float weight, float impulse, float speed, Quaternion rot, Vector3 center, float radius, Vector3 normal, Vector3 vel0, Vector3 vel1, float dt = 0.25f, bool withChildren = true)
+        public void PlayParticles(Color color, float particleCountScaler, float particleSizeScaler, float weight, float impulse, float speed, Quaternion rot, Vector3 center, float radius, Vector3 normal, Vector3 vel0, Vector3 vel1, float mass0, float mass1, float dt = 0.25f, bool withChildren = true)
         {
             if (withChildren)
             {
                 for (int i = 0; i < children.Length; i++)
                 {
                     var sps = children[i].GetInstance();
-                    sps.PlayParticles(color, particleCountScaler, particleSizeScaler, weight, impulse, speed, rot, center, radius, normal, vel0, vel1, dt: dt, withChildren: false);
+                    sps.PlayParticles(color, particleCountScaler, particleSizeScaler, weight, impulse, speed, rot, center, radius, normal, vel0, vel1, mass0, mass1, dt: dt, withChildren: false);
                 }
             }
 
@@ -181,12 +188,27 @@ namespace PrecisionSurfaceEffects
                 var em2 = temporarySystem.emission;
                 em2.enabled = false;
 
-                if(normal != Vector3.zero)
+                if (normal != Vector3.zero)
                 {
                     var averageVel = (vel0 + vel1) * 0.5f;
-                    vel0 = Vector3.Reflect(vel0 - averageVel, normal) + averageVel;
-                    vel1 = Vector3.Reflect(vel1 - averageVel, normal) + averageVel;
+                    //vel0 = Vector3.Reflect(vel0 - vel1, normal) + vel1;
+                    //vel1 = Vector3.Reflect(vel1 - vel0, normal) + vel0;
+
+                    float massSum = mass0 + mass1;
+                    Vector3 mixVel;
+                    if (massSum == 0)
+                        mixVel = (vel0 + vel1) * 0.5f;
+                    else
+                        mixVel = (mass0 * vel0 + mass1 * vel1) / massSum;
+
+                    vel0 = Vector3.Reflect(vel0 - mixVel, normal) + mixVel;
+                    vel1 = Vector3.Reflect(vel1 - mixVel, normal) + mixVel;
+
+                    //vel0 = Vector3.ProjectOnPlane(vel0, normal) + averageVel;
+                    //vel1 = Vector3.ProjectOnPlane(vel1, normal);
                 }
+                else
+                    Debug.Log("Empty normal");
             }
 
             //TODO: what is the cost of Clear()? or to just set particles, can I just use one particlesystem efficiently?

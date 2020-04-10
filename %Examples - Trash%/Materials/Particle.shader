@@ -16,11 +16,13 @@ Shader "Example/Particle"
     }
     SubShader 
     {
-		Tags { "RenderType" = "Transparent" "Queue" = "Transparent" }
-		Blend SrcAlpha OneMinusSrcAlpha, One OneMinusSrcAlpha
+		Tags { "RenderType" = "Opaque" "Queue" = "Geometry" }
+		//Tags { "RenderType" = "Transparent" "Queue" = "Transparent" }
+		//Blend SrcAlpha OneMinusSrcAlpha, One OneMinusSrcAlpha
 		Cull Off
 		ZTest On
-		ZWrite Off
+		//ZWrite Off
+		ZWrite On
 
 		Pass
 		{
@@ -74,8 +76,11 @@ Shader "Example/Particle"
 
 				float3 detail = (1.0 + (tex2D(_Detail, uvTiled * _Detail_ST.xy).rgb - 0.5) * _DetailAmount);
 				float2 off = UnpackNormal(tex2D(_Offset, uvTiled * _Offset_ST.xy)).xy * _OffsetAmount;
-				float4 c = _Color * tex2D(_MainTex, uv + off) * i.color;
+				float4 c = tex2D(_MainTex, uv + off);
+				clip(c.a - 0.5);
+				c *= _Color * i.color;
 				c.rgb *= detail;
+
 				return c;
 			}
 			ENDCG
