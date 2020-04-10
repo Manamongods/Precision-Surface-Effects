@@ -203,7 +203,7 @@ namespace PrecisionSurfaceEffects
             if (otherCSM != null)
             {
                 if (otherCSM.priority == priority)
-                    return (otherCSM.gameObject.GetInstanceID() > gameObject.GetInstanceID());
+                    return (otherCSM.gameObject.GetInstanceID() > gameObject.GetInstanceID()) ^ (Time.frameCount % 2 == 0);
 
                 return priority < otherCSM.priority;
             }
@@ -380,18 +380,18 @@ namespace PrecisionSurfaceEffects
             //Calculation
             Calculate(collision, out int contactCount, out Vector3 center, out Vector3 normal, out float radius, out Vector3 vel0, out Vector3 vel1, out float mass0, out float mass1);
 
-            float speed = Vector3.ProjectOnPlane(vel1 - vel0, normal).magnitude;
+            float lateralSpeed = Vector3.ProjectOnPlane(vel1 - vel0, normal).magnitude;
             float frictionImpulse = impulse * Mathf.Lerp(1, frictionSound.frictionNormalForceMultiplier, Mathf.Abs(Vector3.Dot(impulseNormal, normal))); //I'm not sure if this works
 
 
             //Friction Sounds
             if (doFrictionSound)
-                DoFrictionSound(collision, soundOutputs, frictionImpulse, speed);
+                DoFrictionSound(collision, soundOutputs, frictionImpulse, lateralSpeed);
 
 
             //Particles
             if (doParticles)
-                DoParticles(collision, particleOutputs, Time.deltaTime, center, normal, radius, vel0, vel1, mass0, mass1, frictionImpulse, speed);
+                DoParticles(collision, particleOutputs, Time.deltaTime, center, normal, radius, vel0, vel1, mass0, mass1, frictionImpulse, lateralSpeed);
         }
 
         //public void ResetSounds()

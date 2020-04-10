@@ -12,6 +12,11 @@ PrefabInstance:
       propertyPath: m_Mass
       value: 5000
       objectReference: {fileID: 0}
+    - target: {fileID: 47305488334938370, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: m_CollisionDetection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}
       propertyPath: impactSound.volumeFaderBySpeedRange.y
@@ -20,7 +25,37 @@ PrefabInstance:
     - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}
       propertyPath: forceMultiplier
-      value: 0.0002
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: frictionSound.volumeFaderBySpeedRange.x
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: frictionSound.volumeFaderBySpeedRange.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: impulseChangeRateToImpact
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: impactSound.volumeByForce
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: vibrationSound.volumeByForce
+      value: 0.0005
+      objectReference: {fileID: 0}
+    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: vibrationSound.maxForce
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 47305488334938374, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}

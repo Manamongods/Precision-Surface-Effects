@@ -158,8 +158,8 @@ namespace PrecisionSurfaceEffects
                 vel0 = Vector3.Reflect(vel0 - mixVel, normal) * inheritAmount + mixVel;
                 vel1 = Vector3.Reflect(vel1 - mixVel, normal) * inheritAmount + mixVel;
             }
-            else
-                Debug.Log("Empty normal");
+            //else
+            //    Debug.Log("Empty normal");
 
 
             ParticleSystem system = inheritVelocities ? temporarySystem : particleSystem;
