@@ -453,7 +453,7 @@ namespace PrecisionSurfaceEffects
 
                 var speed = speedMultiplier * collision.relativeVelocity.magnitude; //Can't consistently use CurrentRelativeVelocity(collision);, probably maybe because it's too late to get that speed (already resolved)
                 var force = forceMultiplier * collision.impulse.magnitude;//Here "force" is actually an impulse
-                float speedFade = totalVolumeMultiplier;
+                float speedFade = impactSound.SpeedFader(speed);
                 var vol = totalVolumeMultiplier * impactSound.Volume(force) * speedFade;
 
                 if (vol > 0.00000000000001f)

@@ -30,21 +30,6 @@ namespace PrecisionSurfaceEffects
 {
     public partial class CollisionEffects : CollisionEffectsMaker
     {
-        //private struct CollisionSound
-        //{
-        //    public float force, speed;
-        //    public SurfaceSoundSet.SurfaceTypeSounds s;
-        //}
-
-        //[System.Serializable]
-        //public class FrictionTypeChangeImpact //Just for foldering
-        //{
-        //    [Range(0, 1)]
-        //    public float probability = 1;
-        //    public float volumeMultiplier = 1;
-        //    public float pitchMultiplier = 1;
-        //}
-
         [System.Serializable]
         public class Particles
         {
@@ -363,3 +348,17 @@ namespace PrecisionSurfaceEffects
             //public float maxForce = 100;
 
  */
+//private struct CollisionSound
+//{
+//    public float force, speed;
+//    public SurfaceSoundSet.SurfaceTypeSounds s;
+//}
+
+//[System.Serializable]
+//public class FrictionTypeChangeImpact //Just for foldering
+//{
+//    [Range(0, 1)]
+//    public float probability = 1;
+//    public float volumeMultiplier = 1;
+//    public float pitchMultiplier = 1;
+//}
