@@ -58,14 +58,80 @@ namespace PrecisionSurfaceEffects
         }
 
         [System.Serializable]
-        public class VibrationSound
+        public class VibrationSound : LoopSource
         {
-            public AudioSource audioSource;
-
+            //Fields
+            [Space(20)]
             public float volumeByForce = 0.1f;
-
             public float basePitch = 0.5f;
             public float pitchBySpeed = 0.035f;
+            public float smoothTime = 0.05f;
+            public float maxForce = 10000;
+            [Header("Decay")]
+            [Min(0)]
+            public float exponentialDecay = 1;
+            [Min(0)]
+            public float linearDecay = 0.01f;
+
+            [Header("Contribution")]
+            public float frictionForceMultiplier = 1;
+            public float frictionSpeedMultiplier = 1;
+            [Space(5)]
+            public float impactForceMultiplier = 1;
+            public float impactSpeedMultiplier = 1;
+
+            private float force;
+            private float weightedSpeed;
+
+            private bool start;
+
+
+            //Methods
+            public void Add(float force, float speed)
+            {
+                if (this.force == 0)
+                    start = true;
+
+                this.force += force;
+                weightedSpeed += force * speed;
+            }
+
+            public void Update(float totalVolumeMultiplier, float totalPitchMultiplier)
+            {
+                float beforce = force;
+
+                float multer = 1 / (1 + Time.deltaTime * exponentialDecay); //?????????
+                force *= multer;
+                force = Mathf.Max(0, force - Time.deltaTime * linearDecay);
+                force = Mathf.Min(force, maxForce);
+
+                float pmulter = 0;
+                if (beforce != 0)
+                    pmulter = force / beforce;
+                weightedSpeed *= pmulter;
+
+
+                currentVolume = Mathf.SmoothDamp(currentVolume, volumeByForce * force, ref volumeVelocity, smoothTime);
+                audioSource.volume = totalVolumeMultiplier * currentVolume;
+
+                float speed = 0;
+                float targetPitch = basePitch + speed * pitchBySpeed;
+                if (start)
+                {
+                    start = false;
+                    currentPitch = targetPitch;
+                    pitchVelocity = 0;
+                }
+
+                if (force > 0)
+                {
+                    speed = weightedSpeed / force;
+                    currentPitch = Mathf.SmoothDamp(currentPitch, targetPitch, ref pitchVelocity, smoothTime);
+                    audioSource.pitch = totalPitchMultiplier * currentPitch;
+                }
+
+                EnsurePlayingOnlyIfAudible();
+            }
         }
 
         [System.Serializable]
@@ -123,6 +189,73 @@ namespace PrecisionSurfaceEffects
         }
 
         [System.Serializable]
+        public struct SmoothTimes
+        {
+            public float up;
+            public float down;
+
+            public static SmoothTimes Default()
+            {
+                return new SmoothTimes()
+                {
+                    up = 0.05f,
+                    down = .15f
+                };
+            }
+        }
+
+        public class LoopSource
+        {
+            //Fields
+            public AudioSource audioSource;
+
+            protected float currentVolume;
+            protected float currentPitch;
+            protected float volumeVelocity;
+            protected float pitchVelocity;
+
+
+
+            //Methods
+            protected static void SmoothDamp(ref float value, float target, ref float velocity, SmoothTimes rates) //float 
+            {
+                float smoothTime;
+                if (target > value)
+                    smoothTime = rates.up;
+                else
+                    smoothTime = rates.down;
+
+                float maxChange = Time.deltaTime * smoothTime;
+
+                var wantedChange = target - value;
+                //var clampedChange = Mathf.Clamp(wantedChange, -maxChange, maxChange);
+                //value += clampedChange;
+
+                var before = value;
+                value = Mathf.SmoothDamp(value, target, ref velocity, smoothTime);
+                float clampedChange = value - before;
+
+                //if (wantedChange == 0)
+                //    return 1;
+                //else
+                //    return clampedChange / wantedChange; //returns the amount it has lerped, basically what the t would be in a Mathf.Lerp(value, target, t);
+            }
+            protected static bool Audible(float vol)
+            {
+                return vol > 0.00000001f;
+            }
+
+            protected void EnsurePlayingOnlyIfAudible()
+            {
+                bool audible = Audible(currentVolume);
+                if (audible && !audioSource.isPlaying)
+                    audioSource.Play();
+                if (!audible && audioSource.isPlaying)
+                    audioSource.Pause(); //perhaps Stop()?
+            }
+        }
+
+        [System.Serializable]
         public class FrictionSound : Sound
         {
             //Fields
@@ -139,33 +272,10 @@ namespace PrecisionSurfaceEffects
 
 
             //Datatypes
-            [System.Serializable]
-            public struct SmoothTimes
+            internal class Source : LoopSource
             {
-                public float up;
-                public float down;
-
-                public static SmoothTimes Default()
-                {
-                    return new SmoothTimes()
-                    {
-                        up = 0.05f,
-                        down = .15f
-                    };
-                }
-            }
-
-            internal class Source
-            {
-                //public SurfaceTypeSounds sts;
-                public AudioSource audioSource;
                 public bool given;
                 public SurfaceTypeSounds.Clip clip;
-
-                private float currentVolume;
-                private float currentPitch;
-                private float volumeVelocity;
-                private float pitchVelocity;
 
 
 
@@ -227,50 +337,16 @@ namespace PrecisionSurfaceEffects
                         else
                         {
                             //Smoothly fades the pitch and volume
-                            float lerpedAmount = SmoothDamp(ref currentVolume, clip.volumeMultiplier * fs.Volume(force), ref volumeVelocity, fs.smoothTimes);
+                            SmoothDamp(ref currentVolume, clip.volumeMultiplier * fs.Volume(force), ref volumeVelocity, fs.smoothTimes); //float lerpedAmount = 
                             audioSource.volume = totalVolumeMultiplier * currentVolume;
 
                             if (speed != 0)
                                 SmoothDamp(ref currentPitch, targetPitch, ref pitchVelocity, fs.smoothTimes); // Mathf.LerpUnclamped(currentPitch, targetPitch, lerpedAmount);
                             audioSource.pitch = totalPitchMultiplier * currentPitch;
 
-
-                            //Ensures the AudioSource is only playing if the volume is high enough
-                            bool audible = Audible(currentVolume);
-                            if (audible && !audioSource.isPlaying)
-                                audioSource.Play();
-                            if (!audible && audioSource.isPlaying)
-                                audioSource.Pause(); //perhaps Stop()?
+                            EnsurePlayingOnlyIfAudible();
                         }
                     }
-                }
-
-                private static float SmoothDamp(ref float value, float target, ref float velocity, SmoothTimes rates)
-                {
-                    float smoothTime;
-                    if (target > value)
-                        smoothTime = rates.up;
-                    else
-                        smoothTime = rates.down;
-
-                    float maxChange = Time.deltaTime * smoothTime;
-
-                    var wantedChange = target - value;
-                    //var clampedChange = Mathf.Clamp(wantedChange, -maxChange, maxChange);
-                    //value += clampedChange;
-
-                    var before = value;
-                    value = Mathf.SmoothDamp(value, target, ref velocity, smoothTime);
-                    float clampedChange = value - before;
-
-                    if (wantedChange == 0)
-                        return 1;
-                    else
-                        return clampedChange / wantedChange; //returns the amount it has lerped, basically what the t would be in a Mathf.Lerp(value, target, t);
-                }
-                private static bool Audible(float vol)
-                {
-                    return vol > 0.00000001f;
                 }
             }
         }

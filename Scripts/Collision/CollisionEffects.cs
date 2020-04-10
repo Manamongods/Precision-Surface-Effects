@@ -278,6 +278,11 @@ namespace PrecisionSurfaceEffects
 
             if (force > 0)
             {
+                if (doVibrationSound)
+                {
+                    vibrationSound.Add(force * vibrationSound.frictionForceMultiplier, speed * vibrationSound.frictionSpeedMultiplier);
+                }
+
                 forceSum += force;
                 weightedSpeed += force * speed;
 
@@ -411,6 +416,9 @@ namespace PrecisionSurfaceEffects
 
             impactSound.Validate(false);
             frictionSound.Validate(true);
+
+            vibrationSound.audioSource.loop = true;
+            vibrationSound.audioSource.playOnAwake = false;
         }
 #endif
 
@@ -437,10 +445,16 @@ namespace PrecisionSurfaceEffects
 
                 var speed = speedMultiplier * collision.relativeVelocity.magnitude; //Can't consistently use CurrentRelativeVelocity(collision);, probably maybe because it's too late to get that speed (already resolved)
                 var force = forceMultiplier * collision.impulse.magnitude;//Here "force" is actually an impulse
-                var vol = totalVolumeMultiplier * impactSound.Volume(force) * impactSound.SpeedFader(speed);
+                float speedFade = totalVolumeMultiplier;
+                var vol = totalVolumeMultiplier * impactSound.Volume(force) * speedFade;
 
                 if (vol > 0.00000000000001f)
                 {
+                    if (doVibrationSound)
+                    {
+                        vibrationSound.Add(force * vibrationSound.impactForceMultiplier * speedFade, speed * vibrationSound.impactSpeedMultiplier); //Remove speedFade?
+                    }
+
                     impactCooldownT = impactCooldown;
 
                     bool doParticles = particlesType != ParticlesType.None;
@@ -485,6 +499,11 @@ namespace PrecisionSurfaceEffects
         private void Update()
         {
             impactCooldownT -= Time.deltaTime;
+
+            if(doVibrationSound)
+            {
+                vibrationSound.Update(totalVolumeMultiplier, totalPitchMultiplier);
+            }
 
             if (doFrictionSound)
             {
