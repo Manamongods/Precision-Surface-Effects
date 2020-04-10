@@ -31,11 +31,6 @@ namespace PrecisionSurfaceEffects
     [RequireComponent(typeof(ParticleSystem))]
     public class SurfaceParticles : MonoBehaviour
     {
-        //Constants
-        public static int maxAttemptParticleCount = 1000; //This is to prevent excessive numbers such as from perhaps a bug
-
-
-
         //Fields
         public SurfaceParticles[] children; //subParticleSystems
 
@@ -62,15 +57,12 @@ namespace PrecisionSurfaceEffects
 
         [Header("Count")]
         public Vector2 countBySpeedRange = new Vector2(0, 5);
-        public float countByImpulse;
+        public ScaledAnimationCurve countByImpulse = new ScaledAnimationCurve();
         [Min(0)]
         public float countByInverseScaleExponent = 2;
 
         [Header("Size")]
-        public float baseScaler = 0.5f;
-        public AnimationCurve scalerByForce = AnimationCurve.Linear(0, 0, 1, 1); //1, 1000, 5 //public float scalerByImpulse = 1; //public float baseScaler = 1;
-        public float scalerForceRange = 1000;
-        public float scalerByForceMultiplier = 4; //public float maxScale = 4;
+        public ScaledAnimationCurve scalerByForce = new ScaledAnimationCurve();
 
         [HideInInspector]
         public new ParticleSystem particleSystem;
@@ -90,6 +82,28 @@ namespace PrecisionSurfaceEffects
         private ParticleSystem.MinMaxGradient sc;
         private ParticleSystem.MinMaxCurve ss, ss2;
         private ParticleSystem.MinMaxCurve ssX, ssX2, ssY, ssY2, ssZ, ssZ2;
+
+
+
+        //Datatypes
+        [System.Serializable]
+        public class ScaledAnimationCurve
+        {
+            public float constant = 0;
+            public float curveRange = 1000;
+            public AnimationCurve curve = AnimationCurve.Linear(0, 0, 1, 1);
+            public float curveMultiplier = 4;
+
+            public float Evaluate(float t)
+            {
+                return constant + curveMultiplier * curve.Evaluate(t / curveRange);
+            }
+
+            public void Validate()
+            {
+                curve.preWrapMode = curve.postWrapMode = WrapMode.Clamp;
+            }
+        }
 
 
 
@@ -227,7 +241,7 @@ namespace PrecisionSurfaceEffects
 
 
             float force = impulse / dt;
-            float scale = baseScaler + scalerByForceMultiplier * scalerByForce.Evaluate(force / scalerForceRange);// Mathf.Min(baseScaler + scalerByImpulse * impulse, maxScale);
+            float scale = scalerByForce.Evaluate(force);// Mathf.Min(baseScaler + scalerByImpulse * impulse, maxScale);
             scale *= particleSizeScaler;
             
             //I have to do this bs because the startSizeMultiplier doesn't work...
@@ -256,7 +270,7 @@ namespace PrecisionSurfaceEffects
 
             float countMult = particleCountScaler * Mathf.Clamp01(Mathf.InverseLerp(countBySpeedRange.x, countBySpeedRange.y, speed));
             countMult /= Mathf.Pow(scale, countByInverseScaleExponent); // * scale; //should technically be cubed though
-            var countf = Mathf.Min(countMult * countByImpulse * impulse, maxAttemptParticleCount) * weight; //maxRate * dt
+            var countf = countMult * countByImpulse.Evaluate(impulse) * weight; //maxRate * dt //Mathf.Min(, maxAttemptParticleCount) 
             int count = (int)countf;
             if (Random.value < countf - count)
                 count++;
@@ -323,7 +337,7 @@ namespace PrecisionSurfaceEffects
             inheritSpreadRange.x = Mathf.Clamp01(inheritSpreadRange.x);
             inheritSpreadRange.y = Mathf.Clamp01(inheritSpreadRange.y);
 
-            scalerByForce.preWrapMode = scalerByForce.postWrapMode = WrapMode.Clamp;
+            scalerByForce.Validate();
         }
 #endif
 
@@ -376,6 +390,11 @@ namespace PrecisionSurfaceEffects
 }
 
 /*
+ *         //Constants
+        public static int maxAttemptParticleCount = 1000; //This is to prevent excessive numbers such as from perhaps a bug
+
+
+
  *     if(main.startSize3D)
                 startSizeM3D = new Vector3(main.startSizeXMultiplier, main.startSizeYMultiplier, main.startSizeZMultiplier);
             else

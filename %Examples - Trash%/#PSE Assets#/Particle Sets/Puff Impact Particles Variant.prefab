@@ -122,6 +122,31 @@ PrefabInstance:
       propertyPath: countByImpulse
       value: 0.1
       objectReference: {fileID: 0}
+    - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: scalerByForce.curveMultiplier
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: countBy.curveRange
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: countByImpulse.curveRange
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: countByImpulse.curveMultiplier
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: scalerByForce.constant
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7670574646986875101, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}
       propertyPath: InitialModule.startSize.scalar
