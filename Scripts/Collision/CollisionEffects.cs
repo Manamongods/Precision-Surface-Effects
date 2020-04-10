@@ -371,6 +371,8 @@ namespace PrecisionSurfaceEffects
             }
         }
 
+        //public void ResetSounds()
+
 
 
         //Datatypes
@@ -402,6 +404,9 @@ namespace PrecisionSurfaceEffects
 
             for (int i = 0; i < frictionSound.audioSources.Length; i++)
                 frictionSound.audioSources[i].Pause();
+
+            if (doVibrationSound)
+                vibrationSound.audioSource.Pause();
         }
 
 #if UNITY_EDITOR
@@ -417,8 +422,11 @@ namespace PrecisionSurfaceEffects
             impactSound.Validate(false);
             frictionSound.Validate(true);
 
-            vibrationSound.audioSource.loop = true;
-            vibrationSound.audioSource.playOnAwake = false;
+            if (doVibrationSound)
+            {
+                vibrationSound.audioSource.loop = true;
+                vibrationSound.audioSource.playOnAwake = false;
+            }
         }
 #endif
 

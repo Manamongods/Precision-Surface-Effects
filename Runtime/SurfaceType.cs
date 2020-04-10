@@ -54,7 +54,9 @@ namespace PrecisionSurfaceEffects
         public class SubType
         {
             public string keyword = "Grass"; //public string[] keywords = new string[1] { "Grass" };
-            internal string lowerKeyword;
+            [SerializeField]
+            [HideInInspector]
+            internal string lowerKeyword = "grass";
 
             public STSettings settings = new STSettings();
         }

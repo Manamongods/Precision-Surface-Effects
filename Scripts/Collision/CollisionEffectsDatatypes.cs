@@ -249,7 +249,10 @@ namespace PrecisionSurfaceEffects
             {
                 bool audible = Audible(currentVolume);
                 if (audible && !audioSource.isPlaying)
+                {
+                    audioSource.time = audioSource.clip.length * Random.value;
                     audioSource.Play();
+                }
                 if (!audible && audioSource.isPlaying)
                     audioSource.Pause(); //perhaps Stop()?
             }
