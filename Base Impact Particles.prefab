@@ -4845,7 +4845,7 @@ MonoBehaviour:
   speedMultiplierBySpeed: 1
   countBySpeedRange: {x: -0.5, y: 2}
   countByImpulse: 0.025
-  countByInverseScaleExponent: 1
+  countByInverseScaleExponent: 2
   baseScaler: 0.25
   scalerByForce:
     serializedVersion: 2
