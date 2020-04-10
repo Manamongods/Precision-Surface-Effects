@@ -27,7 +27,7 @@ MonoBehaviour:
     countMultiplier: 1
   - autoHeader: Bullet Particle Set
     particleSet: {fileID: 11400000, guid: 62a6441a19f2db644bda9edf40c5b1b4, type: 2}
-    particles: {fileID: 9083717482369182543, guid: 4c70f3681a909ff4a891c5cd0319c60c,
+    particles: {fileID: 7491325751417348753, guid: f36799db7697aa04c968d42c3a43b7e3,
       type: 3}
     sizeMultiplier: 1
     countMultiplier: 1

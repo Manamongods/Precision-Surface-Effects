@@ -48,8 +48,9 @@ MonoBehaviour:
         particleSizeMultiplier: 1
         particleCountMultiplier: 1
         color: {r: 0.4339623, g: 0.31673, b: 0.2065504, a: 1}
-        particlesOverride: {fileID: 0}
+        particleOverrides: {fileID: 0}
         normalizedWeight: 1
+      colorMap: {fileID: 0}
     g:
       groupName: Metal
       blends:
@@ -61,8 +62,9 @@ MonoBehaviour:
         particleSizeMultiplier: 1
         particleCountMultiplier: 1
         color: {r: 1, g: 1, b: 1, a: 1}
-        particlesOverride: {fileID: 0}
+        particleOverrides: {fileID: 0}
         normalizedWeight: 1
+      colorMap: {fileID: 0}
     b:
       groupName: Stone
       blends:
@@ -74,8 +76,9 @@ MonoBehaviour:
         particleSizeMultiplier: 1
         particleCountMultiplier: 1
         color: {r: 0.4811321, g: 0.4811321, b: 0.4811321, a: 1}
-        particlesOverride: {fileID: 0}
+        particleOverrides: {fileID: 0}
         normalizedWeight: 1
+      colorMap: {fileID: 0}
     a:
       groupName: Grass
       blends:
@@ -87,8 +90,9 @@ MonoBehaviour:
         particleSizeMultiplier: 1
         particleCountMultiplier: 1
         color: {r: 0.23488578, g: 0.5471698, b: 0.17267944, a: 1}
-        particlesOverride: {fileID: 0}
+        particleOverrides: {fileID: 0}
         normalizedWeight: 1
+      colorMap: {fileID: 0}
   - weight: 1
     subMaterials:
     - materialID: 0
@@ -99,6 +103,7 @@ MonoBehaviour:
     r:
       groupName: Magenta - Null/None
       blends: []
+      colorMap: {fileID: 0}
     g:
       groupName: Marshy swampy muddy muck
       blends:
@@ -110,14 +115,17 @@ MonoBehaviour:
         particleSizeMultiplier: 1
         particleCountMultiplier: 1
         color: {r: 1, g: 0.9168164, b: 0.15520924, a: 1}
-        particlesOverride: {fileID: 0}
+        particleOverrides: {fileID: 0}
         normalizedWeight: 1
+      colorMap: {fileID: 0}
     b:
       groupName: 
       blends: []
+      colorMap: {fileID: 0}
     a:
       groupName: 
       blends: []
+      colorMap: {fileID: 0}
 --- !u!1001 &5514088157553270863
 PrefabInstance:
   m_ObjectHideFlags: 0

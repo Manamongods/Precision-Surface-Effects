@@ -16,9 +16,21 @@ public class SurfaceBlendMapMarkerEditor : Editor
             EditorGUILayout.HelpBox("The Mesh is not set to Readable", MessageType.Error);
         for (int i = 0; i < s.blendMaps.Length; i++)
         {
-            var map = s.blendMaps[i].map;
+            var bm = s.blendMaps[i];
+            var map = bm.map;
             if(!map.isReadable)
-                EditorGUILayout.HelpBox("The Texture: \"" + map.name + "\" is not set to Readable", MessageType.Error);
+                EditorGUILayout.HelpBox("The AlphaMap Texture: \"" + map.name + "\" is not set to Readable", MessageType.Error);
+
+            void Warn(SurfaceBlendMapMarker.BlendMap.SurfaceBlends2 sb2)
+            {
+                if(sb2.colorMap != null && !sb2.colorMap.isReadable)
+                    EditorGUILayout.HelpBox("The Color Texture: \"" + sb2.colorMap.name + "\" is not set to Readable", MessageType.Error);
+            }
+
+            Warn(bm.r);
+            Warn(bm.g);
+            Warn(bm.b);
+            Warn(bm.a);
         }
 
         base.OnInspectorGUI();

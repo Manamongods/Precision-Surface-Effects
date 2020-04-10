@@ -69,7 +69,7 @@ namespace PrecisionSurfaceEffects
 
 
         //Methods
-        private void Add(SurfaceData sd, SurfaceBlends.NormalizedBlends blendResults, float weightMultiplier, ref float totalWeight)
+        private void Add(SurfaceData sd, SurfaceBlends.NormalizedBlends blendResults, Color tint, float weightMultiplier, ref float totalWeight)
         {
             if (weightMultiplier <= 0.0000000001f)
                 return;
@@ -77,7 +77,7 @@ namespace PrecisionSurfaceEffects
             for (int i = 0; i < blendResults.result.Count; i++)
             {
                 var blend = blendResults.result[i];
-
+                blend.color *= tint;
                 sd.AddBlend(blend, false, weightMultiplier, ref totalWeight);
             }
         }
@@ -117,6 +117,18 @@ namespace PrecisionSurfaceEffects
                         Color color = bm.map.GetPixelBilinear(uv.x, uv.y); //this only works for clamp or repeat btw (not mirror etc.)
                         bm.sampledColor = color;
 
+                        void SampleColor(BlendMap.SurfaceBlends2 sb2)
+                        {
+                            if (sb2.colorMap != null)
+                                sb2.sampledColor = sb2.colorMap.GetPixelBilinear(uv.x, uv.y);
+                            else
+                                sb2.sampledColor = Color.white;
+                        }
+                        SampleColor(bm.r);
+                        SampleColor(bm.g);
+                        SampleColor(bm.b);
+                        SampleColor(bm.a);
+
                         totalTotalWeight += bm.weight * (color.r + color.g + color.b + color.a);
 
 #if UNITY_EDITOR
@@ -142,10 +154,10 @@ namespace PrecisionSurfaceEffects
                         float invTotal = bm.weight * invTotalTotal;
 
                         var color = bm.sampledColor;
-                        Add(sd, bm.r.result, color.r * invTotal, ref totalWeight);
-                        Add(sd, bm.g.result, color.g * invTotal, ref totalWeight);
-                        Add(sd, bm.b.result, color.b * invTotal, ref totalWeight);
-                        Add(sd, bm.a.result, color.a * invTotal, ref totalWeight);
+                        Add(sd, bm.r.result, bm.r.sampledColor, color.r * invTotal, ref totalWeight);
+                        Add(sd, bm.g.result, bm.g.sampledColor, color.g * invTotal, ref totalWeight);
+                        Add(sd, bm.b.result, bm.b.sampledColor, color.b * invTotal, ref totalWeight);
+                        Add(sd, bm.a.result, bm.a.sampledColor, color.a * invTotal, ref totalWeight);
                     }
                 }
 
@@ -187,15 +199,24 @@ namespace PrecisionSurfaceEffects
             public Vector4 uvScaleOffset = new Vector4(1, 1, 0, 0); //st
 
             [Header("Channel Blends")]
-            public SurfaceBlends r = new SurfaceBlends();
-            public SurfaceBlends g = new SurfaceBlends();
-            public SurfaceBlends b = new SurfaceBlends();
-            public SurfaceBlends a = new SurfaceBlends();
+            public SurfaceBlends2 r = new SurfaceBlends2();
+            public SurfaceBlends2 g = new SurfaceBlends2();
+            public SurfaceBlends2 b = new SurfaceBlends2();
+            public SurfaceBlends2 a = new SurfaceBlends2();
 
             internal Vector2[] uvs;
 
             internal bool sampled;
             internal Color sampledColor;
+
+            [System.Serializable]
+            public class SurfaceBlends2 : SurfaceBlends
+            {
+                [Header("Optional")]
+                public Texture2D colorMap;
+
+                internal Color sampledColor;
+            }
         }
 
 
