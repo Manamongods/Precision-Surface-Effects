@@ -232,12 +232,8 @@ namespace PrecisionSurfaceEffects
             {
                 var o = outputs[i];
 
-                SurfaceParticles sp;
-                if (o.particlesOverride != null)
-                    sp = o.particlesOverride;
-                else
-                    sp = particleSet.surfaceTypeParticles[o.surfaceTypeID].particles;
-
+                var sp = particleSet.GetSurfaceParticles(o);
+                
                 if (sp != null)
                 {
                     sp.GetInstance().PlayParticles
@@ -288,7 +284,7 @@ namespace PrecisionSurfaceEffects
                     for (int ii = 0; ii < averageOutputs.Count; ii++)
                     {
                         var sumOutput = averageOutputs[ii];
-                        if (sumOutput.surfaceTypeID == output.surfaceTypeID && sumOutput.particlesOverride == output.particlesOverride)
+                        if (sumOutput.surfaceTypeID == output.surfaceTypeID && sumOutput.particleOverrides == output.particleOverrides)
                         {
                             void Lerp(ref float from, float to)
                             {

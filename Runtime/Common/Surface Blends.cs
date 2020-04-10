@@ -81,7 +81,7 @@ namespace PrecisionSurfaceEffects
                 particleSize = blend.particleSizeMultiplier, //particleSpeed = particleSpeedMultiplier,
                 particleCount = blend.particleCountMultiplier,
                 color = blend.color,
-                particlesOverride = blend.particlesOverride
+                particleOverrides = blend.particleOverrides
             };
         }
 
@@ -106,7 +106,7 @@ namespace PrecisionSurfaceEffects
             public float particleSizeMultiplier = 1; //public float particleSpeedMultiplier = 1;
             public float particleCountMultiplier = 1;
             public Color color = Color.white;
-            public SurfaceParticles particlesOverride;
+            public SurfaceParticleOverrides particleOverrides;
 
 #if UNITY_EDITOR
             [SerializeField]
@@ -133,7 +133,7 @@ namespace PrecisionSurfaceEffects
             public float pitch;
 
             public Color color;
-            public SurfaceParticles particlesOverride;
+            public SurfaceParticleOverrides particleOverrides;
 
             public float particleSize; 
             public float particleCount; 

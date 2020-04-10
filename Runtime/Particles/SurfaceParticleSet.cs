@@ -39,6 +39,18 @@ namespace PrecisionSurfaceEffects
 
 
         //Methods
+        public SurfaceParticles GetSurfaceParticles(SurfaceOutput o)
+        {
+            if (o.particleOverrides != null)
+            {
+                var sp = o.particleOverrides.Get(this);
+                if (sp != null)
+                    return sp;
+            }
+
+            return surfaceTypeParticles[o.surfaceTypeID].particles;
+        }
+
         public void PlayParticles(SurfaceOutputs outputs, SurfaceOutput output, float impulse, Vector3 vel, float radius = 0, float deltaTime = 0.25f)
         {
 #if UNITY_EDITOR
@@ -46,11 +58,7 @@ namespace PrecisionSurfaceEffects
                 return;
 #endif
 
-            SurfaceParticles p;
-            if (output.particlesOverride != null)
-                p = output.particlesOverride;
-            else
-                p = surfaceTypeParticles[output.surfaceTypeID].particles;
+            SurfaceParticles p = GetSurfaceParticles(output);
 
             if(p != null)
             {

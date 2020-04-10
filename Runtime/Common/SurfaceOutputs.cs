@@ -33,7 +33,7 @@ namespace PrecisionSurfaceEffects
         public int surfaceTypeID;
         public float weight;
 
-        public SurfaceParticles particlesOverride;
+        public SurfaceParticleOverrides particleOverrides;
         public Color color;
 
         public float volumeScaler;
