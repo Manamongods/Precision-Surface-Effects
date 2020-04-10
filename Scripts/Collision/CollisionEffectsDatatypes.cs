@@ -40,6 +40,12 @@ namespace PrecisionSurfaceEffects
             public float particleSizeMultiplier = 1;
             public float minimumParticleShapeRadius = 0;
             public float frictionCountMultiplier = 1; //Essentially how destructive friction is, how rough the surface is
+            public Vector2 faderBySpeedRange = new Vector2(0.05f, 0.25f);
+
+            public float SpeedFader(float speed)
+            {
+                return Mathf.Clamp01(Mathf.InverseLerp(faderBySpeedRange.x, faderBySpeedRange.y, speed));
+            }
         }
 
         [System.Serializable]

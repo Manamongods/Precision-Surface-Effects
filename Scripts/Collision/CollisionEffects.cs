@@ -235,6 +235,8 @@ namespace PrecisionSurfaceEffects
 
             SurfaceParticles.GetData(c, out float impulse, out float speed, out Quaternion rot, out Vector3 center, out float radius, out Vector3 vel0, out Vector3 vel1, out float mass0, out float mass1);
 
+            float speedFader = particles.SpeedFader(speed);
+
             for (int i = 0; i < outputs.Count; i++)
             {
                 var o = outputs[i];
@@ -246,7 +248,7 @@ namespace PrecisionSurfaceEffects
                     sp.GetInstance().PlayParticles
                     (
                         o.color, o.particleCountMultiplier * particles.particleCountMultiplier, o.particleSizeMultiplier * particles.particleSizeMultiplier,
-                        o.weight,
+                        o.weight * speedFader,
                         impulse, speed,
                         rot, center, radius + particles.minimumParticleShapeRadius, outputs.hitNormal,
                         vel0, vel1,
