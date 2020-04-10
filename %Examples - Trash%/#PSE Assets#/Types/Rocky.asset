@@ -12,30 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17a939634c7ae3a4197d571c0df6eb35, type: 3}
   m_Name: Rocky
   m_EditorClassIdentifier: 
-  hardness: 3
+  hardnessMultiplier: 3
   defaultColorTint: {r: 1, g: 1, b: 1, a: 1}
   subTypes:
   - keyword: Stone
     settings:
+      hardness: 1
       defaultColor: {r: 0.5377358, g: 0.5377358, b: 0.5377358, a: 1}
       volumeMultiplier: 1
       pitchMultiplier: 1
-      hardnessMultiplier: 1
   - keyword: Rock
     settings:
+      hardness: 1
       defaultColor: {r: 0.6226415, g: 0.6226415, b: 0.6226415, a: 1}
       volumeMultiplier: 1
       pitchMultiplier: 1
-      hardnessMultiplier: 1
   - keyword: Tile
     settings:
+      hardness: 1
       defaultColor: {r: 0.74954885, g: 1, b: 0.97391444, a: 1}
       volumeMultiplier: 1
       pitchMultiplier: 1
-      hardnessMultiplier: 1
   - keyword: Brick
     settings:
+      hardness: 1
       defaultColor: {r: 0.6226415, g: 0.4704108, b: 0.36096865, a: 1}
       volumeMultiplier: 1
       pitchMultiplier: 1
-      hardnessMultiplier: 1
