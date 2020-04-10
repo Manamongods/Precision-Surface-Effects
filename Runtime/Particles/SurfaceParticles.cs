@@ -44,6 +44,8 @@ namespace PrecisionSurfaceEffects
         private bool inheritVelocities = true;
 
         [Header("Inherit Velocity")]
+        [Range(0, 1)]
+        public float inheritAmount = 0.5f;
         public Vector2 inheritSpreadRange = new Vector2(0, 1);
 
         [Header("Color")]
@@ -81,13 +83,13 @@ namespace PrecisionSurfaceEffects
         private static readonly ParticleSystem.Particle[] destinationParticles = new ParticleSystem.Particle[10000];
 
         private float startSpeedMultiplier;
-        private float startSizeM;
-        private Vector3 startSizeM3D;
 
         private Color c;
         private Color c0, c1;
         private ParticleSystemGradientMode colorMode;
         private ParticleSystem.MinMaxGradient sc;
+        private ParticleSystem.MinMaxCurve ss, ss2;
+        private ParticleSystem.MinMaxCurve ssX, ssX2, ssY, ssY2, ssZ, ssZ2;
 
 
 
@@ -191,10 +193,6 @@ namespace PrecisionSurfaceEffects
 
             if (normal != Vector3.zero)
             {
-                //var averageVel = (vel0 + vel1) * 0.5f;
-                //vel0 = Vector3.Reflect(vel0 - vel1, normal) + vel1;
-                //vel1 = Vector3.Reflect(vel1 - vel0, normal) + vel0;
-
                 float massSum = mass0 + mass1;
                 Vector3 mixVel;
                 if (massSum == 0)
@@ -205,13 +203,8 @@ namespace PrecisionSurfaceEffects
                     mixVel = (1 - t) * vel0 + t * vel1;
                 }
 
-                mixVel = Vector3.zero;
-
-                vel0 = Vector3.Reflect(vel0 - mixVel, normal) + mixVel;
-                vel1 = Vector3.Reflect(vel1 - mixVel, normal) + mixVel;
-
-                //vel0 = Vector3.ProjectOnPlane(vel0, normal) + averageVel;
-                //vel1 = Vector3.ProjectOnPlane(vel1, normal);
+                vel0 = Vector3.Reflect(vel0 - mixVel, normal) * inheritAmount + mixVel;
+                vel1 = Vector3.Reflect(vel1 - mixVel, normal) * inheritAmount + mixVel;
             }
             else
                 Debug.Log("Empty normal");
@@ -236,15 +229,29 @@ namespace PrecisionSurfaceEffects
             float force = impulse / dt;
             float scale = baseScaler + scalerByForceMultiplier * scalerByForce.Evaluate(force / scalerForceRange);// Mathf.Min(baseScaler + scalerByImpulse * impulse, maxScale);
             scale *= particleSizeScaler;
-            //Hopefully this actually works, and that the editor is broken
+            
+            //I have to do this bs because the startSizeMultiplier doesn't work...
+            void Apply(ParticleSystem.MinMaxCurve from, ref ParticleSystem.MinMaxCurve to, float mult)
+            {
+                to.constant = from.constant * mult;
+                to.constantMin = from.constantMin * mult;
+                to.constantMax = from.constantMax * mult;
+                to.curveMultiplier = from.curveMultiplier * mult;
+            }
             if (main.startSize3D)
             {
-                main.startSizeXMultiplier = startSizeM3D.x * scale;
-                main.startSizeYMultiplier = startSizeM3D.y * scale;
-                main.startSizeZMultiplier = startSizeM3D.z * scale;
+                Apply(ssX, ref ssX2, scale);
+                main.startSizeX = ssX2;
+                Apply(ssY, ref ssY2, scale);
+                main.startSizeY = ssY2;
+                Apply(ssZ, ref ssZ2, scale);
+                main.startSizeZ = ssZ2;
             }
             else
-                main.startSizeMultiplier = startSizeM * scale;
+            {
+                Apply(ss, ref ss2, scale);
+                main.startSize = ss2;
+            }
 
 
             float countMult = particleCountScaler * Mathf.Clamp01(Mathf.InverseLerp(countBySpeedRange.x, countBySpeedRange.y, speed));
@@ -323,10 +330,22 @@ namespace PrecisionSurfaceEffects
         private void Awake()
         {
             var main = particleSystem.main;
-            if(main.startSize3D)
-                startSizeM3D = new Vector3(main.startSizeXMultiplier, main.startSizeYMultiplier, main.startSizeZMultiplier);
+
+            if (main.startSize3D)
+            {
+                ssX = main.startSizeX;
+                ssX2 = main.startSizeX;
+                ssY = main.startSizeY;
+                ssY2 = main.startSizeY;
+                ssZ = main.startSizeZ;
+                ssZ2 = main.startSizeZ;
+            }
             else
-                startSizeM = main.startSizeMultiplier;
+            {
+                ss = main.startSize;
+                ss2 = main.startSize;
+            }
+
             startSpeedMultiplier = main.startSpeedMultiplier;
 
             transform.SetParent(null);
@@ -357,6 +376,17 @@ namespace PrecisionSurfaceEffects
 }
 
 /*
+ *     if(main.startSize3D)
+                startSizeM3D = new Vector3(main.startSizeXMultiplier, main.startSizeYMultiplier, main.startSizeZMultiplier);
+            else
+                startSizeM = main.startSizeMultiplier;
+
+ *                 //var averageVel = (vel0 + vel1) * 0.5f;
+                //vel0 = Vector3.Reflect(vel0 - vel1, normal) + vel1;
+                //vel1 = Vector3.Reflect(vel1 - vel0, normal) + vel0;
+
+                //vel0 = Vector3.ProjectOnPlane(vel0, normal) + averageVel;
+                //vel1 = Vector3.ProjectOnPlane(vel1, normal);
  *
             // startSize.curveMultiplier;
  

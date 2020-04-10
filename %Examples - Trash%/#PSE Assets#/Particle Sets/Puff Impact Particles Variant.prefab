@@ -129,11 +129,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7670574646986875101, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}
-      propertyPath: InitialModule.startSize.minScalar
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7670574646986875101, guid: d7001457c7180594a83ab93837359c5d,
-        type: 3}
       propertyPath: SizeModule.enabled
       value: 0
       objectReference: {fileID: 0}
@@ -211,6 +206,11 @@ PrefabInstance:
         type: 3}
       propertyPath: NoiseModule.frequency
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7670574646986875101, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: InitialModule.startSize.minScalar
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8104508447486059129, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}
