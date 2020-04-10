@@ -285,7 +285,7 @@ namespace PrecisionSurfaceEffects
             contactCount = collision.GetContacts(contacts);
             if (contactCount == 1)
             {
-                var contact = collision.contacts[0];
+                var contact = contacts[0];
                 center = contact.point;
                 normal = contact.normal;
             }
@@ -296,7 +296,7 @@ namespace PrecisionSurfaceEffects
 
                 for (int i = 0; i < contactCount; i++)
                 {
-                    var contact = collision.contacts[i];
+                    var contact = contacts[i];
                     normal += contact.normal;
                     center += contact.point;
                 }
@@ -307,15 +307,14 @@ namespace PrecisionSurfaceEffects
 
                 for (int i = 0; i < contactCount; i++)
                 {
-                    var contact = collision.contacts[i];
+                    var contact = contacts[i];
                     radius += (contact.point - center).magnitude; //this doesn't care if it is lateral to normal, but should it?
                 }
 
                 radius *= invCount;
             }
 
-
-            vel0 = Utility.GetVelocityMass(collision.GetContact(0).thisCollider.attachedRigidbody, center, out mass0);
+            vel0 = Utility.GetVelocityMass(contacts[0].thisCollider.attachedRigidbody, center, out mass0);
             vel1 = Utility.GetVelocityMass(collision.rigidbody, center, out mass1);
         }
 
@@ -364,36 +363,35 @@ namespace PrecisionSurfaceEffects
 
 
             //Impact By Impulse ChangeRate
-            Vector3 normImp = collision.impulse;
-            float impMag = normImp.magnitude;
-            if (impMag != 0)
-                normImp /= impMag;
-            impMag *= forceMultiplier;
+            Vector3 impulseNormal = collision.impulse;
+            float impulse = impulseNormal.magnitude;
+            if (impulse != 0)
+                impulseNormal /= impulse;
+            impulse *= forceMultiplier;
 
             if (doImpactByImpulseChangeRate)
             {
-                if ((impMag - previousImpulse) / Time.deltaTime >= impulseChangeRateToImpact)
+                if ((impulse - previousImpulse) / Time.deltaTime >= impulseChangeRateToImpact)
                     OnCollisionEnter(collision);
-                previousImpulse = impMag;
+                previousImpulse = impulse;
             }
 
 
             //Calculation
             Calculate(collision, out int contactCount, out Vector3 center, out Vector3 normal, out float radius, out Vector3 vel0, out Vector3 vel1, out float mass0, out float mass1);
 
-
             float speed = Vector3.ProjectOnPlane(vel1 - vel0, normal).magnitude;
-            float impulse = impMag * Mathf.Lerp(1, frictionSound.frictionNormalForceMultiplier, Mathf.Abs(Vector3.Dot(normImp, normal))); //I'm not sure if this works
+            float frictionImpulse = impulse * Mathf.Lerp(1, frictionSound.frictionNormalForceMultiplier, Mathf.Abs(Vector3.Dot(impulseNormal, normal))); //I'm not sure if this works
 
 
             //Friction Sounds
             if (doFrictionSound)
-                DoFrictionSound(collision, soundOutputs, impulse, speed);
+                DoFrictionSound(collision, soundOutputs, frictionImpulse, speed);
 
 
             //Particles
             if (doParticles)
-                DoParticles(collision, particleOutputs, Time.deltaTime, center, normal, radius, vel0, vel1, mass0, mass1, impulse, speed);
+                DoParticles(collision, particleOutputs, Time.deltaTime, center, normal, radius, vel0, vel1, mass0, mass1, frictionImpulse, speed);
         }
 
         //public void ResetSounds()
