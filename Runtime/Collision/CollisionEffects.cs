@@ -15,8 +15,9 @@ namespace PrecisionSurfaceEffects
     public sealed partial class CollisionEffects : CollisionEffectsMaker, IOnOnCollisionStay
     {
         //Constants
-        private const float EXTRA_SEARCH_THICKNESS = 0.01f;
-        private const int MAX_PARTICLE_TYPE_COUNT = 10;
+        public static float EXTRA_SEARCH_THICKNESS = 0.01f;
+        public static int MAX_PARTICLE_TYPE_COUNT = 10;
+        public static float IMPACT_DURATION_CONSTANT = .1f;
 
 
 
@@ -38,9 +39,7 @@ namespace PrecisionSurfaceEffects
         [Space(30)]
         public float impactCooldown = 0.1f;
         [Space(5)]
-        [UnityEngine.Serialization.FormerlySerializedAs("doImpactByImpulseChangeRate ")]
         public bool doImpactByForceChange = true;
-        [UnityEngine.Serialization.FormerlySerializedAs("impulseChangeRateToImpact")]
         public float forceChangeToImpact = 10;
 
         [SeperatorLine]
@@ -553,7 +552,7 @@ namespace PrecisionSurfaceEffects
                     //Impact Particles
                     if (doParticles)
                     {
-                        float approximateCollisionDuration = 1 / Mathf.Max(0.00000001f, particles.selfHardness * soundOutputs.hardness);
+                        float approximateCollisionDuration = IMPACT_DURATION_CONSTANT / Mathf.Max(0.00000001f, particles.selfHardness * soundOutputs.hardness);
 
                         particleOutputs.Downshift(MAX_PARTICLE_TYPE_COUNT, particles.minimumTypeWeight);
 

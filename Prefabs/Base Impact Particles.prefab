@@ -4876,7 +4876,7 @@ MonoBehaviour:
   countByInverseScaleExponent: 1
   scalerByForce:
     constant: 0.25
-    curveRange: 10000
+    curveRange: 250000
     curve:
       serializedVersion: 2
       m_Curve:

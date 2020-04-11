@@ -120,7 +120,7 @@ PrefabInstance:
     - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}
       propertyPath: scalerByForce.curveRange
-      value: 5000
+      value: 50000
       objectReference: {fileID: 0}
     - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}

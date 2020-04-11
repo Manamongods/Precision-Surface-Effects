@@ -125,8 +125,6 @@ namespace PrecisionSurfaceEffects
             public float basePitch = 0.5f;
             public float pitchBySpeed = 0.035f;
 
-            //internal SurfaceTypeSounds[] stses;
-
 
             //Methods
             public float SpeedFader(float speed)
@@ -200,7 +198,8 @@ namespace PrecisionSurfaceEffects
             [Header("Rates")]
             public float clipChangeSmoothTime = 0.001f;
             [Tooltip("This is used in smoothing the volume and pitch")]
-            public SmoothTimes smoothTimes = SmoothTimes.Default(); //make it be smoothtime instead?
+            public SmoothTimes volumeSmoothTimes = SmoothTimes.Default();
+            public float pitchSmoothTime = 0.025f;
             [Space(20)]
             [Min(0)]
             public float frictionNormalForceMultiplier = 0.1f;
@@ -320,11 +319,12 @@ namespace PrecisionSurfaceEffects
                         else
                         {
                             //Smoothly fades the pitch and volume
-                            SmoothDamp(ref currentVolume, clip.volumeMultiplier * fs.Volume(force), ref volumeVelocity, fs.smoothTimes); //float lerpedAmount = 
+                            SmoothDamp(ref currentVolume, clip.volumeMultiplier * fs.Volume(force), ref volumeVelocity, fs.volumeSmoothTimes); //float lerpedAmount = 
                             SetVolume();
 
                             if (speed != 0)
-                                SmoothDamp(ref currentPitch, targetPitch, ref pitchVelocity, fs.smoothTimes); // Mathf.LerpUnclamped(currentPitch, targetPitch, lerpedAmount);
+                                currentPitch = Mathf.SmoothDamp(currentPitch, targetPitch, ref pitchVelocity, fs.pitchSmoothTime); // Mathf.LerpUnclamped(currentPitch, targetPitch, lerpedAmount);
+
                             audioSource.pitch = totalPitchMultiplier * currentPitch;
 
                             EnsurePlayingOnlyIfAudible();
