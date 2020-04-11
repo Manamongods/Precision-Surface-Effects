@@ -396,7 +396,6 @@ GameObject:
   - component: {fileID: 7768311540337565090}
   - component: {fileID: 7768311540337565091}
   - component: {fileID: 6898083943534699691}
-  - component: {fileID: 3965173349232124045}
   m_Layer: 0
   m_Name: Sound Sphere
   m_TagString: Untagged
@@ -575,7 +574,8 @@ MonoBehaviour:
     minimumParticleShapeRadius: 0
     frictionCountMultiplier: 1
     faderBySpeedRange: {x: 0.05, y: 0.25}
-  stayer: {fileID: 3965173349232124045}
+  rb: {fileID: 7768311540337565090}
+  collider: {fileID: 7768311540337565089}
 --- !u!114 &6898083943534699691
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -592,19 +592,6 @@ MonoBehaviour:
   cullType: {fileID: 11400000, guid: f7a60ae6607b4b744880993ca99af65f, type: 2}
   disableScripts:
   - {fileID: 7768311540337565091}
---- !u!114 &3965173349232124045
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7768311540337565116}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f03846853e4023241b7cc2f868dc4d4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  needed: 1
 --- !u!1 &7768311541134257655
 GameObject:
   m_ObjectHideFlags: 0

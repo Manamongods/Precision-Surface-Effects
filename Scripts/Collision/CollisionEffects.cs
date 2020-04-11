@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace PrecisionSurfaceEffects
 {
-    public sealed partial class CollisionEffects : CollisionEffectsMaker, IMayNeedOnCollisionStay
+    public sealed partial class CollisionEffects : CollisionEffectsMaker, IOnOnCollisionStay
     {
         //Constants
         private const float EXTRA_SEARCH_THICKNESS = 0.01f;
@@ -75,6 +75,14 @@ namespace PrecisionSurfaceEffects
         public SurfaceParticleSet particleSet;
         public Particles particles = new Particles();
 
+        [SerializeField]
+        [HideInInspector]
+        private Rigidbody rb;
+        [SerializeField]
+        [HideInInspector]
+        private new Collider collider;
+        private bool neededOnCollisionStay;
+
         private float impactCooldownT;
         private SurfaceOutputs outputs2 = new SurfaceOutputs();
         private SurfaceOutputs outputs3 = new SurfaceOutputs();
@@ -85,10 +93,6 @@ namespace PrecisionSurfaceEffects
         private bool downShifted;
         private float previousImpulse;
 
-        [SerializeField]
-        [HideInInspector]
-        private OnCollisionStayer stayer;
-
         public OnSurfaceCallback onEnterParticles; //should I remove these?
         public OnSurfaceCallback onEnterSound;
 
@@ -98,11 +102,13 @@ namespace PrecisionSurfaceEffects
 
         //Properties
 #if UNITY_EDITOR
-        public bool NeedOnCollisionStay
+        private bool NeedOnCollisionStay
         {
             get
             {
-                return particlesType == ParticlesType.ImpactAndFriction || doFrictionSound || doImpactByImpulseChangeRate;
+                bool wanted = particlesType == ParticlesType.ImpactAndFriction || doFrictionSound || doImpactByImpulseChangeRate;
+                bool canReceiveCallbacks = collider != null && (collider.attachedRigidbody == null || rb != null); //This is (still) correct right?
+                return wanted && canReceiveCallbacks;
             }
         }
 #endif
@@ -350,7 +356,7 @@ namespace PrecisionSurfaceEffects
             }
         }
 
-        internal void OnOnCollisionStay(Collision collision)
+        public void OnOnCollisionStay(Collision collision)
         {
             if (!isActiveAndEnabled)
                 return;
@@ -417,13 +423,14 @@ namespace PrecisionSurfaceEffects
 
         private void OnEnable()
         {
-            if (stayer != null)
-                stayer.onOnCollisionStay += OnOnCollisionStay;
+            neededOnCollisionStay = NeedOnCollisionStay;
+            if (neededOnCollisionStay)
+                OnCollisionStayer.Add(gameObject, this);
         }
         private void OnDisable()
         {
-            if (stayer != null)
-                stayer.onOnCollisionStay -= OnOnCollisionStay;
+            if (neededOnCollisionStay)
+                OnCollisionStayer.Remove(gameObject, this);
 
             for (int i = 0; i < frictionSound.audioSources.Length; i++)
                 frictionSound.audioSources[i].Pause();
@@ -435,9 +442,8 @@ namespace PrecisionSurfaceEffects
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            stayer = GetComponent<OnCollisionStayer>();
-            if (stayer == null && NeedOnCollisionStay)
-                stayer = gameObject.AddComponent<OnCollisionStayer>();
+            rb = GetComponent<Rigidbody>();
+            collider = GetComponent<Collider>();
 
             if (!Application.isPlaying)
                 currentFrictionDebug = "(This only works in playmode)";

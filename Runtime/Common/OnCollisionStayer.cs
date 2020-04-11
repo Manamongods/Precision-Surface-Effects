@@ -2,66 +2,46 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IMayNeedOnCollisionStay
+public interface IOnOnCollisionStay
 {
-    bool NeedOnCollisionStay { get; }
+    void OnOnCollisionStay(Collision collision);
 }
 
 [DisallowMultipleComponent]
 public sealed class OnCollisionStayer : MonoBehaviour
 {
     //Fields
-    [HideInInspector]
-    [SerializeField]
-    private bool needed;
+    private OnOnCollisionStay onOnCollisionStay;
 
-    public OnOnCollisionStay onOnCollisionStay;
 
+    //Methods
+    public static void Add(GameObject gameObject, IOnOnCollisionStay self)
+    {
+        var ocs = gameObject.GetComponent<OnCollisionStayer>();
+        if (ocs == null)
+            ocs = gameObject.AddComponent<OnCollisionStayer>();
+
+        ocs.onOnCollisionStay += self.OnOnCollisionStay;
+    }
+    public static void Remove(GameObject gameObject, IOnOnCollisionStay self)
+    {
+        var ocs = gameObject.GetComponent<OnCollisionStayer>();
+        if (ocs != null)
+        {
+            ocs.onOnCollisionStay -= self.OnOnCollisionStay;
+            if (ocs.onOnCollisionStay == null)
+                Destroy(ocs);
+        }
+    }
 
 
     //Datatypes
-    public delegate void OnOnCollisionStay(Collision collision);
-
+    private delegate void OnOnCollisionStay(Collision collision);
 
 
     //Lifecycle
-#if UNITY_EDITOR
-    private void OnValidate()
-    {
-        if (Application.isPlaying)
-            return;
-
-        //hideFlags = HideFlags.HideInInspector;
-        hideFlags = HideFlags.None;
-
-        var inocss = GetComponents<IMayNeedOnCollisionStay>();
-        if (inocss.Length == 0)
-        {
-            DestroyImmediate(this);
-            return;
-        }
-
-        needed = false;
-        foreach (var inocs in inocss)
-        {
-            if(inocs.NeedOnCollisionStay)
-            {
-                needed = true;
-                break;
-            }
-        }
-    }
-#endif
-
-    private void Start()
-    {
-        if (!needed)
-            Destroy(this);
-    }
-
     private void OnCollisionStay(Collision collision)
     {
-        if(onOnCollisionStay != null)
-            onOnCollisionStay(collision);
+        onOnCollisionStay(collision);
     }
 }

@@ -137,7 +137,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2428953931281557233}
   - component: {fileID: 2428953931281557236}
-  - component: {fileID: 8565344869816102546}
   - component: {fileID: 3759882418448924321}
   m_Layer: 0
   m_Name: Basic Collision Effects
@@ -195,6 +194,7 @@ MonoBehaviour:
     minimumTypeWeight: 0.1
     volumeByForce: 0.2
     volumeFaderBySpeedRange: {x: 0.01, y: 0.1}
+    maxVolume: 0.5
     basePitch: 0.5
     pitchBySpeed: -0.0025
   doFrictionSound: 1
@@ -205,6 +205,7 @@ MonoBehaviour:
     minimumTypeWeight: 0.1
     volumeByForce: 0.2
     volumeFaderBySpeedRange: {x: 0, y: 0.1}
+    maxVolume: 0.5
     basePitch: 0.35
     pitchBySpeed: 0.05
     clipChangeSmoothTime: 0.01
@@ -220,6 +221,7 @@ MonoBehaviour:
     pitchBySpeed: 0.035
     smoothTime: 0.05
     maxForce: 10000
+    maxVolume: 0.5
     exponentialDecay: 3
     linearDecay: 1
     frictionForceMultiplier: 1
@@ -235,20 +237,9 @@ MonoBehaviour:
     particleSizeMultiplier: 1
     minimumParticleShapeRadius: 0
     frictionCountMultiplier: 1
-  stayer: {fileID: 8565344869816102546}
---- !u!114 &8565344869816102546
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2428953931281557227}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f03846853e4023241b7cc2f868dc4d4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  needed: 1
+    faderBySpeedRange: {x: 0.05, y: 0.25}
+  rb: {fileID: 0}
+  collider: {fileID: 0}
 --- !u!114 &3759882418448924321
 MonoBehaviour:
   m_ObjectHideFlags: 0
