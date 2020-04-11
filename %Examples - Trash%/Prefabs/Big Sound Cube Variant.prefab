@@ -44,11 +44,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}
-      propertyPath: vibrationSound.volumeByForce
-      value: 0.0005
-      objectReference: {fileID: 0}
-    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
-        type: 3}
       propertyPath: vibrationSound.maxForce
       value: 2000
       objectReference: {fileID: 0}
@@ -61,16 +56,6 @@ PrefabInstance:
         type: 3}
       propertyPath: frictionSound.maxVolume
       value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
-        type: 3}
-      propertyPath: vibrationSound.frictionForceMultiplier
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
-        type: 3}
-      propertyPath: vibrationSound.impactForceMultiplier
-      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}
@@ -91,6 +76,21 @@ PrefabInstance:
         type: 3}
       propertyPath: totalVolumeMultiplier
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: vibrationSound.maxVolume
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: vibrationSound.impactForceMultiplier
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: vibrationSound.frictionForceMultiplier
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 47305488334938374, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}

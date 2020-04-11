@@ -539,11 +539,13 @@ MonoBehaviour:
     - {fileID: 7768311542087541603}
     - {fileID: 8229951337275091168}
     minimumTypeWeight: 0.1
-    volumeByForce: 0.1
+    volumeByForce: 0.05
     volumeFaderBySpeedRange: {x: 0, y: 0.1}
     maxVolume: 0.5
     basePitch: 0.35
     pitchBySpeed: 0.05
+    rollingAmount: 1
+    slidingAmount: 1
     clipChangeSmoothTime: 0.025
     volumeSmoothTimes:
       up: 0.08
@@ -555,16 +557,16 @@ MonoBehaviour:
     audioSource: {fileID: 7420537741251150138}
     volumeByForce: 0.0025
     basePitch: 0.5
-    pitchBySpeed: 0.035
-    smoothTime: 0.01
+    pitchBySpeed: 0.01
+    smoothTime: 0.005
     maxForce: 10000
-    maxVolume: 0.25
+    maxVolume: 0.333333
     exponentialDecay: 3
     linearDecay: 1
-    frictionForceMultiplier: 1
+    frictionForceMultiplier: 0.1
     frictionSpeedMultiplier: 1
     impactForceMultiplier: 10
-    impactSpeedMultiplier: 1
+    impactSpeedMultiplier: -0.2
   particlesType: 2
   particleSet: {fileID: 11400000, guid: ba419fd3c5da39648b19eb10694ec9c9, type: 2}
   particles:

@@ -4839,12 +4839,11 @@ MonoBehaviour:
   inheritAmount: 0.5
   inheritSpreadRange: {x: 0, y: 1}
   setColor: 1
-  shapeRadiusScaler: 1
+  shapeRadiusScaler: 0.5
   constantShapeRadius: 0.2
   shapeRotationOffset: {x: 0, y: 0, z: 0}
   baseSpeedMultiplier: 0
   speedMultiplierBySpeed: 1
-  countBySpeedRange: {x: -0.5, y: 2}
   countByImpulse:
     constant: 0
     curveRange: 1000

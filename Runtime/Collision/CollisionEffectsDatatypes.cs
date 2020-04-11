@@ -61,8 +61,7 @@ namespace PrecisionSurfaceEffects
             [Space(5)]
             [Min(0)]
             public float impactForceMultiplier = 1;
-            [Min(0)]
-            public float impactSpeedMultiplier = 1;
+            public float impactSpeedMultiplier = -1;
 
             internal float force;
             internal float weightedSpeed;
@@ -98,18 +97,18 @@ namespace PrecisionSurfaceEffects
                 currentVolume = Mathf.SmoothDamp(currentVolume, volumeByForce * force, ref volumeVelocity, smoothTime);
                 audioSource.volume = Mathf.Min(totalVolumeMultiplier * currentVolume, maxVolume);
 
-                float speed = 0;
-                float targetPitch = basePitch + speed * pitchBySpeed;
-                if (start)
-                {
-                    start = false;
-                    currentPitch = targetPitch;
-                    pitchVelocity = 0;
-                }
-
                 if (force > 0)
                 {
-                    speed = weightedSpeed / force;
+                    float speed = weightedSpeed / force;
+                    float targetPitch = basePitch + speed * pitchBySpeed;
+
+                    if (start)
+                    {
+                        start = false;
+                        currentPitch = targetPitch;
+                        pitchVelocity = 0;
+                    }
+
                     currentPitch = Mathf.SmoothDamp(currentPitch, targetPitch, ref pitchVelocity, smoothTime);
                     audioSource.pitch = totalPitchMultiplier * currentPitch;
                 }
