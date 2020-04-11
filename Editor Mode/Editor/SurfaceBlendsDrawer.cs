@@ -3,7 +3,10 @@ using UnityEditor;
 
 namespace PrecisionSurfaceEffects
 {
-    [CustomPropertyDrawer(typeof(SurfaceBlends))]
+    [CustomPropertyDrawer(typeof(SurfaceBlendMapMarker.BlendMap.SurfaceBlends2))]
+    public class SurfaceBlends2Drawer : SurfaceBlendsDrawer { }
+
+[CustomPropertyDrawer(typeof(SurfaceBlends))]
     public class SurfaceBlendsDrawer : PropertyDrawer
     {
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)

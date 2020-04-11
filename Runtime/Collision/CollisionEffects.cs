@@ -117,7 +117,12 @@ namespace PrecisionSurfaceEffects
 
 
         //Methods
-        public static SurfaceOutputs FillCollisionData(Collision c, bool findMeshColliderSubmesh, SurfaceData data)
+        public static float GetApproximateImpactDuration(float hardness0, float hardness1)
+        {
+            return IMPACT_DURATION_CONSTANT / Mathf.Max(0.00000001f, hardness0 * hardness1);
+        }
+
+        public static SurfaceOutputs GetSmartCollisionSurfaceTypes(Collision c, bool findMeshColliderSubmesh, SurfaceData data)
         {
             if (findMeshColliderSubmesh && RaycastTestSubmesh(c, out RaycastHit rh, out Vector3 pos))
             {
@@ -552,7 +557,7 @@ namespace PrecisionSurfaceEffects
                     //Impact Particles
                     if (doParticles)
                     {
-                        float approximateCollisionDuration = IMPACT_DURATION_CONSTANT / Mathf.Max(0.00000001f, particles.selfHardness * soundOutputs.hardness);
+                        float approximateCollisionDuration = GetApproximateImpactDuration(particles.selfHardness, soundOutputs.hardness);
 
                         particleOutputs.Downshift(MAX_PARTICLE_TYPE_COUNT, particles.minimumTypeWeight);
 
