@@ -38,8 +38,10 @@ namespace PrecisionSurfaceEffects
         [Space(30)]
         public float impactCooldown = 0.1f;
         [Space(5)]
-        public bool doImpactByImpulseChangeRate = true;
-        public float impulseChangeRateToImpact = 10;
+        [UnityEngine.Serialization.FormerlySerializedAs("doImpactByImpulseChangeRate ")]
+        public bool doImpactByForceChange = true;
+        [UnityEngine.Serialization.FormerlySerializedAs("impulseChangeRateToImpact")]
+        public float forceChangeToImpact = 10;
 
         [SeperatorLine]
         [Header("Sounds")]
@@ -107,7 +109,7 @@ namespace PrecisionSurfaceEffects
         {
             get
             {
-                bool wanted = particlesType == ParticlesType.ImpactAndFriction || doFrictionSound || doImpactByImpulseChangeRate;
+                bool wanted = particlesType == ParticlesType.ImpactAndFriction || doFrictionSound || doImpactByForceChange;
                 bool canReceiveCallbacks = collider != null && (collider.attachedRigidbody == null || rb != null); //This is (still) correct right?
                 return wanted && canReceiveCallbacks;
             }
@@ -374,7 +376,7 @@ namespace PrecisionSurfaceEffects
 
 
             //Impact By Impulse ChangeRate
-            if (doImpactByImpulseChangeRate)
+            if (doImpactByForceChange)
             {
                 currentImpulses.Add(impulse);
 
@@ -382,7 +384,7 @@ namespace PrecisionSurfaceEffects
                 if (previousImpulses.Count >= currentImpulses.Count)
                     previousImpulse = previousImpulses[currentImpulses.Count - 1];
 
-                if ((impulse - previousImpulse) / Time.deltaTime >= impulseChangeRateToImpact)
+                if ((impulse - previousImpulse) / Time.deltaTime >= forceChangeToImpact)
                     OnCollisionEnter(collision); //previousImpulse = impulse;
             }
 
