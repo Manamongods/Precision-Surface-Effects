@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //This is used when you want to attach a CollisionSounds to a child collider of a rigidbody.
-//It won't receive any collision callbacks, so this is the way to get different CollisionSounds variants among the colliders.
+//It won't receive any collision callbacks, so this is the way to get different CollisionEffects variants among the colliders.
 
 namespace PrecisionSurfaceEffects
 {
     [DisallowMultipleComponent]
     public class CollisionEffectsMaker : MonoBehaviour
     {
-        [Tooltip("If bigger than a colliding CollisionSounds, it will play instead of it")]
+        [Tooltip("If bigger than a colliding CollisionEffects, it will play instead of it")]
         public int priority;
     }
 
