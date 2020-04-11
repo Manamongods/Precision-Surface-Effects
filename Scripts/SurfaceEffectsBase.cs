@@ -34,7 +34,7 @@ public class SurfaceEffectsBase : MonoBehaviour
     //Methods
     public SurfaceOutputs Play(AudioSource[] audioSources, Vector3 pos, Vector3 dir, float impulse, float speed)
     {
-        var outputs = soundSet.data.GetRaycastSurfaceTypes(pos, dir);
+        var outputs = soundSet.data.GetRaycastSurfaceTypes(pos, dir, shareList: true);
         outputs.Downshift(audioSources.Length, minimumWeight);
 
         for (int i = 0; i < outputs.Count; i++)

@@ -53,7 +53,8 @@ namespace PrecisionSurfaceEffects
             //(So long as the weights given were sorted, and there aren't any outputs culled past the maxCount + 1, yet)
 
             //This all relies on having the outputs be sorted by decreasing weight
-            for (int i = 0; i < Count; i++)
+            int c = Count;
+            for (int i = 0; i < c; i++)
             {
                 var val = this[i]; //val.weight *= mult;
                 this[i] = val;
@@ -62,12 +63,13 @@ namespace PrecisionSurfaceEffects
                 {
                     RemoveAt(i);
                     i--;
+                    c--;
                 }
             }
 
             //int downID = maxCount;
             //if (Count > downID)
-            if (Count > 0)
+            if (c > 0)
             {
                 const float eps = 0.0000001f;
 
@@ -83,17 +85,20 @@ namespace PrecisionSurfaceEffects
 
 
                 float min = minWeight;
-                if (Count > maxCount)
+                if (c > maxCount)
                     min = Mathf.Max(min, this[maxCount].weight);
                 min -= eps;
                 float downMult = anchor / (anchor - min);
 
                 //Clears any extras
-                while (Count > maxCount)
+                while (c > maxCount)
+                {
                     RemoveAt(Count - 1);
+                    c--;
+                }
 
 
-                for (int i = 0; i < Count; i++)
+                for (int i = 0; i < c; i++)
                 {
                     var o = this[i];
                     o.weight = (o.weight - anchor) * downMult + anchor;

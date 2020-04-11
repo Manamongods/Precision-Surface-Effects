@@ -12,8 +12,33 @@ namespace PrecisionSurfaceEffects
     [RequireComponent(typeof(Collider))]
     public abstract class Marker : MonoBehaviour
     {
+        //Fields
         [HideInInspector]
         public Marker[] markerFamily;
+        [HideInInspector]
+        public MeshRenderer meshRenderer;
+        public bool hasMR;
+        [HideInInspector]
+        public MeshFilter meshFilter;
+
+
+        //Methods
+        public static bool GetMR(bool anyMarkers, Marker marker, GameObject gameObject, out MeshRenderer mr)
+        {
+            if (anyMarkers)
+            {
+                mr = marker.meshRenderer;
+                return marker.hasMR;
+            }
+            mr = gameObject.GetComponent<MeshRenderer>();
+            return !object.Equals(mr, null);//?
+        }
+        public static MeshFilter GetMF(bool anyMarkers, Marker marker, GameObject gameObject)
+        {
+            if (anyMarkers)
+                return marker.meshFilter;
+            return gameObject.GetComponent<MeshFilter>();
+        }
 
         public bool GetMarker<MarkerType>(out MarkerType marker) where MarkerType : Marker
         {
@@ -33,10 +58,22 @@ namespace PrecisionSurfaceEffects
             return false;
         }
 
-        protected virtual void OnValidate()
+        public void Refresh()
         {
             markerFamily = GetComponents<Marker>();
+            meshFilter = GetComponent<MeshFilter>();
+            meshRenderer = GetComponent<MeshRenderer>();
+            hasMR = meshRenderer != null;
         }
+
+
+        //Lifecycle
+#if UNITY_EDITOR
+        protected virtual void OnValidate()
+        {
+            Refresh();
+        }
+#endif
     }
 
     public abstract class MarkerOverride

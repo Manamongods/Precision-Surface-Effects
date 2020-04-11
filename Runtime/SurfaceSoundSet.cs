@@ -10,11 +10,11 @@ using UnityExtensions;
 
 namespace PrecisionSurfaceEffects
 {
-    [System.Serializable]
-    public class SurfaceParticlesSettings
-    {
+    //[System.Serializable]
+    //public class SurfaceParticlesSettings
+    //{
 
-    }
+    //}
 
     [CreateAssetMenu(menuName = "Precision Surface Effects/Surface Sound Set")]
     public class SurfaceSoundSet : SurfaceSet<SurfaceTypeSounds>
@@ -135,7 +135,7 @@ namespace PrecisionSurfaceEffects
             {
                 var cv = clipVariants[i];
                 finder += cv.probabilityWeight;
-                if (finder >= rand - 0.000000001f) //I just do that just in case of rounding errors (idk)
+                if (finder >= rand - 0.000000001f) //I just do that just in case of rounding errors (i dunno)
                     return cv;
             }
 

@@ -91,7 +91,9 @@ namespace PrecisionSurfaceEffects
         private float weightedSpeed;
         private float forceSum;
         private bool downShifted;
-        private float previousImpulse;
+
+        private List<float> previousImpulses = new List<float>();
+        private List<float> currentImpulses = new List<float>();
 
         public OnSurfaceCallback onEnterParticles; //should I remove these?
         public OnSurfaceCallback onEnterSound;
@@ -125,7 +127,7 @@ namespace PrecisionSurfaceEffects
                 return SurfaceData.outputs;
             }
 
-            return data.GetCollisionSurfaceTypes(c);
+            return data.GetCollisionSurfaceTypes(c, shareList: true);
         }
         private static bool RaycastTestSubmesh(Collision c, out RaycastHit rh, out Vector3 pos)
         {
@@ -184,13 +186,13 @@ namespace PrecisionSurfaceEffects
 
                 if (doSound)
                 {
-                    soundSet.data.GetCollisionSurfaceTypes(c);
+                    soundSet.data.GetCollisionSurfaceTypes(c, shareList: true);
                     soundOutputs = GetFlipFlopOutputs();
                 }
 
                 if (doParticle)
                 {
-                    particleSet.data.GetCollisionSurfaceTypes(c);
+                    particleSet.data.GetCollisionSurfaceTypes(c, shareList: true);
                     particleOutputs = GetFlipFlopOutputs();
                 }
             }
@@ -325,7 +327,7 @@ namespace PrecisionSurfaceEffects
 
         private void DoParticles(Collision c, SurfaceOutputs particleOutputs, float dt, Vector3 center, Vector3 normal, float radius, Vector3 vel0, Vector3 vel1, float mass0, float mass1, float impulse, float speed)
         {
-            if (particleSet != null && particleOutputs.Count != 0)
+            if (particleOutputs.Count != 0) //particleSet != null && 
             {
                 var rot = Quaternion.FromToRotation(Vector3.forward, normal); //Vector3.up
 
@@ -360,14 +362,8 @@ namespace PrecisionSurfaceEffects
         {
             if (!isActiveAndEnabled)
                 return;
-            if (Stop(collision))
-                return;
-
-            var doParticles = particlesType == ParticlesType.ImpactAndFriction;
-            GetSurfaceTypeOutputs(collision, doFrictionSound, doParticles, out SurfaceOutputs soundOutputs, out SurfaceOutputs particleOutputs);
 
 
-            //Impact By Impulse ChangeRate
             Vector3 impulseNormal = collision.impulse;
             float impulse = impulseNormal.magnitude;
             float absImpulse = impulse;
@@ -375,12 +371,30 @@ namespace PrecisionSurfaceEffects
                 impulseNormal /= impulse;
             impulse *= forceMultiplier;
 
+
+            bool stop = Stop(collision);
+
+
+            //Impact By Impulse ChangeRate
             if (doImpactByImpulseChangeRate)
             {
+                currentImpulses.Add(impulse);
+
+                float previousImpulse = 0;
+                if (previousImpulses.Count >= currentImpulses.Count)
+                    previousImpulse = previousImpulses[currentImpulses.Count - 1];
+
                 if ((impulse - previousImpulse) / Time.deltaTime >= impulseChangeRateToImpact)
-                    OnCollisionEnter(collision);
-                previousImpulse = impulse;
+                    OnCollisionEnter(collision); //previousImpulse = impulse;
             }
+
+
+            if (stop)
+                return;
+
+            var doParticles = particlesType == ParticlesType.ImpactAndFriction;
+            GetSurfaceTypeOutputs(collision, doFrictionSound, doParticles, out SurfaceOutputs soundOutputs, out SurfaceOutputs particleOutputs);
+
 
 
             //Calculation
@@ -400,7 +414,18 @@ namespace PrecisionSurfaceEffects
                 DoParticles(collision, particleOutputs, Time.deltaTime, center, normal, radius, vel0, vel1, mass0, mass1, frictionImpulser * absImpulse, lateralSpeed);
         }
 
-        //public void ResetSounds()
+        public void ResetSounds()
+        {
+            //?
+
+            vibrationSound.force = 0;
+            vibrationSound.weightedSpeed = 0;
+
+            forceSum = 0;
+            weightedSpeed = 0;
+            downShifted = false;
+            averageOutputs.Clear(); //?
+        }
 
 
 
@@ -465,6 +490,11 @@ namespace PrecisionSurfaceEffects
             downShifted = false;
             weightedSpeed = 0;
             forceSum = 0;
+
+            var temp = currentImpulses;
+            currentImpulses = previousImpulses;
+            previousImpulses = temp;
+            currentImpulses.Clear();
         }
 
         internal void OnCollisionEnter(Collision collision)

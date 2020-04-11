@@ -133,7 +133,7 @@ namespace PrecisionSurfaceEffects
 
         internal void AddSurfaceTypes(Collider collider, Vector3 worldPosition, int triangleIndex = -1)
         {
-            if (collider != null)
+            //if (collider != null)
             {
                 if (collider is TerrainCollider tc) //it is a terrain collider
                 {
@@ -176,16 +176,16 @@ namespace PrecisionSurfaceEffects
         {
             //Markers
             var marker = collider.GetComponent<Marker>();
-            bool anyMarkers = marker != null;
+            bool anyMarkers = !object.Equals(marker, null); // != null;
 
             //MeshRenderers
-            var mr = collider.GetComponent<MeshRenderer>();
-            if (mr != null)
+            bool hasMR = Marker.GetMR(anyMarkers, marker, collider.gameObject, out MeshRenderer mr); //!mr.Equals(null))//mr != null) //var mr = ; //This is (I think) more performant // collider.GetComponent<MeshRenderer>();
+            if (hasMR)
             {
                 //The collider is a non-convex meshCollider. We can find the triangle index.
                 if (triangleIndex != -1 && collider is MeshCollider mc && !mc.convex)
                 {
-                    var mesh = collider.GetComponent<MeshFilter>().sharedMesh; //could use the marker to find this faster
+                    var mesh = Marker.GetMF(anyMarkers, marker, collider.gameObject).sharedMesh; //could use the marker to find this faster
                     int subMeshID = Utility.GetSubmesh(mesh, triangleIndex);
 
                     SurfaceBlends.NormalizedBlends blendResults = null;
@@ -256,7 +256,7 @@ namespace PrecisionSurfaceEffects
             }
 
             //Defaults to the first material (For most colliders it can't be discerned which specific material it is)
-            if (mr != null)
+            if (hasMR)
             {
                 var mat = mr.sharedMaterial;
 

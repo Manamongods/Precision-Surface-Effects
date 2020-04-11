@@ -53,8 +53,8 @@ namespace PrecisionSurfaceEffects
             public float impactForceMultiplier = 1;
             public float impactSpeedMultiplier = 1;
 
-            private float force;
-            private float weightedSpeed;
+            internal float force;
+            internal float weightedSpeed;
 
             private bool start;
 
