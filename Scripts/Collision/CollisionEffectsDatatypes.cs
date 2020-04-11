@@ -307,7 +307,7 @@ namespace PrecisionSurfaceEffects
                 {
                     void SetVolume()
                     {
-                        audioSource.volume = Mathf.Min(totalVolumeMultiplier * currentVolume, fs.maxVolume);
+                        audioSource.volume = Mathf.Min(totalVolumeMultiplier * currentVolume, fs.maxVolume * clip.volumeMultiplier);
                     }
 
                     if (clip == null)

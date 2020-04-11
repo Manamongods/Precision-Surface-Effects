@@ -531,7 +531,7 @@ MonoBehaviour:
     minimumTypeWeight: 0.1
     volumeByForce: 0.2
     volumeFaderBySpeedRange: {x: 0.01, y: 0.1}
-    maxVolume: 0.5
+    maxVolume: 0.6666
     basePitch: 0.5
     pitchBySpeed: -0.0025
   doFrictionSound: 1
@@ -540,8 +540,8 @@ MonoBehaviour:
     - {fileID: 7768311542087541603}
     - {fileID: 8229951337275091168}
     minimumTypeWeight: 0.1
-    volumeByForce: 0.2
-    volumeFaderBySpeedRange: {x: 0, y: 0.3}
+    volumeByForce: 0.1
+    volumeFaderBySpeedRange: {x: 0, y: 0.6}
     maxVolume: 0.5
     basePitch: 0.35
     pitchBySpeed: 0.05
@@ -556,7 +556,7 @@ MonoBehaviour:
     volumeByForce: 0.0025
     basePitch: 0.5
     pitchBySpeed: 0.035
-    smoothTime: 0.05
+    smoothTime: 0.025
     maxForce: 10000
     maxVolume: 0.25
     exponentialDecay: 3

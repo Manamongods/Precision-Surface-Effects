@@ -115,7 +115,6 @@ namespace PrecisionSurfaceEffects
 
 
 
-
         //Properties
 #if UNITY_EDITOR
         public bool NeedOnCollisionStay
@@ -130,6 +129,41 @@ namespace PrecisionSurfaceEffects
 
 
         //Methods
+        public static SurfaceOutputs FillCollisionData(Collision c, bool findMeshColliderSubmesh, SurfaceData data)
+        {
+            if (findMeshColliderSubmesh && RaycastTestSubmesh(c, out RaycastHit rh, out Vector3 pos))
+            {
+                SurfaceData.outputs.Clear();
+                data.AddSurfaceTypes(c.collider, pos, triangleIndex: rh.triangleIndex);
+                return SurfaceData.outputs;
+            }
+
+            return data.GetCollisionSurfaceTypes(c);
+        }
+        private static bool RaycastTestSubmesh(Collision c, out RaycastHit rh, out Vector3 pos)
+        {
+            if (c.collider is MeshCollider mc && !mc.convex)
+            {
+                var contact = c.GetContact(0);
+                pos = contact.point;
+                var norm = contact.normal; //this better be normalized!
+
+                float searchThickness = EXTRA_SEARCH_THICKNESS + Mathf.Abs(contact.separation);
+
+                if (mc.Raycast(new Ray(pos + norm * searchThickness, -norm), out rh, Mathf.Infinity)) //searchThickness * 2
+                {
+#if UNITY_EDITOR
+                    float debugSize = 3;
+                    Debug.DrawLine(pos + norm * debugSize, pos - norm * debugSize, Color.white, 0);
+#endif
+                    return true;
+                }
+            }
+
+            pos = default;
+            rh = default;
+            return false;
+        }
         private void GetSurfaceTypeOutputs(Collision c, bool doSound, bool doParticle, out SurfaceOutputs soundOutputs, out SurfaceOutputs particleOutputs)
         {
             soundOutputs = particleOutputs = null;
@@ -144,36 +178,21 @@ namespace PrecisionSurfaceEffects
                     return temp;
                 }
 
-                if (findMeshColliderSubmesh && c.collider is MeshCollider mc && !mc.convex)
+                if (findMeshColliderSubmesh && RaycastTestSubmesh(c, out RaycastHit rh, out Vector3 pos))
                 {
-                    var contact = c.GetContact(0);
-                    var pos = contact.point;
-                    var norm = contact.normal; //this better be normalized!
-
-                    float searchThickness = EXTRA_SEARCH_THICKNESS + Mathf.Abs(contact.separation);
-
-                    if (mc.Raycast(new Ray(pos + norm * searchThickness, -norm), out RaycastHit rh, Mathf.Infinity)) //searchThickness * 2
+                    SurfaceOutputs GetOutputs(SurfaceData data)
                     {
-#if UNITY_EDITOR
-                        float debugSize = 3;
-                        Debug.DrawLine(pos + norm * debugSize, pos - norm * debugSize, Color.white, 0);
-#endif
-
-                        SurfaceOutputs GetOutputs(SurfaceData data)
-                        {
-                            SurfaceData.outputs.Clear();
-                            data.AddSurfaceTypes(c.collider, pos, triangleIndex: rh.triangleIndex);
-                            return GetFlipFlopOutputs();
-                        }
-
-                        //Sound Outputs
-                        if (doSound)
-                            soundOutputs = GetOutputs(soundSet.data);
-                        if (doParticle)
-                            particleOutputs = GetOutputs(particleSet.data);
-
-                        return;
+                        SurfaceData.outputs.Clear();
+                        data.AddSurfaceTypes(c.collider, pos, triangleIndex: rh.triangleIndex);
+                        return GetFlipFlopOutputs();
                     }
+
+                    if (doSound)
+                        soundOutputs = GetOutputs(soundSet.data);
+                    if (doParticle)
+                        particleOutputs = GetOutputs(particleSet.data);
+
+                    return;
                 }
 
                 if (doSound)
@@ -364,6 +383,7 @@ namespace PrecisionSurfaceEffects
             //Impact By Impulse ChangeRate
             Vector3 impulseNormal = collision.impulse;
             float impulse = impulseNormal.magnitude;
+            float absImpulse = impulse;
             if (impulse != 0)
                 impulseNormal /= impulse;
             impulse *= forceMultiplier;
@@ -380,17 +400,17 @@ namespace PrecisionSurfaceEffects
             Calculate(collision, out int contactCount, out Vector3 center, out Vector3 normal, out float radius, out Vector3 vel0, out Vector3 vel1, out float mass0, out float mass1);
 
             float lateralSpeed = Vector3.ProjectOnPlane(vel1 - vel0, normal).magnitude;
-            float frictionImpulse = impulse * Mathf.Lerp(1, frictionSound.frictionNormalForceMultiplier, Mathf.Abs(Vector3.Dot(impulseNormal, normal))); //I'm not sure if this works
+            float frictionImpulser = Mathf.Lerp(1, frictionSound.frictionNormalForceMultiplier, Mathf.Abs(Vector3.Dot(impulseNormal, normal))); //I'm not sure if this works
 
 
             //Friction Sounds
             if (doFrictionSound)
-                DoFrictionSound(collision, soundOutputs, frictionImpulse, lateralSpeed);
+                DoFrictionSound(collision, soundOutputs, frictionImpulser * impulse, speedMultiplier * lateralSpeed);
 
 
             //Particles
             if (doParticles)
-                DoParticles(collision, particleOutputs, Time.deltaTime, center, normal, radius, vel0, vel1, mass0, mass1, frictionImpulse, lateralSpeed);
+                DoParticles(collision, particleOutputs, Time.deltaTime, center, normal, radius, vel0, vel1, mass0, mass1, frictionImpulser * absImpulse, lateralSpeed);
         }
 
         //public void ResetSounds()
@@ -473,10 +493,12 @@ namespace PrecisionSurfaceEffects
                 if (Stop(collision))
                     return;
 
-                var speed = speedMultiplier * collision.relativeVelocity.magnitude; //Can't consistently use CurrentRelativeVelocity(collision);, probably maybe because it's too late to get that speed (already resolved)
-                var impulse = forceMultiplier * collision.impulse.magnitude; //force //Here "force" is actually an impulse
+                var absSpeed = collision.relativeVelocity.magnitude;
+                var speed = speedMultiplier * absSpeed; //Can't consistently use CurrentRelativeVelocity(collision);, probably maybe because it's too late to get that speed (already resolved)
+                var absImpulse = collision.impulse.magnitude;
+                var impulse = forceMultiplier * absImpulse;
                 float speedFade = impactSound.SpeedFader(speed);
-                var vol = totalVolumeMultiplier * impactSound.Volume(impulse) * speedFade;
+                var vol = totalVolumeMultiplier * impactSound.Volume(impulse) * speedFade; //force //Here "force" is actually an impulse
 
                 if (vol > 0.00000000000001f)
                 {
@@ -496,13 +518,15 @@ namespace PrecisionSurfaceEffects
                     int maxc = impactSound.audioSources.Length;
                     soundOutputs.Downshift(maxc, impactSound.minimumTypeWeight);
 
+                    vol = Mathf.Min(vol, impactSound.maxVolume);
+
                     var c = Mathf.Min(maxc, soundOutputs.Count);
                     for (int i = 0; i < c; i++)
                     {
                         var output = soundOutputs[i];
                         var st = soundSet.surfaceTypeSounds[output.surfaceTypeID];
                         var voll = vol * output.weight * output.volumeMultiplier;
-                        st.PlayOneShot(impactSound.audioSources[i], Mathf.Min(voll, impactSound.maxVolume), pitch * output.pitchMultiplier);
+                        st.PlayOneShot(impactSound.audioSources[i], voll, pitch * output.pitchMultiplier);
                     }
 
                     if (onEnterSound != null)
@@ -517,7 +541,7 @@ namespace PrecisionSurfaceEffects
                         particleOutputs.Downshift(MAX_PARTICLE_TYPE_COUNT, particles.minimumTypeWeight);
 
                         Calculate(collision, out int contactCount, out Vector3 center, out Vector3 normal, out float radius, out Vector3 vel0, out Vector3 vel1, out float mass0, out float mass1);
-                        DoParticles(collision, particleOutputs, approximateCollisionDuration, center, normal, radius, vel0, vel1, mass0, mass1, impulse, speed);
+                        DoParticles(collision, particleOutputs, approximateCollisionDuration, center, normal, radius, vel0, vel1, mass0, mass1, absImpulse, absSpeed);
 
                         if (onEnterParticles != null)
                             onEnterParticles(collision, particleOutputs);

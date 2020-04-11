@@ -48,7 +48,10 @@ namespace PrecisionSurfaceEffects
                     return sp;
             }
 
-            return surfaceTypeParticles[o.surfaceTypeID].particles;
+            var stp = surfaceTypeParticles[o.surfaceTypeID];
+            o.particleCountMultiplier *= stp.countMultiplier;
+            o.particleSizeMultiplier *= stp.sizeMultiplier;
+            return stp.particles;
         }
 
         public void PlayParticles(SurfaceOutputs outputs, SurfaceOutput output, float impulse, Vector3 vel, float mass, float radius = 0, float deltaTime = 0.25f)
@@ -99,5 +102,8 @@ namespace PrecisionSurfaceEffects
     public class SurfaceTypeParticles : SurfaceSetType
     {
         public SurfaceParticles particles;
+
+        public float countMultiplier = 1;
+        public float sizeMultiplier = 1;
     }
 }
