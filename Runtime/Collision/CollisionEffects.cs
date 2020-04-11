@@ -18,6 +18,7 @@ namespace PrecisionSurfaceEffects
         public static float EXTRA_SEARCH_THICKNESS = 0.01f;
         public static int MAX_PARTICLE_TYPE_COUNT = 10;
         public static float IMPACT_DURATION_CONSTANT = .1f;
+        public static bool CLAMP_FINAL_ONE_SHOT_VOLUME = true;
 
 
 
@@ -558,6 +559,8 @@ namespace PrecisionSurfaceEffects
                         var output = soundOutputs[i];
                         var st = soundSet.surfaceTypeSounds[output.surfaceTypeID];
                         var voll = vol * output.weight * output.volumeMultiplier;
+                        if (CLAMP_FINAL_ONE_SHOT_VOLUME)
+                            voll = Mathf.Min(voll, 1);
                         st.PlayOneShot(impactSound.audioSources[i], voll, pitch * output.pitchMultiplier);
                     }
 
@@ -704,10 +707,8 @@ namespace PrecisionSurfaceEffects
 }
 
 /*
-        public const bool CLAMP_FINAL_ONE_SHOT_VOLUME = true;
  *             
- *             //if (CLAMP_FINAL_ONE_SHOT_VOLUME)
-                        //    voll = Mathf.Min(voll, 1);
+ *             
 
             float impulse = 0;
             for (int i = 0; i < contactCount; i++)
