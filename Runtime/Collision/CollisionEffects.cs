@@ -49,9 +49,9 @@ namespace PrecisionSurfaceEffects
 
         [Header("Scaling")]
         [Space(5)]
-        [Tooltip("To easily make the speed be local/relative")]
-        public float speedMultiplier = 1;
-        public float forceMultiplier = 1;
+        [Tooltip("To easily make the sound speed be local/relative")] //These 4 apply only to sounds, not particles
+        public float soundSpeedMultiplier = 1;
+        public float soundForceMultiplier = 1;
         public float totalVolumeMultiplier = 0.3f;
         public float totalPitchMultiplier = 1;
 
@@ -373,7 +373,7 @@ namespace PrecisionSurfaceEffects
             float absImpulse = impulse;
             if (impulse != 0)
                 impulseNormal /= impulse;
-            impulse *= forceMultiplier;
+            impulse *= soundForceMultiplier;
 
 
             bool stop = Stop(collision);
@@ -404,18 +404,18 @@ namespace PrecisionSurfaceEffects
             //Calculation
             Calculate(collision, out int contactCount, out Vector3 center, out Vector3 normal, out float radius, out Vector3 vel0, out Vector3 vel1, out float mass0, out float mass1);
 
-            float lateralSpeed = Vector3.ProjectOnPlane(vel1 - vel0, normal).magnitude;
+            float perpendicularSpeed = Vector3.ProjectOnPlane(vel1 - vel0, normal).magnitude;
             float frictionImpulser = Mathf.Lerp(1, frictionSound.frictionNormalForceMultiplier, Mathf.Abs(Vector3.Dot(impulseNormal, normal))); //I'm not sure if this works
 
 
             //Friction Sounds
             if (doFrictionSound)
-                DoFrictionSound(collision, soundOutputs, frictionImpulser * impulse, speedMultiplier * lateralSpeed);
+                DoFrictionSound(collision, soundOutputs, frictionImpulser * impulse, soundSpeedMultiplier * perpendicularSpeed);
 
 
             //Particles
             if (doParticles)
-                DoParticles(collision, particleOutputs, Time.deltaTime, center, normal, radius, vel0, vel1, mass0, mass1, frictionImpulser * absImpulse, lateralSpeed);
+                DoParticles(collision, particleOutputs, Time.deltaTime, center, normal, radius, vel0, vel1, mass0, mass1, frictionImpulser * absImpulse, perpendicularSpeed);
         }
 
         public void ResetSounds()
@@ -515,9 +515,9 @@ namespace PrecisionSurfaceEffects
                     return;
 
                 var absSpeed = collision.relativeVelocity.magnitude;
-                var speed = speedMultiplier * absSpeed; //Can't consistently use CurrentRelativeVelocity(collision);, probably maybe because it's too late to get that speed (already resolved)
+                var speed = soundSpeedMultiplier * absSpeed; //Can't consistently use CurrentRelativeVelocity(collision);, probably maybe because it's too late to get that speed (already resolved)
                 var absImpulse = collision.impulse.magnitude;
-                var impulse = forceMultiplier * absImpulse;
+                var impulse = soundForceMultiplier * absImpulse;
                 float speedFade = impactSound.SpeedFader(speed);
                 var vol = totalVolumeMultiplier * impactSound.Volume(impulse) * speedFade; //force //Here "force" is actually an impulse
 

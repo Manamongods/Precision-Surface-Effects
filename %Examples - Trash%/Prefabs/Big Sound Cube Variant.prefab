@@ -77,6 +77,16 @@ PrefabInstance:
       propertyPath: vibrationSound.impactForceMultiplier
       value: 50
       objectReference: {fileID: 0}
+    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: soundForceMultiplier
+      value: 0.0002
+      objectReference: {fileID: 0}
+    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: forceChangeToImpact
+      value: 1000
+      objectReference: {fileID: 0}
     - target: {fileID: 47305488334938374, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}
       propertyPath: m_LocalPosition.x

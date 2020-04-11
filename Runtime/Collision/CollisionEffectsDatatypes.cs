@@ -16,11 +16,14 @@ namespace PrecisionSurfaceEffects
         {
             [Min(0)]
             public float minimumTypeWeight = 0.1f;
+            [Min(0)]
             public float selfHardness = 1;
-            public float particleCountMultiplier = 1;
+            [Min(0)]
+            public float particleCountMultiplier = 1; //public float frictionCountMultiplier = 1; //Essentially how destructive friction is, how rough the surface is
+            [Min(0)]
             public float particleSizeMultiplier = 1;
+            [Min(0)]
             public float minimumParticleShapeRadius = 0;
-            public float frictionCountMultiplier = 1; //Essentially how destructive friction is, how rough the surface is
             public Vector2 faderBySpeedRange = new Vector2(0.05f, 0.25f);
 
             public float SpeedFader(float speed)
@@ -34,11 +37,15 @@ namespace PrecisionSurfaceEffects
         {
             //Fields
             [Space(20)]
+            [Min(0)]
             public float volumeByForce = 0.1f;
             public float basePitch = 0.5f;
             public float pitchBySpeed = 0.035f;
+            [Min(0)]
             public float smoothTime = 0.05f;
+            [Min(0)]
             public float maxForce = 10000;
+            [Min(0)]
             public float maxVolume = 0.5f;
             [Header("Decay")]
             [Min(0)]
@@ -47,10 +54,14 @@ namespace PrecisionSurfaceEffects
             public float linearDecay = 0.01f;
 
             [Header("Contribution")]
+            [Min(0)]
             public float frictionForceMultiplier = 1;
+            [Min(0)]
             public float frictionSpeedMultiplier = 1;
             [Space(5)]
+            [Min(0)]
             public float impactForceMultiplier = 1;
+            [Min(0)]
             public float impactSpeedMultiplier = 1;
 
             internal float force;
@@ -117,8 +128,10 @@ namespace PrecisionSurfaceEffects
             public float minimumTypeWeight = 0.1f;
 
             [Header("Volume")]
+            [Min(0)]
             public float volumeByForce = 0.1f; //public float baseVolume = 0;
             public Vector2 volumeFaderBySpeedRange = new Vector2(0.01f, 0.1f);
+            [Min(0)]
             public float maxVolume = 0.5f;
 
             [Header("Pitch")]

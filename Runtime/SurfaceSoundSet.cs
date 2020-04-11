@@ -22,7 +22,6 @@ namespace PrecisionSurfaceEffects
         //Fields
         [Space(30)]
         [ReorderableList()]
-        //[UnityEngine.Serialization.FormerlySerializedAs("surfaceTypes")]
         public SurfaceTypeSounds[] surfaceTypeSounds = new SurfaceTypeSounds[] { new SurfaceTypeSounds() };
 
 

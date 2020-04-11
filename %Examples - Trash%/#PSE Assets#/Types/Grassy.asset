@@ -12,28 +12,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17a939634c7ae3a4197d571c0df6eb35, type: 3}
   m_Name: Grassy
   m_EditorClassIdentifier: 
-  hardnessMultiplier: 0.25
+  hardnessMultiplier: 0.5
   defaultColorTint: {r: 1, g: 1, b: 1, a: 1}
   subTypes:
   - keyword: Grass
+    lowerKeyword: grass
     settings:
       hardness: 1
       defaultColor: {r: 0.5976886, g: 0.735849, b: 0.3502376, a: 1}
       volumeMultiplier: 1
       pitchMultiplier: 1
   - keyword: Leaves
+    lowerKeyword: leaves
     settings:
       hardness: 1
       defaultColor: {r: 0.016677022, g: 1, b: 0, a: 1}
       volumeMultiplier: 1
       pitchMultiplier: 1
   - keyword: Hay
+    lowerKeyword: hay
     settings:
       hardness: 1
       defaultColor: {r: 0.8584906, g: 0.7944348, b: 0.3438188, a: 1}
       volumeMultiplier: 1
       pitchMultiplier: 1
   - keyword: Flower
+    lowerKeyword: flower
     settings:
       hardness: 1
       defaultColor: {r: 1, g: 0.63634133, b: 0.94926816, a: 1}
