@@ -37,7 +37,7 @@ namespace PrecisionSurfaceEffects
         public float speedMultiplierBySpeed = 1;
 
         [Header("Count")]
-        public Vector2 countBySpeedRange = new Vector2(0, 5);
+        //public Vector2 countBySpeedRange = new Vector2(-0.5, 2); //-1, 5
         public ScaledAnimationCurve countByImpulse = new ScaledAnimationCurve();
         [Min(0)]
         public float countByInverseScaleExponent = 2;
@@ -187,7 +187,7 @@ namespace PrecisionSurfaceEffects
             }
 
 
-            float countMult = particleCountScaler * Mathf.Clamp01(Mathf.InverseLerp(countBySpeedRange.x, countBySpeedRange.y, speed));
+            float countMult = particleCountScaler; // * Mathf.Clamp01(Mathf.InverseLerp(countBySpeedRange.x, countBySpeedRange.y, speed));
             countMult /= Mathf.Pow(scale, countByInverseScaleExponent); // * scale; //should technically be cubed though
             var countf = countMult * countByImpulse.Evaluate(impulse) * weight; //maxRate * dt //Mathf.Min(, maxAttemptParticleCount) 
             int count = (int)countf;

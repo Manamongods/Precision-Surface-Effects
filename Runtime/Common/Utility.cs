@@ -73,16 +73,18 @@ namespace PrecisionSurfaceEffects
         }
 
 
-        public static Vector3 GetVelocityMass(Rigidbody r, Vector3 point, out float mass)
+        public static Vector3 GetVelocityMass(Rigidbody r, Vector3 point, out Vector3 centerVel, out float mass)
         {
             if (r == null)
             {
                 mass = 1E32f; // float.MaxValue; // Mathf.Infinity;
-                return Vector3.zero;
+                return centerVel = Vector3.zero;
             }
             else
             {
                 mass = r.mass;
+                //return r.velocity * (r.worldCenterOfMass - point).magnitude;
+                centerVel = r.velocity;
                 return r.GetPointVelocity(point);
             }
         }

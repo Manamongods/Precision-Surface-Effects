@@ -29,13 +29,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}
-      propertyPath: frictionSound.volumeFaderBySpeedRange.x
-      value: 0.15
-      objectReference: {fileID: 0}
-    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
-        type: 3}
       propertyPath: frictionSound.volumeFaderBySpeedRange.y
-      value: 4
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}
@@ -45,7 +40,7 @@ PrefabInstance:
     - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}
       propertyPath: impactSound.volumeByForce
-      value: 0.05
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}
@@ -70,7 +65,7 @@ PrefabInstance:
     - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}
       propertyPath: vibrationSound.frictionForceMultiplier
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}
@@ -85,7 +80,17 @@ PrefabInstance:
     - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}
       propertyPath: forceChangeToImpact
-      value: 1000
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: impactSound.maxVolume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: totalVolumeMultiplier
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 47305488334938374, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}

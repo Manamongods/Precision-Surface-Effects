@@ -540,7 +540,7 @@ MonoBehaviour:
     - {fileID: 8229951337275091168}
     minimumTypeWeight: 0.1
     volumeByForce: 0.1
-    volumeFaderBySpeedRange: {x: 0, y: 0.6}
+    volumeFaderBySpeedRange: {x: 0, y: 0.1}
     maxVolume: 0.5
     basePitch: 0.35
     pitchBySpeed: 0.05
@@ -548,8 +548,8 @@ MonoBehaviour:
     volumeSmoothTimes:
       up: 0.08
       down: 0.16
-    pitchSmoothTime: 0.025
-    frictionNormalForceMultiplier: 0.1
+    pitchSmoothTime: 0.1
+    frictionNormalForceMultiplier: 0.2
   doVibrationSound: 1
   vibrationSound:
     audioSource: {fileID: 7420537741251150138}

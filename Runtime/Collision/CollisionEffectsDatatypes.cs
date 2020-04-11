@@ -208,6 +208,10 @@ namespace PrecisionSurfaceEffects
         public class FrictionSound : Sound
         {
             //Fields
+            [Header("Amounts")]
+            public float rollingAmount = 1;
+            public float slidingAmount = 1;
+
             [Header("Rates")]
             public float clipChangeSmoothTime = 0.001f;
             [Tooltip("This is used in smoothing the volume and pitch")]

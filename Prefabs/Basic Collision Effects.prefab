@@ -180,11 +180,11 @@ MonoBehaviour:
   currentFrictionDebug: (This only works in playmode)
   findMeshColliderSubmesh: 1
   impactCooldown: 0.05
-  doImpactByImpulseChangeRate: 1
-  impulseChangeRateToImpact: 10
+  doImpactByForceChange: 1
+  forceChangeToImpact: 10
   soundSet: {fileID: 11400000, guid: 80344998cfdc62548be42ca931b98cce, type: 2}
-  speedMultiplier: 1
-  forceMultiplier: 0.01
+  soundSpeedMultiplier: 1
+  soundForceMultiplier: 0.01
   totalVolumeMultiplier: 1
   totalPitchMultiplier: 1
   impactSound:
@@ -209,9 +209,10 @@ MonoBehaviour:
     basePitch: 0.35
     pitchBySpeed: 0.05
     clipChangeSmoothTime: 0.01
-    smoothTimes:
-      up: 0.06
-      down: 0.18
+    volumeSmoothTimes:
+      up: 0.08
+      down: 0.16
+    pitchSmoothTime: 0.1
     frictionNormalForceMultiplier: 0.1
   doVibrationSound: 1
   vibrationSound:
@@ -236,7 +237,6 @@ MonoBehaviour:
     particleCountMultiplier: 1
     particleSizeMultiplier: 1
     minimumParticleShapeRadius: 0
-    frictionCountMultiplier: 1
     faderBySpeedRange: {x: 0.05, y: 0.25}
   rb: {fileID: 0}
   collider: {fileID: 0}
