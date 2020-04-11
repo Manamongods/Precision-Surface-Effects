@@ -36,12 +36,14 @@ namespace PrecisionSurfaceEffects
         public class VibrationSound : LoopSource
         {
             //Fields
-            [Space(20)]
             [Min(0)]
+            [Header("Volume")]
             public float volumeByForce = 0.1f;
+            [Header("Pitch")]
             public float basePitch = 0.5f;
             public float pitchBySpeed = 0.035f;
             [Min(0)]
+            [Space(10)]
             public float smoothTime = 0.05f;
             [Min(0)]
             public float maxForce = 10000;
@@ -55,13 +57,13 @@ namespace PrecisionSurfaceEffects
 
             [Header("Contribution")]
             [Min(0)]
+            public float impactForceMultiplier = 1;
+            public float impactSpeedMultiplier = -1;
+            [Space(5)]
+            [Min(0)]
             public float frictionForceMultiplier = 1;
             [Min(0)]
             public float frictionSpeedMultiplier = 1;
-            [Space(5)]
-            [Min(0)]
-            public float impactForceMultiplier = 1;
-            public float impactSpeedMultiplier = -1;
 
             internal float force;
             internal float weightedSpeed;

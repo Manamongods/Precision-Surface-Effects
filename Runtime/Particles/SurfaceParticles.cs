@@ -309,54 +309,6 @@ namespace PrecisionSurfaceEffects
 }
 
 /*
-        //public static void GetData(Collision c, out float impulse, out float speed, out Quaternion rot, out Vector3 center, out float radius, out Vector3 vel0, out Vector3 vel1, out float mass0, out float mass1)
-        //{
-        //    impulse = c.impulse.magnitude; //speed = c.relativeVelocity.magnitude;
-
-
-        //    Vector3 normal;
-        //    radius = 0;
-
-        //    int contactCount = c.GetContacts(contacts);
-        //    if (contactCount == 1)
-        //    {
-        //        var contact = contacts[0];
-        //        center = contact.point;
-        //        normal = contact.normal;
-        //    }
-        //    else
-        //    {
-        //        normal = new Vector3();
-        //        center = new Vector3();
-
-        //        for (int i = 0; i < contactCount; i++)
-        //        {
-        //            var contact = contacts[i];
-        //            normal += contact.normal;
-        //            center += contact.point;
-        //        }
-
-        //        normal.Normalize();
-        //        float invCount = 1f / contactCount;
-        //        center *= invCount;
-
-        //        for (int i = 0; i < contactCount; i++)
-        //        {
-        //            var contact = contacts[i];
-        //            radius += (contact.point - center).magnitude; //this doesn't care if it is lateral to normal, but should it?
-        //        }
-
-        //        radius *= invCount;
-        //    }
-
-        //    rot = Quaternion.FromToRotation(Vector3.forward, normal); //Vector3.up
-
-        //    vel0 = GetVelocityMass(c.GetContact(0).thisCollider.attachedRigidbody, center, out mass0);
-        //    vel1 = GetVelocityMass(c.rigidbody, center, out mass1);
-
-        //    //speed = (vel0 - vel1).magnitude;
-        //}
-
  *         //Constants
         public static int maxAttemptParticleCount = 1000; //This is to prevent excessive numbers such as from perhaps a bug
 

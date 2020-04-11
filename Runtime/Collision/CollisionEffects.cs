@@ -320,7 +320,7 @@ namespace PrecisionSurfaceEffects
                 for (int i = 0; i < contactCount; i++)
                 {
                     var contact = contacts[i];
-                    radius += (contact.point - center).magnitude; //this doesn't care if it is lateral to normal, but should it?
+                    radius += (contact.point - center).magnitude; //this doesn't care if it is perpendicular to normal, but should it?
                 }
 
                 radius *= invCount;
