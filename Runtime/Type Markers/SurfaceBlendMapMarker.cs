@@ -148,8 +148,10 @@ namespace PrecisionSurfaceEffects
             return false;
         }
 
-        public void Refresh()
+        public override void Refresh()
         {
+            base.Refresh();
+
             for (int i = 0; i < blendMaps.Length; i++)
             {
                 var bm = blendMaps[i];

@@ -103,7 +103,6 @@ namespace PrecisionSurfaceEffects
 
 
         //Properties
-#if UNITY_EDITOR
         private bool NeedOnCollisionStay
         {
             get
@@ -113,7 +112,6 @@ namespace PrecisionSurfaceEffects
                 return wanted && canReceiveCallbacks;
             }
         }
-#endif
 
 
 

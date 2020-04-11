@@ -10,14 +10,22 @@ namespace PrecisionSurfaceEffects
     [DisallowMultipleComponent]
     public class SurfaceTypeMarker : SingleMarker
     {
+        //Fields
         public string reference = "Grass";
+        [HideInInspector]
+        [SerializeField]
         internal string lowerReference;
 
-        public void Refresh()
+
+        //Methods
+        public override void Refresh()
         {
+            base.Refresh();
             lowerReference = reference.ToLowerInvariant();
         }
 
+
+        //Lifecycle
 #if UNITY_EDITOR
         protected override void OnValidate()
         {

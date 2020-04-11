@@ -17,6 +17,7 @@ namespace PrecisionSurfaceEffects
         public Marker[] markerFamily;
         [HideInInspector]
         public MeshRenderer meshRenderer;
+        [HideInInspector]
         public bool hasMR;
         [HideInInspector]
         public MeshFilter meshFilter;
@@ -58,7 +59,7 @@ namespace PrecisionSurfaceEffects
             return false;
         }
 
-        public void Refresh()
+        public virtual void Refresh()
         {
             markerFamily = GetComponents<Marker>();
             meshFilter = GetComponent<MeshFilter>();

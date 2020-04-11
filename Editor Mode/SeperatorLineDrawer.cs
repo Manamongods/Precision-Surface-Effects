@@ -1,4 +1,4 @@
-﻿#if UNITY_EDITOR
+﻿
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +12,8 @@ public class SeperatorLineAttribute : MultiPropertyAttribute
     {
         this.under = under;
     }
+
+#if UNITY_EDITOR
     public bool Under
     {
         get { return under; }
@@ -37,8 +39,8 @@ public class SeperatorLineAttribute : MultiPropertyAttribute
         base.OnGUI(actualRect, property, label);
         EditorGUI.LabelField(lineRect, "", GUI.skin.horizontalSlider);
     }
-}
 #endif
+}
 
 /*
  * 

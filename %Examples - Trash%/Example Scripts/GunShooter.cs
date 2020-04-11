@@ -1,10 +1,10 @@
-﻿#if UNITY_EDITOR
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using PrecisionSurfaceEffects;
 using UnityEditor;
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(GunShooter))]
 public class GSEditor : Editor
 {
@@ -20,6 +20,7 @@ public class GSEditor : Editor
             gs.Shoot(ray.origin, ray.direction);
     }
 }
+#endif
 
 [ExecuteInEditMode]
 public class GunShooter : SurfaceEffectsBase
@@ -69,4 +70,3 @@ public class GunShooter : SurfaceEffectsBase
         }
     }
 }
-#endif

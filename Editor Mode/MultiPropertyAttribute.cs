@@ -10,6 +10,7 @@ using System.Linq;
 [System.AttributeUsage(System.AttributeTargets.Field)]
 public abstract class MultiPropertyAttribute : PropertyAttribute
 {
+#if UNITY_EDITOR
     public IOrderedEnumerable<object> stored = null;
 
     public virtual void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -22,8 +23,10 @@ public abstract class MultiPropertyAttribute : PropertyAttribute
 
     internal virtual bool IsVisible(SerializedProperty property) { return true; }
     internal virtual float? GetPropertyHeight(SerializedProperty property, GUIContent label) { return null; }
+#endif
 }
 
+#if UNITY_EDITOR
 [CustomPropertyDrawer(typeof(MultiPropertyAttribute), true)]
 public class MultiPropertyDrawer : PropertyDrawer
 {
@@ -88,3 +91,4 @@ public class MultiPropertyDrawer : PropertyDrawer
             attr.OnPostGUI(position, property);
     }
 }
+#endif

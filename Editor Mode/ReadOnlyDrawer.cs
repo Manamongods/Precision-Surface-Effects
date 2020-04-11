@@ -1,5 +1,4 @@
-﻿#if UNITY_EDITOR
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -7,6 +6,7 @@ using UnityEditor;
 [System.AttributeUsage(System.AttributeTargets.Field)]
 public class ReadOnlyAttribute : MultiPropertyAttribute
 {
+#if UNITY_EDITOR
     internal override void OnPreGUI(Rect position, SerializedProperty property)
     {
         GUI.enabled = false;
@@ -15,5 +15,5 @@ public class ReadOnlyAttribute : MultiPropertyAttribute
     {
         GUI.enabled = true;
     }
-}
 #endif
+}

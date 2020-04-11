@@ -96,7 +96,8 @@ namespace PrecisionSurfaceEffects
 #endif
         }
 
-        internal class NormalizedBlends //BlendResult
+        [System.Serializable]
+        internal sealed class NormalizedBlends
         {
             public List<NormalizedBlend> result = new List<NormalizedBlend>();
         }
