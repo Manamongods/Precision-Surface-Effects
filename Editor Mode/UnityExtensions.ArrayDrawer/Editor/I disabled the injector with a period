@@ -1,0 +1,3 @@
+And by I I mean me, Steffen Vetne
+
+This is because otherwise every array/list would be reorderable, which might not be desirable, particularly if you like the ability to type the number of array elements you want
