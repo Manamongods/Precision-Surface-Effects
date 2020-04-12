@@ -25,8 +25,12 @@ MonoBehaviour:
       hardnessMultiplier: 1
       volumeMultiplier: 1
       pitchMultiplier: 1
-      particleSizeMultiplier: 2
-      particleCountMultiplier: 1
+      selfParticleMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      otherParticleMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 3
       color: {r: 0.7, g: 0.46392158, b: 0.45294118, a: 1}
       particleOverrides: {fileID: 0}
       normalizedWeight: 1
@@ -40,8 +44,12 @@ MonoBehaviour:
         pitch: 1
         color: {r: 0.7, g: 0.46392158, b: 0.45294118, a: 1}
         particleOverrides: {fileID: 0}
-        particleSize: 2
-        particleCount: 1
+        selfParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
+        otherParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 3
 --- !u!114 &2572680316780925790
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -55,6 +63,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 0.7, g: 0.46392158, b: 0.45294118, a: 1}
+  selfParticleMultipliers:
+    countMultiplier: 1
+    sizeMultiplier: 3
 --- !u!1001 &8569534095878517724
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -137,6 +148,11 @@ PrefabInstance:
         type: 3}
       propertyPath: particles.selfColor.r
       value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: particles.selfMultipliers.sizeMultiplier
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7768311540337565094, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
         type: 3}

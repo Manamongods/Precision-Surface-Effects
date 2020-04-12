@@ -110,7 +110,8 @@ namespace PrecisionSurfaceEffects
                     o.volumeMultiplier *= invW;
                     o.pitchMultiplier *= invW;
                     o.color *= invW;
-                    o.particleSizeMultiplier *= invW;
+                    o.selfParticleMultipliers *= invW;
+                    o.otherParticleMultipliers *= invW;
                 }
                 outputs[i] = o;
             }
@@ -305,8 +306,8 @@ namespace PrecisionSurfaceEffects
                     output.volumeMultiplier += weight * blendResult.volume;
                     output.pitchMultiplier += weight * blendResult.pitch;
                     output.color += weight * blendResult.color;
-                    output.particleCountMultiplier  += weight * blendResult.particleCount;
-                    output.particleSizeMultiplier += weight * blendResult.particleSize;
+                    output.selfParticleMultipliers += blendResult.selfParticleMultipliers * weight;
+                    output.otherParticleMultipliers += blendResult.otherParticleMultipliers * weight;
 
                     outputs[outputID] = output;
                     success = true;
@@ -325,8 +326,8 @@ namespace PrecisionSurfaceEffects
                         volumeMultiplier = weight * blendResult.volume,
                         pitchMultiplier = weight * blendResult.pitch,
                         color = weight * blendResult.color,
-                        particleCountMultiplier = weight * blendResult.particleCount,
-                        particleSizeMultiplier = weight * blendResult.particleSize,
+                        selfParticleMultipliers = blendResult.selfParticleMultipliers * weight,
+                        otherParticleMultipliers = blendResult.otherParticleMultipliers * weight,
                         particleOverrides = blendResult.particleOverrides,
                     }
                 );
@@ -349,8 +350,8 @@ namespace PrecisionSurfaceEffects
                     pitchMultiplier = subType.settings.pitchMultiplier,
                     particleOverrides = null,
                     color = st.defaultColorTint * subType.settings.defaultColor,
-                    particleCountMultiplier = 1,
-                    particleSizeMultiplier = 1,
+                    selfParticleMultipliers = ParticleMultipliers.Default(),
+                    otherParticleMultipliers = ParticleMultipliers.Default(),
                 }
             );
         }

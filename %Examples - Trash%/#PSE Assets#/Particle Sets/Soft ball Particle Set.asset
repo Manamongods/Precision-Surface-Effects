@@ -16,35 +16,65 @@ MonoBehaviour:
   surfaceTypeParticles:
   - name: None
     particles: {fileID: 0}
-    countMultiplier: 1
-    sizeMultiplier: 1
+    selfMultipliers:
+      countMultiplier: 1
+      sizeMultiplier: 1
+    otherMultipliers:
+      countMultiplier: 1
+      sizeMultiplier: 1
     flipSelf: 0
+    isBoth: 0
   - name: Grassy
     particles: {fileID: 7491325751417348753, guid: f36799db7697aa04c968d42c3a43b7e3,
       type: 3}
-    countMultiplier: 1
-    sizeMultiplier: 1
+    selfMultipliers:
+      countMultiplier: 1
+      sizeMultiplier: 1
+    otherMultipliers:
+      countMultiplier: 1
+      sizeMultiplier: 1
     flipSelf: 0
+    isBoth: 0
   - name: Rocky
     particles: {fileID: 1354068138572865173, guid: c4fa8904db86a4c4f86a0b6ca862ba6f,
       type: 3}
-    countMultiplier: 1
-    sizeMultiplier: 2
+    selfMultipliers:
+      countMultiplier: 1
+      sizeMultiplier: 1
+    otherMultipliers:
+      countMultiplier: 1
+      sizeMultiplier: 1
     flipSelf: 1
+    isBoth: 0
   - name: Wood
     particles: {fileID: 0}
-    countMultiplier: 1
-    sizeMultiplier: 1
+    selfMultipliers:
+      countMultiplier: 1
+      sizeMultiplier: 1
+    otherMultipliers:
+      countMultiplier: 1
+      sizeMultiplier: 1
     flipSelf: 0
+    isBoth: 1
   - name: Hollow Metal
     particles: {fileID: 1354068138572865173, guid: c4fa8904db86a4c4f86a0b6ca862ba6f,
       type: 3}
-    countMultiplier: 1
-    sizeMultiplier: 2
+    selfMultipliers:
+      countMultiplier: 1
+      sizeMultiplier: 1
+    otherMultipliers:
+      countMultiplier: 1
+      sizeMultiplier: 1
     flipSelf: 1
+    isBoth: 0
   - name: Muddy
     particles: {fileID: 2975248891490045703, guid: fa0fe63664b402f46831cc2c66740e2e,
       type: 3}
-    countMultiplier: 1
-    sizeMultiplier: 1
+    selfMultipliers:
+      countMultiplier: 1
+      sizeMultiplier: 1
+    otherMultipliers:
+      countMultiplier: 1
+      sizeMultiplier: 1
     flipSelf: 0
+    isBoth: 0

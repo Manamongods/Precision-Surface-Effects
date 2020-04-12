@@ -256,11 +256,17 @@ namespace PrecisionSurfaceEffects
                                 from = invInfluence * from + influence * to;
                             }
 
+                            void LerpPM(ref ParticleMultipliers from, ParticleMultipliers to)
+                            {
+                                from.countMultiplier = invInfluence * from.countMultiplier + influence * to.countMultiplier;
+                                from.sizeMultiplier = invInfluence * from.sizeMultiplier + influence * to.sizeMultiplier;
+                            }
+
                             Lerp(ref o.weight, output.weight);
                             Lerp(ref o.volumeMultiplier, output.volumeMultiplier);
                             Lerp(ref o.pitchMultiplier, output.pitchMultiplier);
-                            Lerp(ref o.particleSizeMultiplier, output.particleSizeMultiplier);
-                            Lerp(ref o.particleCountMultiplier, output.particleCountMultiplier);
+                            LerpPM(ref o.selfParticleMultipliers, output.selfParticleMultipliers);
+                            LerpPM(ref o.otherParticleMultipliers, output.otherParticleMultipliers);
                             o.color = invInfluence * o.color + influence * output.color;
 
                             averageOutputs[ii] = o;
@@ -281,8 +287,8 @@ namespace PrecisionSurfaceEffects
                                 surfaceTypeID = output.surfaceTypeID,
                                 volumeMultiplier = output.volumeMultiplier,
                                 pitchMultiplier = output.pitchMultiplier,
-                                particleSizeMultiplier = output.particleSizeMultiplier,
-                                particleCountMultiplier = output.particleCountMultiplier,
+                                selfParticleMultipliers = output.selfParticleMultipliers,
+                                otherParticleMultipliers = output.otherParticleMultipliers,
                                 color = output.color,
                             }
                         );
@@ -356,7 +362,7 @@ namespace PrecisionSurfaceEffects
                 {
                     var o = particleOutputs[i];
 
-                    var sp = particleSet.GetSurfaceParticles(ref o, out bool flipSelf);
+                    var sp = particleSet.GetSurfaceParticles(ref o, out bool flipSelf, out bool isBoth);
 
                     if (sp != null)
                     {
@@ -365,8 +371,9 @@ namespace PrecisionSurfaceEffects
 
                         sp.GetInstance().PlayParticles
                         (
-                            flipSelf, particles.selfColor, o.color, 
-                            o.particleCountMultiplier * particles.particleCountMultiplier, o.particleSizeMultiplier * particles.particleSizeMultiplier,
+                            flipSelf, isBoth,
+                            particles.selfColor, o.color, 
+                            o.selfParticleMultipliers * particles.selfMultipliers, o.otherParticleMultipliers * particles.otherMultipliers,
                             o.weight * speedFader,
                             impulse, speed,
                             rot, center, radius + particles.minimumParticleShapeRadius, particleOutputs.hitNormal,

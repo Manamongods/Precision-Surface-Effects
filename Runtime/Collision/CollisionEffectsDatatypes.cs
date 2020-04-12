@@ -19,10 +19,8 @@ namespace PrecisionSurfaceEffects
             [Min(0)]
             public float selfHardness = 1;
             public Color selfColor = Color.white;
-            [Min(0)]
-            public float particleCountMultiplier = 1; //public float frictionCountMultiplier = 1; //Essentially how destructive friction is, how rough the surface is
-            [Min(0)]
-            public float particleSizeMultiplier = 1;
+            public ParticleMultipliers selfMultipliers = ParticleMultipliers.Default();
+            public ParticleMultipliers otherMultipliers = ParticleMultipliers.Default();
             [Min(0)]
             public float minimumParticleShapeRadius = 0;
 

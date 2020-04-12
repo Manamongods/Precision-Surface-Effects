@@ -121,7 +121,8 @@ namespace PrecisionSurfaceEffects
                 volume = 1,
                 pitch = 1,
                 color = surfaceTypes[defaultSurfaceType].defaultColorTint * defaultSurfaceTypeSettings.defaultColor,
-                particleSize = 1,
+                selfParticleMultipliers = ParticleMultipliers.Default(),
+                otherParticleMultipliers = ParticleMultipliers.Default(),
             };
             defaultBlend = Settingsify(defaultBlend);
         }

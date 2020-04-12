@@ -59,8 +59,8 @@ namespace PrecisionSurfaceEffects
                 volume = blend.volumeMultiplier,
                 pitch = blend.pitchMultiplier,
                 hardness = blend.hardnessMultiplier,
-                particleSize = blend.particleSizeMultiplier, //particleSpeed = particleSpeedMultiplier,
-                particleCount = blend.particleCountMultiplier,
+                selfParticleMultipliers = blend.selfParticleMultipliers, //particleSpeed = particleSpeedMultiplier,
+                otherParticleMultipliers = blend.otherParticleMultipliers,
                 color = blend.color,
                 particleOverrides = blend.particleOverrides
             };
@@ -84,8 +84,8 @@ namespace PrecisionSurfaceEffects
             public float pitchMultiplier = 1;
 
             [Header("Particles")]
-            public float particleSizeMultiplier = 1; //public float particleSpeedMultiplier = 1;
-            public float particleCountMultiplier = 1;
+            public ParticleMultipliers selfParticleMultipliers = ParticleMultipliers.Default();
+            public ParticleMultipliers otherParticleMultipliers = ParticleMultipliers.Default();
             public Color color = Color.white;
             public SurfaceParticleOverrides particleOverrides;
 
@@ -116,9 +116,8 @@ namespace PrecisionSurfaceEffects
 
             public Color color;
             public SurfaceParticleOverrides particleOverrides;
-
-            public float particleSize; 
-            public float particleCount; 
+            public ParticleMultipliers selfParticleMultipliers;
+            public ParticleMultipliers otherParticleMultipliers;
         }
     }
 }

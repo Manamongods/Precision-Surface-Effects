@@ -17,21 +17,23 @@ namespace PrecisionSurfaceEffects
 
 
         //Methods
-        public SurfaceParticles Get(ref SurfaceOutput output, SurfaceParticleSet particleSet, out bool flipSelf)
+        public SurfaceParticles Get(ref SurfaceOutput output, SurfaceParticleSet particleSet, out bool flipSelf, out bool isBoth)
         {
             for (int i = 0; i < overrides.Length; i++)
             {
                 var o = overrides[i];
                 if (o.particleSet == particleSet)
                 {
-                    output.particleCountMultiplier *= o.countMultiplier;
-                    output.particleSizeMultiplier *= o.sizeMultiplier;
+                    output.selfParticleMultipliers *= o.selfMultipliers; // // //Note that these are flipped!:
+                    output.otherParticleMultipliers *= o.otherMultipliers;
                     flipSelf = o.flipSelf;
+                    isBoth = o.isBoth;
                     return o.particles;
                 }
             }
 
             flipSelf = false;
+            isBoth = false;
             return null;
         }
 
@@ -45,9 +47,10 @@ namespace PrecisionSurfaceEffects
             internal string autoHeader;
             public SurfaceParticleSet particleSet;
             public SurfaceParticles particles;
-            public float sizeMultiplier = 1;
-            public float countMultiplier = 1;
+            public ParticleMultipliers selfMultipliers = ParticleMultipliers.Default();
+            public ParticleMultipliers otherMultipliers = ParticleMultipliers.Default();
             public bool flipSelf;
+            public bool isBoth;
         }
 
 

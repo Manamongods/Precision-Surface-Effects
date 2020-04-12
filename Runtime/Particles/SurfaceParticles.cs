@@ -9,6 +9,35 @@ using UnityEngine;
 
 namespace PrecisionSurfaceEffects
 {
+    [System.Serializable]
+    public struct ParticleMultipliers
+    {
+        [Min(0)]
+        public float countMultiplier;
+        [Min(0)]
+        public float sizeMultiplier;
+
+        public static ParticleMultipliers Default()
+        {
+            return new ParticleMultipliers() { countMultiplier = 1, sizeMultiplier = 1 };
+        }
+
+        public static ParticleMultipliers operator *(ParticleMultipliers a, ParticleMultipliers b)
+        {
+            return new ParticleMultipliers() { countMultiplier = a.countMultiplier * b.countMultiplier, sizeMultiplier = a.sizeMultiplier * b.sizeMultiplier };
+        }
+
+        public static ParticleMultipliers operator *(ParticleMultipliers a, float b)
+        {
+            return new ParticleMultipliers() { countMultiplier = a.countMultiplier * b, sizeMultiplier = a.sizeMultiplier * b };
+        }
+
+        public static ParticleMultipliers operator +(ParticleMultipliers a, ParticleMultipliers b)
+        {
+            return new ParticleMultipliers() { countMultiplier = a.countMultiplier + b.countMultiplier, sizeMultiplier = a.sizeMultiplier + b.sizeMultiplier };
+        }
+    }
+
     [RequireComponent(typeof(ParticleSystem))]
     public class SurfaceParticles : MonoBehaviour
     {
@@ -16,11 +45,12 @@ namespace PrecisionSurfaceEffects
         public SurfaceParticles[] children; //subParticleSystems
 
         [Space(10)]
-        public bool isSelf;
+        public SelfType selfType = SelfType.IsOther; //public bool isSelf;
+        public enum SelfType { IsSelf = 0, IsOther = 1, IsBoth = 2 }
 
         [Header("Quality")]
         [SerializeField]
-        private bool inheritVelocities = true;
+        private bool inheritVelocities = true; // highQuality = true;
 
         [Header("Inherit Velocity")]
         [Range(0, 1)]
@@ -123,19 +153,8 @@ namespace PrecisionSurfaceEffects
             return rollingSpeed * rollingSpeedMultiplier + slidingSpeed * slidingSpeedMultiplier;
         }
 
-        public void PlayParticles(bool flipSelf, Color selfColor, Color otherColor, float particleCountScaler, float particleSizeScaler, float weight, float impulse, float speed, Quaternion rot, Vector3 center, float radius, Vector3 normal, Vector3 vel0, Vector3 vel1, float mass0, float mass1, float dt = 0.25f, bool withChildren = true)
+        private void AssertTemporarySystem()
         {
-            bool isSelf = this.isSelf ^ flipSelf;
-
-            if (withChildren)
-            {
-                for (int i = 0; i < children.Length; i++)
-                {
-                    var sps = children[i].GetInstance();
-                    sps.PlayParticles(flipSelf, selfColor, otherColor, particleCountScaler, particleSizeScaler, weight, impulse, speed, rot, center, radius, normal, vel0, vel1, mass0, mass1, dt: dt, withChildren: false);
-                }
-            }
-
             if (inheritVelocities && temporarySystem == null)
             {
                 var inst = Instantiate(this);
@@ -147,7 +166,49 @@ namespace PrecisionSurfaceEffects
                 var em2 = temporarySystem.emission;
                 em2.enabled = false;
             }
+        }
 
+        public void PlayParticles
+        (
+            bool flipSelf, bool isBoth,
+            Color selfColor, Color otherColor,
+            ParticleMultipliers selfMultipliers,
+            ParticleMultipliers otherMultipliers,
+
+            float weight,
+
+            float impulse, float speed,
+
+            Quaternion rot, Vector3 center, float radius, Vector3 normal,
+
+            Vector3 vel0, Vector3 vel1,
+            float mass0, float mass1,
+
+            float dt = 0.25f,
+
+            bool withChildren = true
+        )
+        {
+            if (dt == 0)
+                return; //?
+
+
+            #region Plays Children
+            if (withChildren)
+            {
+                for (int i = 0; i < children.Length; i++)
+                {
+                    var sps = children[i].GetInstance();
+                    sps.PlayParticles(flipSelf, isBoth, selfColor, otherColor, selfMultipliers, otherMultipliers, weight, impulse, speed, rot, center, radius, normal, vel0, vel1, mass0, mass1, dt: dt, withChildren: false);
+                }
+            }
+            #endregion
+
+
+            AssertTemporarySystem();
+
+
+            #region Reflects Velocities
             if (normal != Vector3.zero)
             {
                 float massSum = mass0 + mass1;
@@ -165,112 +226,129 @@ namespace PrecisionSurfaceEffects
             }
             //else
             //    Debug.Log("Empty normal");
+            #endregion
 
 
             ParticleSystem system = inheritVelocities ? temporarySystem : particleSystem;
-
-
-            radius *= shapeRadiusScaler;
-            radius += constantShapeRadius;
-
             var main = system.main;
-            main.startSpeedMultiplier = startSpeedMultiplier * (baseSpeedMultiplier + speed * speedMultiplierBySpeed);
-
-
-            var shape = system.shape;
-            shape.position = center;
-            shape.radius = radius;
-            var baseRot = Quaternion.identity;
-            if (isSelf)
-                baseRot = Quaternion.Euler(flipSelfRotationOffset);
-            shape.rotation = (rot * Quaternion.Euler(shapeRotationOffset) * baseRot).eulerAngles;
-
-
             float force = impulse / dt;
-            float scale = scalerByForce.Evaluate(force);// Mathf.Min(baseScaler + scalerByImpulse * impulse, maxScale);
-            scale *= particleSizeScaler;
-            
-            //I have to do this bs because the startSizeMultiplier doesn't work...
-            void Apply(ParticleSystem.MinMaxCurve from, ref ParticleSystem.MinMaxCurve to, float mult)
+
+
+            void Play(Color color, ParticleMultipliers particleMultipliers, bool isSelf)
             {
-                to.constant = from.constant * mult;
-                to.constantMin = from.constantMin * mult;
-                to.constantMax = from.constantMax * mult;
-                to.curveMultiplier = from.curveMultiplier * mult;
+                float scale = scalerByForce.Evaluate(force) * particleMultipliers.sizeMultiplier;// Mathf.Min(baseScaler + scalerByImpulse * impulse, maxScale);
+                float countMult = selfMultipliers.countMultiplier * (1f / Mathf.Pow(scale, countByInverseScaleExponent));
+
+
+                #region Applies Scale
+                //I have to do this bs because the startSizeMultiplier doesn't work...
+                void Apply(ParticleSystem.MinMaxCurve from, ref ParticleSystem.MinMaxCurve to, float mult)
+                {
+                    to.constant = from.constant * mult;
+                    to.constantMin = from.constantMin * mult;
+                    to.constantMax = from.constantMax * mult;
+                    to.curveMultiplier = from.curveMultiplier * mult;
+                }
+                if (main.startSize3D)
+                {
+                    Apply(ssX, ref ssX2, scale);
+                    main.startSizeX = ssX2;
+                    Apply(ssY, ref ssY2, scale);
+                    main.startSizeY = ssY2;
+                    Apply(ssZ, ref ssZ2, scale);
+                    main.startSizeZ = ssZ2;
+                }
+                else
+                {
+                    Apply(ss, ref ss2, scale);
+                    main.startSize = ss2;
+                }
+                #endregion
+
+
+                #region Finds Count
+                var countf = countMult * rateByForce.Evaluate(force) * dt * weight; //maxRate * dt //Mathf.Min(, maxAttemptParticleCount) 
+                int count = (int)countf;
+                if (Random.value < countf - count)
+                    count++;
+                if (count == 0)
+                    return;
+                #endregion
+
+
+                //Applies Start Speed
+                main.startSpeedMultiplier = startSpeedMultiplier * (baseSpeedMultiplier + speed * speedMultiplierBySpeed);
+
+
+                #region Applies Shape
+                var shape = system.shape;
+                shape.position = center;
+
+                shape.radius = radius * shapeRadiusScaler + constantShapeRadius;
+                var baseRot = Quaternion.identity;
+                if (isSelf)
+                    baseRot = Quaternion.Euler(flipSelfRotationOffset);
+                shape.rotation = (rot * Quaternion.Euler(shapeRotationOffset) * baseRot).eulerAngles;
+                #endregion
+
+
+                #region SetColor
+                if (setColor)
+                {
+                    if (colorMode == ParticleSystemGradientMode.Color)
+                    {
+                        sc.color = this.c * color;
+                    }
+                    else if (colorMode == ParticleSystemGradientMode.TwoColors)
+                    {
+                        sc.colorMin = c0 * color;
+                        sc.colorMax = c1 * color;
+                    }
+
+                    main.startColor = sc;
+                }
+                #endregion
+
+
+                //Emits
+                system.Emit(count);
+
+
+                //Modifies if High Quality
+                if (inheritVelocities)
+                {
+                    var par = new ParticleSystem.EmitParams();
+
+                    int takingCount = temporarySystem.GetParticles(sourceParticles);
+                    for (int i = 0; i < takingCount; i++)
+                    {
+                        var particle = sourceParticles[i];
+
+                        float rand = Random.Range(inheritSpreadRange.x, inheritSpreadRange.y); //is there a faster version of this?
+                        particle.velocity += (vel0 * (1 - rand) + vel1 * rand);
+                        par.particle = particle;
+                        particleSystem.Emit(par, 1);
+                    }
+
+                    temporarySystem.Clear(false);
+                }
             }
-            if (main.startSize3D)
+
+
+            if (selfType == SelfType.IsBoth || isBoth)
             {
-                Apply(ssX, ref ssX2, scale);
-                main.startSizeX = ssX2;
-                Apply(ssY, ref ssY2, scale);
-                main.startSizeY = ssY2;
-                Apply(ssZ, ref ssZ2, scale);
-                main.startSizeZ = ssZ2;
+                Play(selfColor, selfMultipliers, true);
+                Play(otherColor, otherMultipliers, false);
             }
             else
             {
-                Apply(ss, ref ss2, scale);
-                main.startSize = ss2;
+                bool isSelf = selfType == SelfType.IsSelf ^ flipSelf;
+
+                if (isSelf)
+                    Play(selfColor, selfMultipliers, true);
+                else
+                    Play(otherColor, otherMultipliers, false);
             }
-
-
-            float countMult = particleCountScaler; // * Mathf.Clamp01(Mathf.InverseLerp(countBySpeedRange.x, countBySpeedRange.y, speed));
-            countMult /= Mathf.Pow(scale, countByInverseScaleExponent); // * scale; //should technically be cubed though
-            var countf = countMult * rateByForce.Evaluate(force) * dt * weight; //maxRate * dt //Mathf.Min(, maxAttemptParticleCount) 
-            int count = (int)countf;
-            if (Random.value < countf - count)
-                count++;
-
-
-            if(setColor)
-            {
-                var color = isSelf ? selfColor : otherColor;
-
-                if (colorMode == ParticleSystemGradientMode.Color)
-                {
-                    sc.color = this.c * color;
-                }
-                else if (colorMode == ParticleSystemGradientMode.TwoColors)
-                {
-                    sc.colorMin = c0 * color;
-                    sc.colorMax = c1 * color;
-                }
-
-                main.startColor = sc;
-            }
-
-            system.Emit(count);
-
-            var par = new ParticleSystem.EmitParams();
-
-            if (inheritVelocities)
-            {
-                //int dstCount = particleSystem.GetParticles(destinationParticles);
-
-                //int maxDst = Mathf.Min(destinationParticles.Length, main.maxParticles);
-                //var dstPC = particleSystem.particleCount;
-                //int takingCount = Mathf.Min(maxDst - dstPC, temporarySystem.GetParticles(sourceParticles));
-                int takingCount = temporarySystem.GetParticles(sourceParticles);
-                for (int i = 0; i < takingCount; i++)
-                {
-                    var particle = sourceParticles[i];
-
-                    float rand = Random.Range(inheritSpreadRange.x, inheritSpreadRange.y); //is there a faster version of this?
-                    particle.velocity += (vel0 * (1 - rand) + vel1 * rand);
-
-                    //destinationParticles[dstCount] = particle;
-                    //dstCount++;
-
-                    par.particle = particle;
-                    particleSystem.Emit(par, 1);
-                }
-
-                //particleSystem.SetParticles(destinationParticles, dstCount);
-                temporarySystem.Clear(false); // SetParticles(destinationParticles, 0);
-            }
-
-            //if(!particleSystem.isPlaying)
-            //    particleSystem.Play();
         }
 
 
@@ -338,6 +416,13 @@ namespace PrecisionSurfaceEffects
 }
 
 /*
+                // particleCountScaler; // * Mathf.Clamp01(Mathf.InverseLerp(countBySpeedRange.x, countBySpeedRange.y, speed)); //countMult ; // * scale; //should technically be cubed though
+         
+    // SetParticles(destinationParticles, 0);
+ * 
+            //if(!particleSystem.isPlaying)
+            //    particleSystem.Play();
+
  *         //Constants
         public static int maxAttemptParticleCount = 1000; //This is to prevent excessive numbers such as from perhaps a bug
 

@@ -20,23 +20,22 @@ namespace PrecisionSurfaceEffects
 
 
         //Methods
-        public SurfaceParticles GetSurfaceParticles(ref SurfaceOutput o, out bool flipSelf)
+        public SurfaceParticles GetSurfaceParticles(ref SurfaceOutput o, out bool flipSelf, out bool isBoth)
         {
             if (o.particleOverrides != null)
             {
-                var sp = o.particleOverrides.Get(ref o, this, out flipSelf);
+                var sp = o.particleOverrides.Get(ref o, this, out flipSelf, out isBoth);
                 if (sp != null)
                 {
                     return sp;
                 }
             }
 
-            flipSelf = false;
-
             var stp = surfaceTypeParticles[o.surfaceTypeID];
-            o.particleCountMultiplier *= stp.countMultiplier;
-            o.particleSizeMultiplier *= stp.sizeMultiplier;
+            o.selfParticleMultipliers *= stp.selfMultipliers;
+            o.otherParticleMultipliers *= stp.otherMultipliers;
             flipSelf = stp.flipSelf;
+            isBoth = stp.isBoth;
             return stp.particles;
         }
 
@@ -47,7 +46,7 @@ namespace PrecisionSurfaceEffects
                 return;
 #endif
 
-            SurfaceParticles p = GetSurfaceParticles(ref output, out bool flipSelf);
+            SurfaceParticles p = GetSurfaceParticles(ref output, out bool flipSelf, out bool isBoth);
 
             if(p != null)
             {
@@ -56,8 +55,9 @@ namespace PrecisionSurfaceEffects
                 var speed = (otherVel - vel).magnitude;
                 p.GetInstance().PlayParticles
                 (
-                    flipSelf, selfColor, output.color,
-                    output.particleCountMultiplier, output.particleSizeMultiplier, 
+                    flipSelf, isBoth,
+                    selfColor, output.color,
+                    output.selfParticleMultipliers, output.otherParticleMultipliers, 
                     1, 
                     impulse, speed,
                     rot, outputs.hitPosition, radius, outputs.hitNormal,
@@ -88,8 +88,9 @@ namespace PrecisionSurfaceEffects
     {
         public SurfaceParticles particles;
 
-        public float countMultiplier = 1;
-        public float sizeMultiplier = 1;
+        public ParticleMultipliers selfMultipliers = ParticleMultipliers.Default();
+        public ParticleMultipliers otherMultipliers = ParticleMultipliers.Default();
         public bool flipSelf;
+        public bool isBoth;
     }
 }

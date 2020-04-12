@@ -19,8 +19,8 @@ public class SurfaceEffectsBase : MonoBehaviour
     [Space(20)]
     public SurfaceParticleSet particleSet;
     public float particleRadius = 0;
-    public float particleCountMultiplier = 1;
-    public float particleSizeMultiplier = 1;
+    public ParticleMultipliers selfParticleMultipliers = ParticleMultipliers.Default();
+    public ParticleMultipliers otherParticleMultipliers = ParticleMultipliers.Default();
     public float particleDeltaTime = 0.05f;
     public Color selfColor = Color.white;
     [Tooltip("This is used to calculate the (reflected) inherited particle velocity")]
@@ -45,8 +45,8 @@ public class SurfaceEffectsBase : MonoBehaviour
 
             if (particleSet != null)
             {
-                output.particleSizeMultiplier *= particleSizeMultiplier;
-                output.particleCountMultiplier *= particleCountMultiplier;
+                output.selfParticleMultipliers *= selfParticleMultipliers;
+                output.otherParticleMultipliers *= otherParticleMultipliers;
                 particleSet.PlayParticles(outputs, output, selfColor, impulse, speed * dir, mass, radius: particleRadius, deltaTime: particleDeltaTime); //-speed * outputs.hitNormal
             }
         }

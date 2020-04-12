@@ -19,8 +19,9 @@ namespace PrecisionSurfaceEffects
 
         public float volumeMultiplier;
         public float pitchMultiplier;
-        public float particleSizeMultiplier;
-        public float particleCountMultiplier;
+
+        public ParticleMultipliers selfParticleMultipliers;
+        public ParticleMultipliers otherParticleMultipliers;
     }
 
     public class SurfaceOutputs : List<SurfaceOutput>

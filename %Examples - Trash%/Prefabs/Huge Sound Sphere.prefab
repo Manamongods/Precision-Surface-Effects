@@ -142,6 +142,11 @@ PrefabInstance:
       propertyPath: frictionSound.pitchBySpeed
       value: 0.08
       objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: priority
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7768311540337565094, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -215,7 +220,7 @@ PrefabInstance:
     - target: {fileID: 7768311540337565116, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
         type: 3}
       propertyPath: m_Name
-      value: Huge Sound Sphere Variant
+      value: Huge Sound Sphere
       objectReference: {fileID: 0}
     - target: {fileID: 7768311541134257654, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
         type: 3}
