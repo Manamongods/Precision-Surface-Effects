@@ -9,7 +9,7 @@ Should easierly work much better for stylized art styles, where the size of a fr
 
 If you use the system frequently, it should only be used on PC, not mobile. Infrequent use is perfectly fine performance wise.
 
-Uses: https://github.com/garettbass/UnityExtensions.ArrayDrawer for some reorderability
+Uses: https://github.com/cfoulston/Unity-Reorderable-List for some reorderability
 
 It's possible that you'll need to import this into an empty project if you want to try the Example Scene, as the free assets I've taken from MicroSplat and Unity's Standard Assets might conflict if you already have them in your project.
 
