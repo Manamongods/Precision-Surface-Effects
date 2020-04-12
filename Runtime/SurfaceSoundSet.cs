@@ -10,18 +10,11 @@ using Malee;
 
 namespace PrecisionSurfaceEffects
 {
-    //[System.Serializable]
-    //public class SurfaceParticlesSettings
-    //{
-
-    //}
-
     [CreateAssetMenu(menuName = "Precision Surface Effects/Surface Sound Set")]
     public class SurfaceSoundSet : SurfaceSet<SurfaceTypeSounds>
     {
         //Fields
         [Space(30)]
-        [Reorderable]
         public SurfaceTypeSounds[] surfaceTypeSounds = new SurfaceTypeSounds[] { new SurfaceTypeSounds() };
 
 

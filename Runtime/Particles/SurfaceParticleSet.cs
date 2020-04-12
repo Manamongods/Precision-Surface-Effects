@@ -14,12 +14,8 @@ namespace PrecisionSurfaceEffects
     public class SurfaceParticleSet : SurfaceSet<SurfaceTypeParticles>
     {
         //Fields
-        //[Space(30)]
-        //[Reorderable()] //surrogateType = typeof(SurfaceTypeParticles), surrogateProperty = "objectProperty")]
+        [Space(30)]
         public SurfaceTypeParticles[] surfaceTypeParticles = new SurfaceTypeParticles[] { new SurfaceTypeParticles() };
-
-        [System.Serializable]
-        public class STPArray : ReorderableArray<SurfaceTypeParticles> { }
 
 
         //Methods
@@ -74,14 +70,9 @@ namespace PrecisionSurfaceEffects
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            //Resize(ref surfaceTypeParticles);
+            Resize(ref surfaceTypeParticles);
         }
 #endif
-
-        private void OnEnable()
-        {
-            //instantiates
-        }
     }
 
     [System.Serializable]
@@ -90,3 +81,11 @@ namespace PrecisionSurfaceEffects
         public Particles[] particles = new Particles[1] { new Particles() };
     }
 }
+
+/*
+        private void OnEnable()
+        {
+            //instantiates
+        }
+
+*/

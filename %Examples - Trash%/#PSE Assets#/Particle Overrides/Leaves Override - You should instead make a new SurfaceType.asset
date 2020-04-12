@@ -15,19 +15,66 @@ MonoBehaviour:
   overrides:
   - autoHeader: Foot Particle Set
     particleSet: {fileID: 11400000, guid: 2d328975ebda86f4bbbe8b7f8109f50a, type: 2}
-    particles: {fileID: 2283238127136573854, guid: 7409fc54ea5285a4386bb1c3bed715ce,
-      type: 3}
-    sizeMultiplier: 1
-    countMultiplier: 0.25
+    particles:
+    - particles: {fileID: 0}
+      selfMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      otherMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      originType: 0
   - autoHeader: Metal ball Particle Set
     particleSet: {fileID: 11400000, guid: ba419fd3c5da39648b19eb10694ec9c9, type: 2}
-    particles: {fileID: 2283238127136573854, guid: 7409fc54ea5285a4386bb1c3bed715ce,
-      type: 3}
-    sizeMultiplier: 1
-    countMultiplier: 1
+    particles:
+    - particles: {fileID: 0}
+      selfMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      otherMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      originType: 0
+    - particles: {fileID: 0}
+      selfMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      otherMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      originType: 0
+    - particles: {fileID: 0}
+      selfMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      otherMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      originType: 0
   - autoHeader: Bullet Particle Set
     particleSet: {fileID: 11400000, guid: 62a6441a19f2db644bda9edf40c5b1b4, type: 2}
-    particles: {fileID: 2283238127136573854, guid: 7409fc54ea5285a4386bb1c3bed715ce,
-      type: 3}
-    sizeMultiplier: 1
-    countMultiplier: 1
+    particles:
+    - particles: {fileID: 0}
+      selfMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      otherMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      originType: 0
+    - particles: {fileID: 0}
+      selfMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      otherMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      originType: 0
+    - particles: {fileID: 0}
+      selfMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      otherMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      originType: 0

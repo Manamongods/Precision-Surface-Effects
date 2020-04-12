@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17a939634c7ae3a4197d571c0df6eb35, type: 3}
   m_Name: None
   m_EditorClassIdentifier: 
-  hardness: 0
-  keywords: []
+  hardnessMultiplier: 1
+  defaultColorTint: {r: 1, g: 1, b: 1, a: 1}
   subTypes: []

@@ -29,7 +29,8 @@ MonoBehaviour:
       originType: 0
   - name: Rocky
     particles:
-    - particles: {fileID: 0}
+    - particles: {fileID: 6917217161448239402, guid: 7b616163bab6af94290e1548cde390db,
+        type: 3}
       selfMultipliers:
         countMultiplier: 1
         sizeMultiplier: 1

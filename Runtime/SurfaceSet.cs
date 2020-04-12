@@ -11,8 +11,10 @@ namespace PrecisionSurfaceEffects
 {
     public class SurfaceSetType
     {
-        [ReadOnly]
-        [SeperatorLine(true)]
+        //[ReadOnly]
+        //[SeperatorLine(true)]
+        [SerializeField]
+        [HideInInspector]
         public string name = "";
     }
 

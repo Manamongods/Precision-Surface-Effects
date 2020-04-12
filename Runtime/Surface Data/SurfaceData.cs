@@ -15,31 +15,20 @@ namespace PrecisionSurfaceEffects
     public partial class SurfaceData : ScriptableObject
     {
         //Fields
-        [Header("Surface Types")]
-        [Space(20)]
         [Tooltip("If it can't find one")]
         public int defaultSurfaceType = 0;
 #if UNITY_EDITOR
-        [ReadOnly]
         public string defaultSurfaceTypeGroupName;
 #endif
         public STSettings defaultSurfaceTypeSettings = new STSettings();
 
-        [Space(40)]
-        [Reorderable]
         public SurfaceType[] surfaceTypes = new SurfaceType[1];
 
-        [Header("Materials")]
-        [Space(20)]
         [Tooltip("If your game reuses materials you can easily use these")]
         [SerializeField]
-        [Reorderable]
         internal MaterialBlendOverride[] materialBlendOverrides = new MaterialBlendOverride[] { new MaterialBlendOverride() };
 
-        [Header("Terrain Textures")]
-        [Space(20)]
         [SerializeField]
-        [Reorderable]
         internal TerrainBlends[] terrainBlends = new TerrainBlends[] { new TerrainBlends() };
 
 

@@ -34,11 +34,31 @@ MonoBehaviour:
       hardnessMultiplier: 1
       volumeMultiplier: 1
       pitchMultiplier: 1
-      particleSizeMultiplier: 1
-      particleCountMultiplier: 1
+      selfParticleMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      otherParticleMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
       color: {r: 1, g: 1, b: 1, a: 1}
       particleOverrides: {fileID: 0}
       normalizedWeight: 1
+    result:
+      result:
+      - lowerReference: stone
+        surfaceTypeID: 0
+        normalizedWeight: 1
+        hardness: 1
+        volume: 1
+        pitch: 1
+        color: {r: 1, g: 1, b: 1, a: 1}
+        particleOverrides: {fileID: 0}
+        selfParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
+        otherParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
     materials:
     - {fileID: 2100000, guid: 27b693d56a456064ba16f9ed7df95f23, type: 2}
   terrainBlends:
@@ -49,11 +69,31 @@ MonoBehaviour:
       hardnessMultiplier: 1
       volumeMultiplier: 1
       pitchMultiplier: 1
-      particleSizeMultiplier: 1
-      particleCountMultiplier: 1
+      selfParticleMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      otherParticleMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
       color: {r: 0.7371023, g: 0.8773585, b: 0.54174554, a: 1}
       particleOverrides: {fileID: 0}
       normalizedWeight: 1
+    result:
+      result:
+      - lowerReference: grass
+        surfaceTypeID: 1
+        normalizedWeight: 1
+        hardness: 1
+        volume: 1
+        pitch: 1
+        color: {r: 0.7371023, g: 0.8773585, b: 0.54174554, a: 1}
+        particleOverrides: {fileID: 0}
+        selfParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
+        otherParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
     terrainAlbedos:
     - {fileID: 2800000, guid: 66fb879d08c8d4a8d9217a396637cd02, type: 3}
   - groupName: Rocky
@@ -63,11 +103,31 @@ MonoBehaviour:
       hardnessMultiplier: 1
       volumeMultiplier: 1
       pitchMultiplier: 1
-      particleSizeMultiplier: 1
-      particleCountMultiplier: 1
+      selfParticleMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      otherParticleMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
       color: {r: 0.5943396, g: 0.5943396, b: 0.5943396, a: 1}
       particleOverrides: {fileID: 0}
       normalizedWeight: 1
+    result:
+      result:
+      - lowerReference: stone
+        surfaceTypeID: 2
+        normalizedWeight: 1
+        hardness: 1
+        volume: 1
+        pitch: 1
+        color: {r: 0.5943396, g: 0.5943396, b: 0.5943396, a: 1}
+        particleOverrides: {fileID: 0}
+        selfParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
+        otherParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
     terrainAlbedos:
     - {fileID: 2800000, guid: b2e5c511fff7f41559554175e2005252, type: 3}
   - groupName: Desertey muddy stuff
@@ -77,8 +137,12 @@ MonoBehaviour:
       hardnessMultiplier: 1
       volumeMultiplier: 1
       pitchMultiplier: 1
-      particleSizeMultiplier: 1
-      particleCountMultiplier: 1
+      selfParticleMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      otherParticleMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
       color: {r: 0.3490566, g: 0.3161762, b: 0.2319981, a: 1}
       particleOverrides: {fileID: 0}
       normalizedWeight: 0.6666667
@@ -87,11 +151,45 @@ MonoBehaviour:
       hardnessMultiplier: 1
       volumeMultiplier: 1
       pitchMultiplier: 1
-      particleSizeMultiplier: 1
-      particleCountMultiplier: 1
+      selfParticleMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      otherParticleMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
       color: {r: 0.3490566, g: 0.3161762, b: 0.2319981, a: 1}
       particleOverrides: {fileID: 0}
       normalizedWeight: 0.33333334
+    result:
+      result:
+      - lowerReference: stone
+        surfaceTypeID: 2
+        normalizedWeight: 0.6666667
+        hardness: 1
+        volume: 1
+        pitch: 1
+        color: {r: 0.3490566, g: 0.3161762, b: 0.2319981, a: 1}
+        particleOverrides: {fileID: 0}
+        selfParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
+        otherParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
+      - lowerReference: mud
+        surfaceTypeID: 5
+        normalizedWeight: 0.33333334
+        hardness: 1
+        volume: 1
+        pitch: 1
+        color: {r: 0.3490566, g: 0.3161762, b: 0.2319981, a: 1}
+        particleOverrides: {fileID: 0}
+        selfParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
+        otherParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
     terrainAlbedos:
     - {fileID: 2800000, guid: 1d6b5702e2d7947a6aca898081729d0f, type: 3}
   - groupName: Stonegrass
@@ -101,8 +199,12 @@ MonoBehaviour:
       hardnessMultiplier: 1
       volumeMultiplier: 1
       pitchMultiplier: 1
-      particleSizeMultiplier: 1
-      particleCountMultiplier: 1
+      selfParticleMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      otherParticleMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
       color: {r: 0.5283019, g: 0.51689434, b: 0.4408439, a: 1}
       particleOverrides: {fileID: 0}
       normalizedWeight: 0.5
@@ -111,10 +213,44 @@ MonoBehaviour:
       hardnessMultiplier: 1
       volumeMultiplier: 1
       pitchMultiplier: 1
-      particleSizeMultiplier: 1
-      particleCountMultiplier: 1
+      selfParticleMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      otherParticleMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
       color: {r: 0.34707358, g: 0.5, b: 0.19081217, a: 1}
       particleOverrides: {fileID: 0}
       normalizedWeight: 0.5
+    result:
+      result:
+      - lowerReference: stone
+        surfaceTypeID: 2
+        normalizedWeight: 0.5
+        hardness: 1
+        volume: 1
+        pitch: 1
+        color: {r: 0.5283019, g: 0.51689434, b: 0.4408439, a: 1}
+        particleOverrides: {fileID: 0}
+        selfParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
+        otherParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
+      - lowerReference: grass
+        surfaceTypeID: 1
+        normalizedWeight: 0.5
+        hardness: 1
+        volume: 1
+        pitch: 1
+        color: {r: 0.34707358, g: 0.5, b: 0.19081217, a: 1}
+        particleOverrides: {fileID: 0}
+        selfParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
+        otherParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
     terrainAlbedos:
     - {fileID: 2800000, guid: a4a9376fca9114840bb973b6693e7ff5, type: 3}

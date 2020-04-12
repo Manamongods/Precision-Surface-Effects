@@ -57,13 +57,7 @@ namespace PrecisionSurfaceEffects
             [SerializeField]
             internal string autoHeader;
             public SurfaceParticleSet particleSet;
-
-            //public SurfaceParticles particles;
-            public ParticleMultipliers selfMultipliers = ParticleMultipliers.Default();
-            public ParticleMultipliers otherMultipliers = ParticleMultipliers.Default();
-            public bool flipSelf;
-            public bool isBoth;
-
+            [Space(10)]
             public Particles[] particles = new Particles[1] { new Particles() };
         }
 

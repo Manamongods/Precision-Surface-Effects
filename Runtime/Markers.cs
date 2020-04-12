@@ -90,7 +90,7 @@ namespace PrecisionSurfaceEffects
     {
         //Fields
         [SerializeField]
-        public SubmeshType[] overrides = new SubmeshType[1] { new SubmeshType() }; //submeshes //[ReorderableList()] //subMaterials
+        public SubmeshType[] overrides = new SubmeshType[1] { new SubmeshType() };
 
 
         //Methods
