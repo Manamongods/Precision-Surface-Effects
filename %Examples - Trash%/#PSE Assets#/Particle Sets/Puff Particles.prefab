@@ -167,6 +167,11 @@ PrefabInstance:
       propertyPath: rateByForce.curveRange
       value: 1000
       objectReference: {fileID: 0}
+    - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: constantSpeedMultiplier
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 7670574646986875101, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}
       propertyPath: InitialModule.startSize.scalar

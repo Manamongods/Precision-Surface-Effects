@@ -6,7 +6,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityExtensions;
+using Malee;
 
 namespace PrecisionSurfaceEffects
 {
@@ -21,7 +21,7 @@ namespace PrecisionSurfaceEffects
     {
         //Fields
         [Space(30)]
-        [ReorderableList()]
+        [Reorderable]
         public SurfaceTypeSounds[] surfaceTypeSounds = new SurfaceTypeSounds[] { new SurfaceTypeSounds() };
 
 

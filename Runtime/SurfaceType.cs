@@ -7,7 +7,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using UnityExtensions;
 
 //This contains the identification of a surface type
 

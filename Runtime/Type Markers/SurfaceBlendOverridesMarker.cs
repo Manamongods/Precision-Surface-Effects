@@ -6,7 +6,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityExtensions;
 using System.Linq;
 
 //Blends are used to give a material more than one surface type (similar to Terrain's alphaMap)

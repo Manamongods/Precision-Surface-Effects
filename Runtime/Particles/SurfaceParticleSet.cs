@@ -6,7 +6,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityExtensions;
+using Malee;
 
 namespace PrecisionSurfaceEffects
 {
@@ -14,28 +14,27 @@ namespace PrecisionSurfaceEffects
     public class SurfaceParticleSet : SurfaceSet<SurfaceTypeParticles>
     {
         //Fields
-        [Space(30)]
-        [ReorderableList()]
+        //[Space(30)]
+        //[Reorderable()] //surrogateType = typeof(SurfaceTypeParticles), surrogateProperty = "objectProperty")]
         public SurfaceTypeParticles[] surfaceTypeParticles = new SurfaceTypeParticles[] { new SurfaceTypeParticles() };
+
+        [System.Serializable]
+        public class STPArray : ReorderableArray<SurfaceTypeParticles> { }
 
 
         //Methods
-        public SurfaceParticles GetSurfaceParticles(ref SurfaceOutput o, out bool flipSelf, out bool isBoth)
+        public Particles[] GetSurfaceParticles(SurfaceOutput o)
         {
             if (o.particleOverrides != null)
             {
-                var sp = o.particleOverrides.Get(ref o, this, out flipSelf, out isBoth);
-                if (sp != null)
+                var sps = o.particleOverrides.Get(ref o, this);
+                if (sps != null)
                 {
-                    return sp;
+                    return sps;
                 }
             }
 
             var stp = surfaceTypeParticles[o.surfaceTypeID];
-            o.selfParticleMultipliers *= stp.selfMultipliers;
-            o.otherParticleMultipliers *= stp.otherMultipliers;
-            flipSelf = stp.flipSelf;
-            isBoth = stp.isBoth;
             return stp.particles;
         }
 
@@ -46,18 +45,20 @@ namespace PrecisionSurfaceEffects
                 return;
 #endif
 
-            SurfaceParticles p = GetSurfaceParticles(ref output, out bool flipSelf, out bool isBoth);
+            Particles[] ps = GetSurfaceParticles(output);
 
-            if(p != null)
+            for (int i = 0; i < ps.Length; i++)
             {
+                var p = ps[i];
+
                 var rot = Quaternion.FromToRotation(Vector3.forward, outputs.hitNormal);
                 var otherVel = Utility.GetVelocityMass(outputs.collider.attachedRigidbody, outputs.hitPosition, out Vector3 centerVel1, out float mass1);
                 var speed = (otherVel - vel).magnitude;
-                p.GetInstance().PlayParticles
+                p.particles.GetInstance().PlayParticles
                 (
-                    flipSelf, isBoth,
+                    p.originType,
                     selfColor, output.color,
-                    output.selfParticleMultipliers, output.otherParticleMultipliers, 
+                    output.selfParticleMultipliers * p.selfMultipliers, output.otherParticleMultipliers * p.otherMultipliers, 
                     1, 
                     impulse, speed,
                     rot, outputs.hitPosition, radius, outputs.hitNormal,
@@ -73,7 +74,7 @@ namespace PrecisionSurfaceEffects
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            Resize(ref surfaceTypeParticles);
+            //Resize(ref surfaceTypeParticles);
         }
 #endif
 
@@ -86,11 +87,6 @@ namespace PrecisionSurfaceEffects
     [System.Serializable]
     public class SurfaceTypeParticles : SurfaceSetType
     {
-        public SurfaceParticles particles;
-
-        public ParticleMultipliers selfMultipliers = ParticleMultipliers.Default();
-        public ParticleMultipliers otherMultipliers = ParticleMultipliers.Default();
-        public bool flipSelf;
-        public bool isBoth;
+        public Particles[] particles = new Particles[1] { new Particles() };
     }
 }

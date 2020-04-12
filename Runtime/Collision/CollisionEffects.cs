@@ -375,18 +375,24 @@ namespace PrecisionSurfaceEffects
                 {
                     var o = particleOutputs[i];
 
-                    var sp = particleSet.GetSurfaceParticles(ref o, out bool flipSelf, out bool isBoth);
+                    var sps = particleSet.GetSurfaceParticles(o);
 
-                    if (sp != null)
+                    for (int ii = 0; ii < sps.Length; ii++)
                     {
-                        var fadingSpeed = isFriction ? sp.GetAmountedSpeed(rollingSpeed, speed) : sp.impactSpeedMultiplier * speed;
+                        var sp = sps[ii];
+                        var spp = sp.particles;
+
+                        var fadingSpeed = isFriction ? spp.GetAmountedSpeed(rollingSpeed, speed) : spp.impactSpeedMultiplier * speed;
                         float speedFader = particles.SpeedFader(fadingSpeed);
 
-                        sp.GetInstance().PlayParticles
+                        var selfMults = o.selfParticleMultipliers * particles.selfMultipliers * sp.selfMultipliers;
+                        var otherMults = o.otherParticleMultipliers * particles.otherMultipliers * sp.otherMultipliers;
+
+                        spp.GetInstance().PlayParticles
                         (
-                            flipSelf, isBoth,
-                            particles.selfColor, o.color, 
-                            o.selfParticleMultipliers * particles.selfMultipliers, o.otherParticleMultipliers * particles.otherMultipliers,
+                            sp.originType,
+                            particles.selfColor, o.color,
+                            selfMults, otherMults,
                             o.weight * speedFader,
                             impulse, speed,
                             rot, center, radius + particles.minimumParticleShapeRadius, particleOutputs.hitNormal,

@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace PrecisionSurfaceEffects
 {
-    public partial class CollisionEffects : CollisionEffectsMaker
+    public partial class CollisionEffects
     {
         [System.Serializable]
         public class Particles

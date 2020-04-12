@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using UnityExtensions;
+using Malee;
 
 namespace PrecisionSurfaceEffects
 {
@@ -26,20 +26,20 @@ namespace PrecisionSurfaceEffects
         public STSettings defaultSurfaceTypeSettings = new STSettings();
 
         [Space(40)]
-        [ReorderableList()]
+        [Reorderable]
         public SurfaceType[] surfaceTypes = new SurfaceType[1];
 
         [Header("Materials")]
         [Space(20)]
         [Tooltip("If your game reuses materials you can easily use these")]
         [SerializeField]
-        [ReorderableList()]
+        [Reorderable]
         internal MaterialBlendOverride[] materialBlendOverrides = new MaterialBlendOverride[] { new MaterialBlendOverride() };
 
         [Header("Terrain Textures")]
         [Space(20)]
         [SerializeField]
-        [ReorderableList()]
+        [Reorderable]
         internal TerrainBlends[] terrainBlends = new TerrainBlends[] { new TerrainBlends() };
 
 

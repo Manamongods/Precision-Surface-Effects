@@ -6,7 +6,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityExtensions;
 using System.Linq;
 
 //The weights are normalized in runtime

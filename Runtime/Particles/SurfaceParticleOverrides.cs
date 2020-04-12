@@ -9,6 +9,17 @@ using UnityEngine;
 
 namespace PrecisionSurfaceEffects
 {
+    [System.Serializable]
+    public class Particles
+    {
+        public SurfaceParticles particles;
+        public ParticleMultipliers selfMultipliers = ParticleMultipliers.Default();
+        public ParticleMultipliers otherMultipliers = ParticleMultipliers.Default();
+
+        public OriginType originType = OriginType.Other;
+        public enum OriginType { Other, Self, Both }
+    }
+
     [CreateAssetMenu(menuName = "Precision Surface Effects/Particle Overrides")]
     public class SurfaceParticleOverrides : ScriptableObject
     {
@@ -17,23 +28,23 @@ namespace PrecisionSurfaceEffects
 
 
         //Methods
-        public SurfaceParticles Get(ref SurfaceOutput output, SurfaceParticleSet particleSet, out bool flipSelf, out bool isBoth)
+        public Particles[] Get(ref SurfaceOutput output, SurfaceParticleSet particleSet) //, out bool flipSelf, out bool isBoth
         {
             for (int i = 0; i < overrides.Length; i++)
             {
                 var o = overrides[i];
                 if (o.particleSet == particleSet)
                 {
-                    output.selfParticleMultipliers *= o.selfMultipliers; // // //Note that these are flipped!:
-                    output.otherParticleMultipliers *= o.otherMultipliers;
-                    flipSelf = o.flipSelf;
-                    isBoth = o.isBoth;
+                    //output.selfParticleMultipliers *= o.selfMultipliers; // // //Note that these are flipped!:
+                    //output.otherParticleMultipliers *= o.otherMultipliers;
+                    //flipSelf = o.flipSelf;
+                    //isBoth = o.isBoth;
                     return o.particles;
                 }
             }
 
-            flipSelf = false;
-            isBoth = false;
+            //flipSelf = false;
+            //isBoth = false;
             return null;
         }
 
@@ -46,11 +57,14 @@ namespace PrecisionSurfaceEffects
             [SerializeField]
             internal string autoHeader;
             public SurfaceParticleSet particleSet;
-            public SurfaceParticles particles;
+
+            //public SurfaceParticles particles;
             public ParticleMultipliers selfMultipliers = ParticleMultipliers.Default();
             public ParticleMultipliers otherMultipliers = ParticleMultipliers.Default();
             public bool flipSelf;
             public bool isBoth;
+
+            public Particles[] particles = new Particles[1] { new Particles() };
         }
 
 

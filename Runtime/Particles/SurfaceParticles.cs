@@ -44,10 +44,6 @@ namespace PrecisionSurfaceEffects
         //Fields
         public SurfaceParticles[] children; //subParticleSystems
 
-        [Space(10)]
-        public SelfType selfType = SelfType.IsOther; //public bool isSelf;
-        public enum SelfType { IsSelf = 0, IsOther = 1, IsBoth = 2 }
-
         [Header("Quality")]
         [SerializeField]
         private bool inheritVelocities = true; // highQuality = true;
@@ -63,7 +59,7 @@ namespace PrecisionSurfaceEffects
         [Header("Shape")]
         public float shapeRadiusScaler = 1;
         public float constantShapeRadius = 0.2f;
-        public Vector3 shapeRotationOffset = new Vector3(-90, 0, 0);
+        public Vector3 shapeRotationOffset = new Vector3(0, 0, 0);
         [System.NonSerialized]
         public Vector3 flipSelfRotationOffset = new Vector3(180, 0, 0);
 
@@ -74,7 +70,7 @@ namespace PrecisionSurfaceEffects
         public float slidingSpeedMultiplier = 1;
 
         [Header("Speed")]
-        public float baseSpeedMultiplier = 1;
+        public float constantSpeedMultiplier = 0; //baseSpeedMultiplier
         public float speedMultiplierBySpeed = 1;
 
         [Header("Count")]
@@ -170,7 +166,7 @@ namespace PrecisionSurfaceEffects
 
         public void PlayParticles
         (
-            bool flipSelf, bool isBoth,
+            Particles.OriginType origin,
             Color selfColor, Color otherColor,
             ParticleMultipliers selfMultipliers,
             ParticleMultipliers otherMultipliers,
@@ -199,7 +195,7 @@ namespace PrecisionSurfaceEffects
                 for (int i = 0; i < children.Length; i++)
                 {
                     var sps = children[i].GetInstance();
-                    sps.PlayParticles(flipSelf, isBoth, selfColor, otherColor, selfMultipliers, otherMultipliers, weight, impulse, speed, rot, center, radius, normal, vel0, vel1, mass0, mass1, dt: dt, withChildren: false);
+                    sps.PlayParticles(origin, selfColor, otherColor, selfMultipliers, otherMultipliers, weight, impulse, speed, rot, center, radius, normal, vel0, vel1, mass0, mass1, dt: dt, withChildren: false);
                 }
             }
             #endregion
@@ -234,7 +230,7 @@ namespace PrecisionSurfaceEffects
             float force = impulse / dt;
 
 
-            void Play(Color color, ParticleMultipliers particleMultipliers, bool isSelf)
+            void Play(Color color, ParticleMultipliers particleMultipliers, bool flip)
             {
                 float scale = scalerByForce.Evaluate(force) * particleMultipliers.sizeMultiplier;// Mathf.Min(baseScaler + scalerByImpulse * impulse, maxScale);
                 float countMult = selfMultipliers.countMultiplier * (1f / Mathf.Pow(scale, countByInverseScaleExponent));
@@ -277,7 +273,7 @@ namespace PrecisionSurfaceEffects
 
 
                 //Applies Start Speed
-                main.startSpeedMultiplier = startSpeedMultiplier * (baseSpeedMultiplier + speed * speedMultiplierBySpeed);
+                main.startSpeedMultiplier = startSpeedMultiplier * (constantSpeedMultiplier + speed * speedMultiplierBySpeed);
 
 
                 #region Applies Shape
@@ -286,7 +282,7 @@ namespace PrecisionSurfaceEffects
 
                 shape.radius = radius * shapeRadiusScaler + constantShapeRadius;
                 var baseRot = Quaternion.identity;
-                if (isSelf)
+                if (flip)
                     baseRot = Quaternion.Euler(flipSelfRotationOffset);
                 shape.rotation = (rot * Quaternion.Euler(shapeRotationOffset) * baseRot).eulerAngles;
                 #endregion
@@ -317,6 +313,13 @@ namespace PrecisionSurfaceEffects
                 //Modifies if High Quality
                 if (inheritVelocities)
                 {
+                    Vector2 inheritSpreadRange = this.inheritSpreadRange;
+                    if(flip)
+                    {
+                        inheritSpreadRange.x = 1 - inheritSpreadRange.x;
+                        inheritSpreadRange.y = 1 - inheritSpreadRange.y;
+                    }
+
                     var par = new ParticleSystem.EmitParams();
 
                     int takingCount = temporarySystem.GetParticles(sourceParticles);
@@ -335,19 +338,18 @@ namespace PrecisionSurfaceEffects
             }
 
 
-            if (selfType == SelfType.IsBoth || isBoth)
+            if (origin == Particles.OriginType.Both)
             {
-                Play(selfColor, selfMultipliers, true);
+                //This is all based on the idea that the normal is how I imagine it is
                 Play(otherColor, otherMultipliers, false);
+                Play(selfColor, selfMultipliers, true);
             }
             else
             {
-                bool isSelf = selfType == SelfType.IsSelf ^ flipSelf;
-
-                if (isSelf)
-                    Play(selfColor, selfMultipliers, true);
-                else
+                if (origin == Particles.OriginType.Other)
                     Play(otherColor, otherMultipliers, false);
+                else
+                    Play(selfColor, selfMultipliers, true);
             }
         }
 
