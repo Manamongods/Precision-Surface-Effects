@@ -10,8 +10,18 @@ namespace PrecisionSurfaceEffects
     [DisallowMultipleComponent]
     public class CollisionEffectsMaker : MonoBehaviour
     {
+        //Fields
         [Tooltip("If bigger than a colliding CollisionEffects, it will play instead of it")]
         public int priority;
+
+        internal bool stayFrameBool;
+
+
+        //Methods
+        protected bool FrameBool()
+        {
+            return Time.frameCount % 2 == 0;
+        }
     }
 
     public class CollisionEffectsParent : CollisionEffectsMaker
@@ -58,6 +68,8 @@ namespace PrecisionSurfaceEffects
 
         private void OnCollisionEnter(Collision collision)
         {
+            stayFrameBool = FrameBool();
+
             var thisCollider = collision.GetContact(0).thisCollider;
 
             for (int i = 0; i < types.Length; i++)

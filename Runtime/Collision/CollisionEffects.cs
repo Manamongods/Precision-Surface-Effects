@@ -204,8 +204,10 @@ namespace PrecisionSurfaceEffects
             }
         }
 
-        private bool Stop(Collision collision)
+        private bool Stop(Collision collision, bool friction)
         {
+            //This prevents multiple sounds for one collision
+
             Transform target;
             if (collision.rigidbody != null)
                 target = collision.rigidbody.transform;
@@ -216,24 +218,35 @@ namespace PrecisionSurfaceEffects
             if (otherCSM != null)
             {
                 if (otherCSM.priority == priority)
-                    return (otherCSM.gameObject.GetInstanceID() > gameObject.GetInstanceID()) ^ (Time.frameCount % 2 == 0);
+                {
+                    //This complicated stuff gives randomish (but they both get the same value) results as to whether this or the other should be the one to produce effects
+
+                    bool bigger = (otherCSM.gameObject.GetInstanceID() > gameObject.GetInstanceID());
+                    if (!friction)
+                    {
+                        return bigger ^ FrameBool();
+                    }
+                    else
+                    {
+                        bool flipBool;
+                        if (bigger)
+                            flipBool = stayFrameBool;
+                        else
+                            flipBool = otherCSM.stayFrameBool;
+
+                        return bigger ^ flipBool;
+                    }
+                }
 
                 return priority < otherCSM.priority;
             }
             return false;
         }
 
-        private void DoFrictionSound(Collision collision, SurfaceOutputs outputs, float impulse, float speed)
+        private void DoFrictionSound(Collision collision, SurfaceOutputs outputs, float impulse, float speed, float force)
         {
-            var force = impulse / Time.deltaTime; //force = Mathf.Max(0, Mathf.Min(frictionSound.maxForce, force) - frictionSound.minForce);
-            force *= frictionSound.SpeedFader(speed); //So that it is found the maximum with this in mind
-
             if (force > 0)
             {
-                if (doVibrationSound)
-                {
-                    vibrationSound.Add(force * vibrationSound.frictionForceMultiplier, speed * vibrationSound.frictionSpeedMultiplier);
-                }
 
                 forceSum += force;
                 weightedSpeed += force * speed;
@@ -414,11 +427,15 @@ namespace PrecisionSurfaceEffects
             }
 
 
-            //if (Stop(collision))
-            //return;
+            bool stop = Stop(collision, true);
+            if (stop && !doVibrationSound)
+                return;
+
 
             var doParticles = particlesType == ParticlesType.ImpactAndFriction;
-            GetSurfaceTypeOutputs(collision, doFrictionSound, doParticles, out SurfaceOutputs soundOutputs, out SurfaceOutputs particleOutputs);
+            SurfaceOutputs soundOutputs = null, particleOutputs = null;
+            if(!stop)
+                GetSurfaceTypeOutputs(collision, doFrictionSound, doParticles, out soundOutputs, out particleOutputs);
 
 
             //Calculation
@@ -430,13 +447,27 @@ namespace PrecisionSurfaceEffects
             var rollingVelocity = GetRollingVelocity(vel0, vel1, cvel0, cvel1);
 
 
+            float rollingSpeed = Vector3.ProjectOnPlane(rollingVelocity, normal).magnitude; //centerSpeed //The reason is because perpendicularSpeed is for slide sounds, and centerSpeed is for roll sounds. But they are both considered friction sounds here
+            float frictionSpeed = perpendicularSpeed * frictionSound.slidingAmount + rollingSpeed * frictionSound.rollingAmount; //Mathf.Max();
+            frictionSpeed *= soundSpeedMultiplier;
+
+            var frictionForce = impulse / Time.deltaTime; //force = Mathf.Max(0, Mathf.Min(frictionSound.maxForce, force) - frictionSound.minForce);
+            frictionForce *= frictionSound.SpeedFader(frictionSpeed); //So that it is found the maximum with this in mind
+
+
+            if (doVibrationSound)
+            {
+                vibrationSound.Add(frictionForce * vibrationSound.frictionForceMultiplier, frictionSpeed * vibrationSound.frictionSpeedMultiplier);
+
+                if (stop)
+                    return;
+            }
+
+
             //Friction Sounds
             if (doFrictionSound)
             {
-                //The reason is because perpendicularSpeed is for slide sounds, and centerSpeed is for roll sounds. But they are both considered friction sounds here
-                float rollingSpeed = Vector3.ProjectOnPlane(rollingVelocity, normal).magnitude; //centerSpeed
-                float frictionSpeed = perpendicularSpeed * frictionSound.slidingAmount + rollingSpeed * frictionSound.rollingAmount; //Mathf.Max();
-                DoFrictionSound(collision, soundOutputs, frictionImpulser * impulse, soundSpeedMultiplier * frictionSpeed);
+                DoFrictionSound(collision, soundOutputs, frictionImpulser * impulse, frictionSpeed, frictionForce);
             }
 
 
@@ -534,13 +565,14 @@ namespace PrecisionSurfaceEffects
                 return;
 
 
-            //Impact Sound
-            if (impactCooldownT <= 0)
-            {
-                //This prevents multiple sounds for one collision
-                if (Stop(collision))
-                    return;
+            stayFrameBool = FrameBool();
 
+
+            //Impact Sound
+            bool stop = Stop(collision, false) || impactCooldownT > 0; //Impact cooldown is actually quite arbitrarily influenced by whether it is Stopped or not
+
+            if (!stop || doVibrationSound)
+            {
                 var absSpeed = collision.relativeVelocity.magnitude;
                 var speed = soundSpeedMultiplier * absSpeed; //Can't consistently use CurrentRelativeVelocity(collision);, probably maybe because it's too late to get that speed (already resolved)
                 var absImpulse = collision.impulse.magnitude;
@@ -554,6 +586,9 @@ namespace PrecisionSurfaceEffects
                     {
                         vibrationSound.Add(impulse * vibrationSound.impactForceMultiplier * speedFade, speed * vibrationSound.impactSpeedMultiplier); //Remove speedFade?
                     }
+
+                    if (stop)
+                        return;
 
                     impactCooldownT = impactCooldown;
 
