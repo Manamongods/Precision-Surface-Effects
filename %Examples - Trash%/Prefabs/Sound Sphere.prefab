@@ -576,7 +576,7 @@ MonoBehaviour:
     particleCountMultiplier: 1
     particleSizeMultiplier: 1
     minimumParticleShapeRadius: 0
-    faderBySpeedRange: {x: 0.05, y: 0.25}
+    faderBySpeedRange: {x: 0.025, y: 0.15}
   rb: {fileID: 7768311540337565090}
   collider: {fileID: 7768311540337565089}
 --- !u!114 &6898083943534699691

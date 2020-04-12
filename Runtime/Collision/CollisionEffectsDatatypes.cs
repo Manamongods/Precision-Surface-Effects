@@ -24,6 +24,7 @@ namespace PrecisionSurfaceEffects
             public float particleSizeMultiplier = 1;
             [Min(0)]
             public float minimumParticleShapeRadius = 0;
+
             public Vector2 faderBySpeedRange = new Vector2(0.05f, 0.25f);
 
             public float SpeedFader(float speed)

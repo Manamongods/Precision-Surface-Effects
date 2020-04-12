@@ -138,7 +138,7 @@ GameObject:
   - component: {fileID: 8919730822491214858}
   - component: {fileID: 8919730822491214857}
   m_Layer: 0
-  m_Name: Gunshooter - Select to shoot in SceneView
+  m_Name: Gunshooter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -181,7 +181,7 @@ MonoBehaviour:
   particleSet: {fileID: 11400000, guid: 62a6441a19f2db644bda9edf40c5b1b4, type: 2}
   particleRadius: 0
   particleCountMultiplier: 1
-  particleSizeMultiplier: 1
+  particleSizeMultiplier: 2
   particleDeltaTime: 0.25
   mass: 1
   layerMask:

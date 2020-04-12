@@ -46,12 +46,10 @@ namespace PrecisionSurfaceEffects
 
             if(p != null)
             {
-                p = p.GetInstance();
-
                 var rot = Quaternion.FromToRotation(Vector3.forward, outputs.hitNormal);
                 var otherVel = Utility.GetVelocityMass(outputs.collider.attachedRigidbody, outputs.hitPosition, out Vector3 centerVel1, out float mass1);
                 var speed = (otherVel - vel).magnitude;
-                p.PlayParticles
+                p.GetInstance().PlayParticles
                 (
                     output.color, output.particleCountMultiplier, output.particleSizeMultiplier, 
                     1, 

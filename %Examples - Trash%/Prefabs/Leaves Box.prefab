@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7430399481824380227}
   - component: {fileID: 7430399481824380224}
   - component: {fileID: 7430399481824380225}
+  - component: {fileID: 4075451470491695178}
   m_Layer: 0
   m_Name: Leaves Box
   m_TagString: Untagged
@@ -95,3 +96,47 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4075451470491695178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7430399481824380230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28b77b4558ea2fe499c77aceb44c5db5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  markerFamily:
+  - {fileID: 4075451470491695178}
+  meshRenderer: {fileID: 7430399481824380224}
+  hasMR: 1
+  meshFilter: {fileID: 7430399481824380227}
+  blends:
+    groupName: 
+    blends:
+    - reference: Leaves
+      weight: 1
+      hardnessMultiplier: 1
+      volumeMultiplier: 1
+      pitchMultiplier: 1
+      particleSizeMultiplier: 1
+      particleCountMultiplier: 1
+      color: {r: 0, g: 1, b: 0.08054185, a: 1}
+      particleOverrides: {fileID: 11400000, guid: df556864e33ba2644865847ee72628d3,
+        type: 2}
+      normalizedWeight: 1
+    result:
+      result:
+      - lowerReference: leaves
+        surfaceTypeID: 0
+        normalizedWeight: 1
+        hardness: 1
+        volume: 1
+        pitch: 1
+        color: {r: 0, g: 1, b: 0.08054185, a: 1}
+        particleOverrides: {fileID: 11400000, guid: df556864e33ba2644865847ee72628d3,
+          type: 2}
+        particleSize: 1
+        particleCount: 1

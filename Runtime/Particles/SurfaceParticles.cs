@@ -32,13 +32,18 @@ namespace PrecisionSurfaceEffects
         public float constantShapeRadius = 0.2f;
         public Vector3 shapeRotationOffset = new Vector3(-90, 0, 0);
 
+        [Header("ColliderEffects' Speed Fading")]
+        public float impactSpeedMultiplier = 1;
+        [Space(5)]
+        public float rollingSpeedMultiplier = 0.1f;
+        public float slidingSpeedMultiplier = 1;
+
         [Header("Speed")]
         public float baseSpeedMultiplier = 1;
         public float speedMultiplierBySpeed = 1;
 
         [Header("Count")]
-        //public Vector2 countBySpeedRange = new Vector2(-0.5, 2); //-1, 5
-        public ScaledAnimationCurve countByImpulse = new ScaledAnimationCurve();
+        public ScaledAnimationCurve rateByForce = new ScaledAnimationCurve(); //public Vector2 countBySpeedRange = new Vector2(-0.5, 2); //-1, 5
         [Min(0)]
         public float countByInverseScaleExponent = 2;
 
@@ -99,6 +104,18 @@ namespace PrecisionSurfaceEffects
             }
 
             return instance;
+        }
+
+        //These are to fade your effects yourself
+        public float GetAmountedSpeed(Vector3 velocity0, Vector3 contactVelocity1, Vector3 centerVelocity1)
+        {
+            var rollingSpeed = (velocity0 - centerVelocity1).magnitude;
+            var slidingSpeed = (velocity0 - contactVelocity1).magnitude;
+            return GetAmountedSpeed(rollingSpeed, slidingSpeed);
+        }
+        public float GetAmountedSpeed(float rollingSpeed, float slidingSpeed)
+        {
+            return rollingSpeed * rollingSpeedMultiplier + slidingSpeed * slidingSpeedMultiplier;
         }
 
         public void PlayParticles(Color color, float particleCountScaler, float particleSizeScaler, float weight, float impulse, float speed, Quaternion rot, Vector3 center, float radius, Vector3 normal, Vector3 vel0, Vector3 vel1, float mass0, float mass1, float dt = 0.25f, bool withChildren = true)
@@ -189,7 +206,7 @@ namespace PrecisionSurfaceEffects
 
             float countMult = particleCountScaler; // * Mathf.Clamp01(Mathf.InverseLerp(countBySpeedRange.x, countBySpeedRange.y, speed));
             countMult /= Mathf.Pow(scale, countByInverseScaleExponent); // * scale; //should technically be cubed though
-            var countf = countMult * countByImpulse.Evaluate(impulse) * weight; //maxRate * dt //Mathf.Min(, maxAttemptParticleCount) 
+            var countf = countMult * rateByForce.Evaluate(force) * dt * weight; //maxRate * dt //Mathf.Min(, maxAttemptParticleCount) 
             int count = (int)countf;
             if (Random.value < countf - count)
                 count++;

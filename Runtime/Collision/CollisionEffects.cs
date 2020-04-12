@@ -337,15 +337,24 @@ namespace PrecisionSurfaceEffects
 //#endif
         }
 
-        private void DoParticles(Collision c, SurfaceOutputs particleOutputs, float dt, Vector3 center, Vector3 normal, float radius, Vector3 vel0, Vector3 vel1, float mass0, float mass1, float impulse, float speed)
+        public static Vector3 GetRollingVelocity(Vector3 vel0, Vector3 vel1, Vector3 cvel0, Vector3 cvel1)
+        {
+            var roll0 = (cvel0 - vel1);
+            var roll1 = (cvel1 - vel0);
+            return roll1 - roll0;
+        }
+
+        private void DoParticles(Collision c, SurfaceOutputs particleOutputs, float dt, Vector3 center, Vector3 normal, float radius, Vector3 vel0, Vector3 vel1, Vector3 cvel0, Vector3 cvel1, float mass0, float mass1, float impulse, float speed, bool isFriction)
         {
             if (particleOutputs.Count != 0) //particleSet != null && 
             {
+                float rollingSpeed = 0;
+                if(isFriction)
+                    rollingSpeed = GetRollingVelocity(vel0, vel1, cvel0, cvel1).magnitude;
+
                 var rot = Quaternion.FromToRotation(Vector3.forward, normal); //Vector3.up
 
                 particleOutputs.Downshift(MAX_PARTICLE_TYPE_COUNT, particles.minimumTypeWeight);
-
-                float speedFader = particles.SpeedFader(speed);
 
                 for (int i = 0; i < particleOutputs.Count; i++)
                 {
@@ -355,6 +364,9 @@ namespace PrecisionSurfaceEffects
 
                     if (sp != null)
                     {
+                        var fadingSpeed = isFriction ? sp.GetAmountedSpeed(rollingSpeed, speed) : sp.impactSpeedMultiplier * speed;
+                        float speedFader = particles.SpeedFader(fadingSpeed);
+
                         sp.GetInstance().PlayParticles
                         (
                             o.color, o.particleCountMultiplier * particles.particleCountMultiplier, o.particleSizeMultiplier * particles.particleSizeMultiplier,
@@ -420,15 +432,15 @@ namespace PrecisionSurfaceEffects
             if (doFrictionSound)
             {
                 //The reason is because perpendicularSpeed is for slide sounds, and centerSpeed is for roll sounds. But they are both considered friction sounds here
-                float centerSpeed = Vector3.ProjectOnPlane(cvel1 - cvel0, normal).magnitude;
-                float frictionSpeed = perpendicularSpeed * frictionSound.slidingAmount + centerSpeed * frictionSound.rollingAmount; //Mathf.Max();
+                float rollingSpeed = Vector3.ProjectOnPlane(GetRollingVelocity(vel0, vel1, cvel0, cvel1), normal).magnitude; //centerSpeed
+                float frictionSpeed = perpendicularSpeed * frictionSound.slidingAmount + rollingSpeed * frictionSound.rollingAmount; //Mathf.Max();
                 DoFrictionSound(collision, soundOutputs, frictionImpulser * impulse, soundSpeedMultiplier * frictionSpeed);
             }
 
 
             //Particles
             if (doParticles)
-                DoParticles(collision, particleOutputs, Time.deltaTime, center, normal, radius, vel0, vel1, mass0, mass1, frictionImpulser * absImpulse, perpendicularSpeed);
+                DoParticles(collision, particleOutputs, Time.deltaTime, center, normal, radius, vel0, vel1, cvel0, cvel1, mass0, mass1, frictionImpulser * absImpulse, perpendicularSpeed, true);
         }
 
         public void ResetSounds()
@@ -577,7 +589,7 @@ namespace PrecisionSurfaceEffects
                         particleOutputs.Downshift(MAX_PARTICLE_TYPE_COUNT, particles.minimumTypeWeight);
 
                         Calculate(collision, out int contactCount, out Vector3 center, out Vector3 normal, out float radius, out Vector3 vel0, out Vector3 vel1, out Vector3 cvel0, out Vector3 cvel1, out float mass0, out float mass1);
-                        DoParticles(collision, particleOutputs, approximateCollisionDuration, center, normal, radius, vel0, vel1, mass0, mass1, absImpulse, absSpeed);
+                        DoParticles(collision, particleOutputs, approximateCollisionDuration, center, normal, radius, vel0, vel1, cvel0, cvel1, mass0, mass1, absImpulse, absSpeed, false);
 
                         if (onEnterParticles != null)
                             onEnterParticles(collision, particleOutputs);
