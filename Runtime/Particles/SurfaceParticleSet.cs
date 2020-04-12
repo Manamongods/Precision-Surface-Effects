@@ -20,29 +20,34 @@ namespace PrecisionSurfaceEffects
 
 
         //Methods
-        public SurfaceParticles GetSurfaceParticles(ref SurfaceOutput o)
+        public SurfaceParticles GetSurfaceParticles(ref SurfaceOutput o, out bool flipSelf)
         {
             if (o.particleOverrides != null)
             {
-                var sp = o.particleOverrides.Get(ref o, this);
+                var sp = o.particleOverrides.Get(ref o, this, out flipSelf);
                 if (sp != null)
+                {
                     return sp;
+                }
             }
+
+            flipSelf = false;
 
             var stp = surfaceTypeParticles[o.surfaceTypeID];
             o.particleCountMultiplier *= stp.countMultiplier;
             o.particleSizeMultiplier *= stp.sizeMultiplier;
+            flipSelf = stp.flipSelf;
             return stp.particles;
         }
 
-        public void PlayParticles(SurfaceOutputs outputs, SurfaceOutput output, float impulse, Vector3 vel, float mass, float radius = 0, float deltaTime = 0.25f)
+        public void PlayParticles(SurfaceOutputs outputs, SurfaceOutput output, Color selfColor, float impulse, Vector3 vel, float mass, float radius = 0, float deltaTime = 0.25f)
         {
 #if UNITY_EDITOR
             if (!Application.isPlaying)
                 return;
 #endif
 
-            SurfaceParticles p = GetSurfaceParticles(ref output);
+            SurfaceParticles p = GetSurfaceParticles(ref output, out bool flipSelf);
 
             if(p != null)
             {
@@ -51,7 +56,8 @@ namespace PrecisionSurfaceEffects
                 var speed = (otherVel - vel).magnitude;
                 p.GetInstance().PlayParticles
                 (
-                    output.color, output.particleCountMultiplier, output.particleSizeMultiplier, 
+                    flipSelf, selfColor, output.color,
+                    output.particleCountMultiplier, output.particleSizeMultiplier, 
                     1, 
                     impulse, speed,
                     rot, outputs.hitPosition, radius, outputs.hitNormal,
@@ -84,5 +90,6 @@ namespace PrecisionSurfaceEffects
 
         public float countMultiplier = 1;
         public float sizeMultiplier = 1;
+        public bool flipSelf;
     }
 }

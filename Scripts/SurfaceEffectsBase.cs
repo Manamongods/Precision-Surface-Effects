@@ -21,7 +21,8 @@ public class SurfaceEffectsBase : MonoBehaviour
     public float particleRadius = 0;
     public float particleCountMultiplier = 1;
     public float particleSizeMultiplier = 1;
-    public float particleDeltaTime = 0.25f; //Deltatime allows you to control how many max particles you can accept, because Time.deltaTime is irrelevant for a single shot
+    public float particleDeltaTime = 0.05f;
+    public Color selfColor = Color.white;
     [Tooltip("This is used to calculate the (reflected) inherited particle velocity")]
     public float mass = 1;
 
@@ -46,7 +47,7 @@ public class SurfaceEffectsBase : MonoBehaviour
             {
                 output.particleSizeMultiplier *= particleSizeMultiplier;
                 output.particleCountMultiplier *= particleCountMultiplier;
-                particleSet.PlayParticles(outputs, output, impulse, speed * dir, mass, radius: particleRadius, deltaTime: particleDeltaTime); //-speed * outputs.hitNormal
+                particleSet.PlayParticles(outputs, output, selfColor, impulse, speed * dir, mass, radius: particleRadius, deltaTime: particleDeltaTime); //-speed * outputs.hitNormal
             }
         }
 

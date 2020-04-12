@@ -1,0 +1,225 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &1609267610972910523
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2099680092124655200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28b77b4558ea2fe499c77aceb44c5db5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  markerFamily:
+  - {fileID: 1609267610972910523}
+  meshRenderer: {fileID: 2099680092124655228}
+  hasMR: 1
+  meshFilter: {fileID: 2099680092124655227}
+  blends:
+    groupName: 
+    blends:
+    - reference: Wood
+      weight: 1
+      hardnessMultiplier: 1
+      volumeMultiplier: 1
+      pitchMultiplier: 1
+      particleSizeMultiplier: 2
+      particleCountMultiplier: 1
+      color: {r: 0.7, g: 0.46392158, b: 0.45294118, a: 1}
+      particleOverrides: {fileID: 0}
+      normalizedWeight: 1
+    result:
+      result:
+      - lowerReference: wood
+        surfaceTypeID: 0
+        normalizedWeight: 1
+        hardness: 1
+        volume: 1
+        pitch: 1
+        color: {r: 0.7, g: 0.46392158, b: 0.45294118, a: 1}
+        particleOverrides: {fileID: 0}
+        particleSize: 2
+        particleCount: 1
+--- !u!114 &2572680316780925790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2099680092124655200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 777af25b278da854c9987a2a71f1e111, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: {r: 0.7, g: 0.46392158, b: 0.45294118, a: 1}
+--- !u!1001 &8569534095878517724
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 7768311540337565088, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 663a8eb24a945cc499d7cfc3c06eb700, type: 2}
+    - target: {fileID: 7768311540337565090, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: m_CollisionDetection
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565090, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: m_Mass
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: particles.selfHardness
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: totalPitchMultiplier
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: particleSet
+      value: 
+      objectReference: {fileID: 11400000, guid: cadcb87f0792e944d899ccbe7bdd05b6,
+        type: 2}
+    - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: vibrationSound.basePitch
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: vibrationSound.pitchBySpeed
+      value: 0.015
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: vibrationSound.exponentialDecay
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: vibrationSound.linearDecay
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: vibrationSound.volumeByForce
+      value: 0.002
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: soundForceMultiplier
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: particles.selfColor.g
+      value: 0.46392158
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: particles.selfColor.b
+      value: 0.45294118
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: particles.selfColor.r
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565094, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565094, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565094, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565094, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565094, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565094, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565094, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565094, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565094, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565094, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565094, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565116, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: m_Name
+      value: Soft Sound Sphere
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565116, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0fef6295de871454aa2b87ddf8fbd3c8, type: 3}
+--- !u!1 &2099680092124655200 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7768311540337565116, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+    type: 3}
+  m_PrefabInstance: {fileID: 8569534095878517724}
+  m_PrefabAsset: {fileID: 0}
+--- !u!33 &2099680092124655227 stripped
+MeshFilter:
+  m_CorrespondingSourceObject: {fileID: 7768311540337565095, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+    type: 3}
+  m_PrefabInstance: {fileID: 8569534095878517724}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &2099680092124655228 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7768311540337565088, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+    type: 3}
+  m_PrefabInstance: {fileID: 8569534095878517724}
+  m_PrefabAsset: {fileID: 0}

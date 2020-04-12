@@ -17,7 +17,7 @@ namespace PrecisionSurfaceEffects
 
 
         //Methods
-        public SurfaceParticles Get(ref SurfaceOutput output, SurfaceParticleSet particleSet)
+        public SurfaceParticles Get(ref SurfaceOutput output, SurfaceParticleSet particleSet, out bool flipSelf)
         {
             for (int i = 0; i < overrides.Length; i++)
             {
@@ -26,10 +26,12 @@ namespace PrecisionSurfaceEffects
                 {
                     output.particleCountMultiplier *= o.countMultiplier;
                     output.particleSizeMultiplier *= o.sizeMultiplier;
+                    flipSelf = o.flipSelf;
                     return o.particles;
                 }
             }
 
+            flipSelf = false;
             return null;
         }
 
@@ -45,6 +47,7 @@ namespace PrecisionSurfaceEffects
             public SurfaceParticles particles;
             public float sizeMultiplier = 1;
             public float countMultiplier = 1;
+            public bool flipSelf;
         }
 
 

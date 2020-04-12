@@ -110,8 +110,10 @@ namespace PrecisionSurfaceEffects
             return false;
         }
 
-        public void Refresh()
+        public override void Refresh()
         {
+            base.Refresh();
+
             var mr = GetComponent<MeshRenderer>();
             var mats = mr.sharedMaterials;
 

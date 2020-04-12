@@ -512,7 +512,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa870f96700d10742b6a826c4992d8db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  priority: 0
+  priority: 2
   currentFrictionDebug: (This only works in playmode)
   findMeshColliderSubmesh: 1
   impactCooldown: 0.05

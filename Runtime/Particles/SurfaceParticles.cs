@@ -15,6 +15,9 @@ namespace PrecisionSurfaceEffects
         //Fields
         public SurfaceParticles[] children; //subParticleSystems
 
+        [Space(10)]
+        public bool isSelf;
+
         [Header("Quality")]
         [SerializeField]
         private bool inheritVelocities = true;
@@ -25,12 +28,14 @@ namespace PrecisionSurfaceEffects
         public Vector2 inheritSpreadRange = new Vector2(0, 1);
 
         [Header("Color")]
-        public bool setColor = true; //this isn't the case for sparks or cartooney white puffs
+        public bool setColor = true; //this isn't the case for sparks or cartooney white puffs //public enum ColorType { IsSelf, IsOther, IsNone }
 
         [Header("Shape")]
         public float shapeRadiusScaler = 1;
         public float constantShapeRadius = 0.2f;
         public Vector3 shapeRotationOffset = new Vector3(-90, 0, 0);
+        [System.NonSerialized]
+        public Vector3 flipSelfRotationOffset = new Vector3(180, 0, 0);
 
         [Header("ColliderEffects' Speed Fading")]
         public float impactSpeedMultiplier = 1;
@@ -118,14 +123,16 @@ namespace PrecisionSurfaceEffects
             return rollingSpeed * rollingSpeedMultiplier + slidingSpeed * slidingSpeedMultiplier;
         }
 
-        public void PlayParticles(Color color, float particleCountScaler, float particleSizeScaler, float weight, float impulse, float speed, Quaternion rot, Vector3 center, float radius, Vector3 normal, Vector3 vel0, Vector3 vel1, float mass0, float mass1, float dt = 0.25f, bool withChildren = true)
+        public void PlayParticles(bool flipSelf, Color selfColor, Color otherColor, float particleCountScaler, float particleSizeScaler, float weight, float impulse, float speed, Quaternion rot, Vector3 center, float radius, Vector3 normal, Vector3 vel0, Vector3 vel1, float mass0, float mass1, float dt = 0.25f, bool withChildren = true)
         {
+            bool isSelf = this.isSelf ^ flipSelf;
+
             if (withChildren)
             {
                 for (int i = 0; i < children.Length; i++)
                 {
                     var sps = children[i].GetInstance();
-                    sps.PlayParticles(color, particleCountScaler, particleSizeScaler, weight, impulse, speed, rot, center, radius, normal, vel0, vel1, mass0, mass1, dt: dt, withChildren: false);
+                    sps.PlayParticles(flipSelf, selfColor, otherColor, particleCountScaler, particleSizeScaler, weight, impulse, speed, rot, center, radius, normal, vel0, vel1, mass0, mass1, dt: dt, withChildren: false);
                 }
             }
 
@@ -173,7 +180,10 @@ namespace PrecisionSurfaceEffects
             var shape = system.shape;
             shape.position = center;
             shape.radius = radius;
-            shape.rotation = (rot * Quaternion.Euler(shapeRotationOffset)).eulerAngles;
+            var baseRot = Quaternion.identity;
+            if (isSelf)
+                baseRot = Quaternion.Euler(flipSelfRotationOffset);
+            shape.rotation = (rot * Quaternion.Euler(shapeRotationOffset) * baseRot).eulerAngles;
 
 
             float force = impulse / dt;
@@ -214,6 +224,8 @@ namespace PrecisionSurfaceEffects
 
             if(setColor)
             {
+                var color = isSelf ? selfColor : otherColor;
+
                 if (colorMode == ParticleSystemGradientMode.Color)
                 {
                     sc.color = this.c * color;

@@ -344,14 +344,10 @@ namespace PrecisionSurfaceEffects
             return roll1 - roll0;
         }
 
-        private void DoParticles(Collision c, SurfaceOutputs particleOutputs, float dt, Vector3 center, Vector3 normal, float radius, Vector3 vel0, Vector3 vel1, Vector3 cvel0, Vector3 cvel1, float mass0, float mass1, float impulse, float speed, bool isFriction)
+        private void DoParticles(Collision c, SurfaceOutputs particleOutputs, float dt, Vector3 center, Vector3 normal, float radius, Vector3 vel0, Vector3 vel1, Vector3 cvel0, Vector3 cvel1, float mass0, float mass1, float impulse, float speed, bool isFriction, float rollingSpeed = 0)
         {
             if (particleOutputs.Count != 0) //particleSet != null && 
             {
-                float rollingSpeed = 0;
-                if(isFriction)
-                    rollingSpeed = GetRollingVelocity(vel0, vel1, cvel0, cvel1).magnitude;
-
                 var rot = Quaternion.FromToRotation(Vector3.forward, normal); //Vector3.up
 
                 particleOutputs.Downshift(MAX_PARTICLE_TYPE_COUNT, particles.minimumTypeWeight);
@@ -360,7 +356,7 @@ namespace PrecisionSurfaceEffects
                 {
                     var o = particleOutputs[i];
 
-                    var sp = particleSet.GetSurfaceParticles(ref o);
+                    var sp = particleSet.GetSurfaceParticles(ref o, out bool flipSelf);
 
                     if (sp != null)
                     {
@@ -369,7 +365,8 @@ namespace PrecisionSurfaceEffects
 
                         sp.GetInstance().PlayParticles
                         (
-                            o.color, o.particleCountMultiplier * particles.particleCountMultiplier, o.particleSizeMultiplier * particles.particleSizeMultiplier,
+                            flipSelf, particles.selfColor, o.color, 
+                            o.particleCountMultiplier * particles.particleCountMultiplier, o.particleSizeMultiplier * particles.particleSizeMultiplier,
                             o.weight * speedFader,
                             impulse, speed,
                             rot, center, radius + particles.minimumParticleShapeRadius, particleOutputs.hitNormal,
@@ -396,9 +393,6 @@ namespace PrecisionSurfaceEffects
             impulse *= soundForceMultiplier;
 
 
-            bool stop = Stop(collision);
-
-
             //Impact By Impulse ChangeRate
             if (doImpactByForceChange)
             {
@@ -413,12 +407,11 @@ namespace PrecisionSurfaceEffects
             }
 
 
-            if (stop)
-                return;
+            //if (Stop(collision))
+            //return;
 
             var doParticles = particlesType == ParticlesType.ImpactAndFriction;
             GetSurfaceTypeOutputs(collision, doFrictionSound, doParticles, out SurfaceOutputs soundOutputs, out SurfaceOutputs particleOutputs);
-
 
 
             //Calculation
@@ -427,12 +420,14 @@ namespace PrecisionSurfaceEffects
             float perpendicularSpeed = Vector3.ProjectOnPlane(vel1 - vel0, normal).magnitude;
             float frictionImpulser = Mathf.Lerp(1, frictionSound.frictionNormalForceMultiplier, Mathf.Abs(Vector3.Dot(impulseNormal, normal))); //I'm not sure if this works //Debug.Log(perpendicularSpeed + "   " + (vel1 - vel0).magnitude + "    " + Vector3.Dot((vel0 - vel1).normalized, normal.normalized) + "    " + (vel0 - vel1));
 
+            var rollingVelocity = GetRollingVelocity(vel0, vel1, cvel0, cvel1);
+
 
             //Friction Sounds
             if (doFrictionSound)
             {
                 //The reason is because perpendicularSpeed is for slide sounds, and centerSpeed is for roll sounds. But they are both considered friction sounds here
-                float rollingSpeed = Vector3.ProjectOnPlane(GetRollingVelocity(vel0, vel1, cvel0, cvel1), normal).magnitude; //centerSpeed
+                float rollingSpeed = Vector3.ProjectOnPlane(rollingVelocity, normal).magnitude; //centerSpeed
                 float frictionSpeed = perpendicularSpeed * frictionSound.slidingAmount + rollingSpeed * frictionSound.rollingAmount; //Mathf.Max();
                 DoFrictionSound(collision, soundOutputs, frictionImpulser * impulse, soundSpeedMultiplier * frictionSpeed);
             }
@@ -440,7 +435,7 @@ namespace PrecisionSurfaceEffects
 
             //Particles
             if (doParticles)
-                DoParticles(collision, particleOutputs, Time.deltaTime, center, normal, radius, vel0, vel1, cvel0, cvel1, mass0, mass1, frictionImpulser * absImpulse, perpendicularSpeed, true);
+                DoParticles(collision, particleOutputs, Time.deltaTime, center, normal, radius, vel0, vel1, cvel0, cvel1, mass0, mass1, frictionImpulser * absImpulse, perpendicularSpeed, true, rollingVelocity.magnitude);
         }
 
         public void ResetSounds()
