@@ -568,15 +568,16 @@ namespace PrecisionSurfaceEffects
             stayFrameBool = FrameBool();
 
 
-            //Impact Sound
+            var absImpulse = collision.impulse.magnitude;
+            var impulse = soundForceMultiplier * absImpulse;
+            previousImpulses.Add(impulse);
+
             bool stop = Stop(collision, false) || impactCooldownT > 0; //Impact cooldown is actually quite arbitrarily influenced by whether it is Stopped or not
 
             if (!stop || doVibrationSound)
             {
                 var absSpeed = collision.relativeVelocity.magnitude;
                 var speed = soundSpeedMultiplier * absSpeed; //Can't consistently use CurrentRelativeVelocity(collision);, probably maybe because it's too late to get that speed (already resolved)
-                var absImpulse = collision.impulse.magnitude;
-                var impulse = soundForceMultiplier * absImpulse;
                 float speedFade = impactSound.SpeedFader(speed);
                 var vol = totalVolumeMultiplier * impactSound.Volume(impulse) * speedFade; //force //Here "force" is actually an impulse
 
