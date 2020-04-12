@@ -16,7 +16,8 @@ MonoBehaviour:
   - autoHeader: Foot Particle Set
     particleSet: {fileID: 11400000, guid: 2d328975ebda86f4bbbe8b7f8109f50a, type: 2}
     particles:
-    - particles: {fileID: 0}
+    - particles: {fileID: 2283238127136573854, guid: 7409fc54ea5285a4386bb1c3bed715ce,
+        type: 3}
       selfMultipliers:
         countMultiplier: 1
         sizeMultiplier: 1
@@ -27,7 +28,8 @@ MonoBehaviour:
   - autoHeader: Metal ball Particle Set
     particleSet: {fileID: 11400000, guid: ba419fd3c5da39648b19eb10694ec9c9, type: 2}
     particles:
-    - particles: {fileID: 0}
+    - particles: {fileID: 2283238127136573854, guid: 7409fc54ea5285a4386bb1c3bed715ce,
+        type: 3}
       selfMultipliers:
         countMultiplier: 1
         sizeMultiplier: 1
@@ -35,15 +37,11 @@ MonoBehaviour:
         countMultiplier: 1
         sizeMultiplier: 1
       originType: 0
-    - particles: {fileID: 0}
-      selfMultipliers:
-        countMultiplier: 1
-        sizeMultiplier: 1
-      otherMultipliers:
-        countMultiplier: 1
-        sizeMultiplier: 1
-      originType: 0
-    - particles: {fileID: 0}
+  - autoHeader: Soft ball Particle Set
+    particleSet: {fileID: 11400000, guid: cadcb87f0792e944d899ccbe7bdd05b6, type: 2}
+    particles:
+    - particles: {fileID: 2283238127136573854, guid: 7409fc54ea5285a4386bb1c3bed715ce,
+        type: 3}
       selfMultipliers:
         countMultiplier: 1
         sizeMultiplier: 1
@@ -54,23 +52,8 @@ MonoBehaviour:
   - autoHeader: Bullet Particle Set
     particleSet: {fileID: 11400000, guid: 62a6441a19f2db644bda9edf40c5b1b4, type: 2}
     particles:
-    - particles: {fileID: 0}
-      selfMultipliers:
-        countMultiplier: 1
-        sizeMultiplier: 1
-      otherMultipliers:
-        countMultiplier: 1
-        sizeMultiplier: 1
-      originType: 0
-    - particles: {fileID: 0}
-      selfMultipliers:
-        countMultiplier: 1
-        sizeMultiplier: 1
-      otherMultipliers:
-        countMultiplier: 1
-        sizeMultiplier: 1
-      originType: 0
-    - particles: {fileID: 0}
+    - particles: {fileID: 2283238127136573854, guid: 7409fc54ea5285a4386bb1c3bed715ce,
+        type: 3}
       selfMultipliers:
         countMultiplier: 1
         sizeMultiplier: 1

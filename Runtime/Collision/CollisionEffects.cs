@@ -377,29 +377,32 @@ namespace PrecisionSurfaceEffects
 
                     var sps = particleSet.GetSurfaceParticles(o);
 
-                    for (int ii = 0; ii < sps.Length; ii++)
+                    if (sps != null)
                     {
-                        var sp = sps[ii];
-                        var spp = sp.particles;
+                        for (int ii = 0; ii < sps.Length; ii++)
+                        {
+                            var sp = sps[ii];
+                            var spp = sp.particles;
 
-                        var fadingSpeed = isFriction ? spp.GetAmountedSpeed(rollingSpeed, speed) : spp.impactSpeedMultiplier * speed;
-                        float speedFader = particles.SpeedFader(fadingSpeed);
+                            var fadingSpeed = isFriction ? spp.GetAmountedSpeed(rollingSpeed, speed) : spp.impactSpeedMultiplier * speed;
+                            float speedFader = particles.SpeedFader(fadingSpeed);
 
-                        var selfMults = o.selfParticleMultipliers * particles.selfMultipliers * sp.selfMultipliers;
-                        var otherMults = o.otherParticleMultipliers * particles.otherMultipliers * sp.otherMultipliers;
+                            var selfMults = o.selfParticleMultipliers * particles.selfMultipliers * sp.selfMultipliers;
+                            var otherMults = o.otherParticleMultipliers * particles.otherMultipliers * sp.otherMultipliers;
 
-                        spp.GetInstance().PlayParticles
-                        (
-                            sp.originType,
-                            particles.selfColor, o.color,
-                            selfMults, otherMults,
-                            o.weight * speedFader,
-                            impulse, speed,
-                            rot, center, radius + particles.minimumParticleShapeRadius, particleOutputs.hitNormal,
-                            vel0, vel1,
-                            mass0, mass1,
-                            dt
-                        );
+                            spp.GetInstance().PlayParticles
+                            (
+                                sp.originType,
+                                particles.selfColor, o.color,
+                                selfMults, otherMults,
+                                o.weight * speedFader,
+                                impulse, speed,
+                                rot, center, radius + particles.minimumParticleShapeRadius, particleOutputs.hitNormal,
+                                vel0, vel1,
+                                mass0, mass1,
+                                dt
+                            );
+                        }
                     }
                 }
             }
