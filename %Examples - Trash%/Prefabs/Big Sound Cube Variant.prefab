@@ -7,6 +7,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 47305487946080195, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: MinDistance
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 47305488334938370, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}
       propertyPath: m_Mass
@@ -74,11 +79,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}
-      propertyPath: totalVolumeMultiplier
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
-        type: 3}
       propertyPath: vibrationSound.maxVolume
       value: 0.25
       objectReference: {fileID: 0}
@@ -91,6 +91,11 @@ PrefabInstance:
         type: 3}
       propertyPath: vibrationSound.frictionForceMultiplier
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: totalVolumeMultiplier
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 47305488334938374, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}
@@ -156,6 +161,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 47305489198731606, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: MinDistance
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 981096311944494490, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: MinDistance
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 1824009544910132288, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: MinDistance
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 3531792949643868645, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: MinDistance
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 09c62c7211d37d745a291c8767652fbc, type: 3}

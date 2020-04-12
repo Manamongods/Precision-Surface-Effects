@@ -19,6 +19,7 @@ namespace PrecisionSurfaceEffects
         public static int MAX_PARTICLE_TYPE_COUNT = 10;
         public static float IMPACT_DURATION_CONSTANT = .1f;
         public static bool CLAMP_FINAL_ONE_SHOT_VOLUME = true;
+        public static float AUDIBLE_THRESHOLD = 0.00001f; //this is important especially because SmoothDamp never reaches the target
 
 
 

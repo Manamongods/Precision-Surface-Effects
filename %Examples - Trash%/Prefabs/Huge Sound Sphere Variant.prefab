@@ -7,6 +7,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6513881674433054021, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: MinDistance
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7420537741251150138, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: MinDistance
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 7768311540337565090, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
         type: 3}
       propertyPath: m_Mass
@@ -102,6 +112,36 @@ PrefabInstance:
       propertyPath: impactCooldown
       value: 0.01
       objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: totalVolumeMultiplier
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: vibrationSound.maxVolume
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: impactSound.maxVolume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: frictionSound.maxVolume
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: frictionSound.basePitch
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311540337565091, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: frictionSound.pitchBySpeed
+      value: 0.08
+      objectReference: {fileID: 0}
     - target: {fileID: 7768311540337565094, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -176,6 +216,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Huge Sound Sphere Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311541134257654, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: MinDistance
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768311542087541603, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: MinDistance
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 8229951337275091168, guid: 0fef6295de871454aa2b87ddf8fbd3c8,
+        type: 3}
+      propertyPath: MinDistance
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0fef6295de871454aa2b87ddf8fbd3c8, type: 3}

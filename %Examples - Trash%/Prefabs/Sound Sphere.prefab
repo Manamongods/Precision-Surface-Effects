@@ -544,12 +544,13 @@ MonoBehaviour:
     maxVolume: 0.5
     basePitch: 0.35
     pitchBySpeed: 0.05
+    maxForce: 10
     rollingAmount: 1
     slidingAmount: 1
     clipChangeSmoothTime: 0.025
     volumeSmoothTimes:
-      up: 0.08
-      down: 0.16
+      up: 0.06
+      down: 0.12
     pitchSmoothTime: 0.1
     frictionNormalForceMultiplier: 0.2
   doVibrationSound: 1
@@ -563,10 +564,10 @@ MonoBehaviour:
     maxVolume: 0.333333
     exponentialDecay: 3
     linearDecay: 1
-    frictionForceMultiplier: 0.1
-    frictionSpeedMultiplier: 1
     impactForceMultiplier: 10
     impactSpeedMultiplier: -0.2
+    frictionForceMultiplier: 0.1
+    frictionSpeedMultiplier: 1
   particlesType: 2
   particleSet: {fileID: 11400000, guid: ba419fd3c5da39648b19eb10694ec9c9, type: 2}
   particles:

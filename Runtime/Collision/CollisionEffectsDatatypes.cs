@@ -189,7 +189,7 @@ namespace PrecisionSurfaceEffects
             //Methods
             protected static bool Audible(float vol)
             {
-                return vol > 0.00000001f;
+                return vol > AUDIBLE_THRESHOLD;
             }
 
             protected void EnsurePlayingOnlyIfAudible()
@@ -209,6 +209,10 @@ namespace PrecisionSurfaceEffects
         public class FrictionSound : Sound
         {
             //Fields
+            [Min(0)]
+            [Space(10)]
+            public float maxForce = 10000;
+
             [Header("Amounts")]
             public float rollingAmount = 1;
             public float slidingAmount = 1;
@@ -303,6 +307,8 @@ namespace PrecisionSurfaceEffects
 
                 public void Update(FrictionSound fs, float totalVolumeMultiplier, float totalPitchMultiplier, float force, float speed)
                 {
+                    force = Mathf.Min(force, fs.maxForce);
+
                     void SetVolume()
                     {
                         audioSource.volume = Mathf.Min(totalVolumeMultiplier * currentVolume, fs.maxVolume * clip.volumeMultiplier);
