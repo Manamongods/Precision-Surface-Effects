@@ -66,16 +66,16 @@ namespace PrecisionSurfaceEffects
 
             return GetList(shareList);
         }
-        public SurfaceOutputs GetCollisionSurfaceTypes(Collision collision, bool shareList = false)
+        public SurfaceOutputs GetContactSurfaceTypes(ContactPoint contact, bool shareList = false) //Collision collision
         {
-            var con = collision.GetContact(0);
-            var pos = con.point;
+            var pos = contact.point;
+            var col = contact.otherCollider;
 
             PrepareOutputs(pos);
-            outputs.collider = collision.collider;
-            outputs.hitNormal = con.normal; //?
+            outputs.collider = col;
+            outputs.hitNormal = contact.normal; //?
 
-            AddSurfaceTypes(collision.collider, pos);
+            AddSurfaceTypes(col, pos);
 
             return GetList(shareList);
         }

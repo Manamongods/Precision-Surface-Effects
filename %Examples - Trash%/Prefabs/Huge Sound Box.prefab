@@ -107,6 +107,11 @@ PrefabInstance:
       propertyPath: priority
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: impactCooldown
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 47305488334938374, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}
       propertyPath: m_LocalPosition.x
