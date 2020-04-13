@@ -17,9 +17,9 @@ namespace PrecisionSurfaceEffects
         public static float EXTRA_SEARCH_THICKNESS = 0.01f;
         public static int MAX_PARTICLE_TYPE_COUNT = 10;
         public static float IMPACT_DURATION_CONSTANT = .1f;
-        public static bool CLAMP_FINAL_ONE_SHOT_VOLUME = true;
+        public static bool CLAMP_FINAL_ONE_SHOT_VOLUME = false; //true;
         public static float AUDIBLE_THRESHOLD = 0.00001f; //this is important especially because SmoothDamp never reaches the target
-        public static float TOUCHING_SEPARATION_THRESHOLD = 0.001f;
+        public static float TOUCHING_SEPARATION_THRESHOLD = 0.01f;
 
 
 
@@ -43,6 +43,7 @@ namespace PrecisionSurfaceEffects
         public float impactCooldown = 0.1f;
         [Space(5)]
         public bool doSpeculativeImpacts;
+        public float separationThresholdMultiplier = 1;
         public float maximumContactRelocationRate; //This probably only works for "Persistent Contact Manifold" Contacts Generation
         public float maximumContactRotationRate;
         [Space(5)]
@@ -395,8 +396,7 @@ namespace PrecisionSurfaceEffects
                 c.contactPoints1.Clear();
                 c.localPositions0.Clear();
                 c.localPositions1.Clear();
-                c.impulse = new Vector3();
-                c.linearVelocity = Vector3.zero;
+                c.impulse = new Vector3(); //c.linearVelocity = Vector3.zero;
                 c.used = false;
                 return c;
             }
@@ -575,7 +575,7 @@ namespace PrecisionSurfaceEffects
 
                     bool Touching(float separation)
                     {
-                        return separation <= TOUCHING_SEPARATION_THRESHOLD;
+                        return separation <= TOUCHING_SEPARATION_THRESHOLD * separationThresholdMultiplier;
                     }
 
                     speculativePoints.Clear();
@@ -615,7 +615,7 @@ namespace PrecisionSurfaceEffects
                             Debug.DrawRay(speculativePoints[i].point, Vector3.up * 100); //Draws a white ray upward if a new impact is created there
 #endif
 
-                        OnOnCollisionEnter(stop, collider, speculativePoints, collision.impulse - contact.impulse, contact.linearVelocity); //TODO: find point velocity //Unfortunately the velocity is NOT point velocity
+                        OnOnCollisionEnter(stop, collider, speculativePoints, collision.impulse - contact.impulse, collision.relativeVelocity); //linearVelocity //TODO: find point velocity //Unfortunately the velocity is NOT point velocity
                     }
                     #endregion
                 }
@@ -628,13 +628,13 @@ namespace PrecisionSurfaceEffects
 
                     if (change.magnitude / Time.deltaTime >= forceChangeToImpact) //(imp.magnitude - contact.impulse)
                     {
-                        OnOnCollisionEnter(stop, collider, contactPoints, change, contact.linearVelocity); //OnCollisionEnter(collision);
+                        OnOnCollisionEnter(stop, collider, contactPoints, change, collision.relativeVelocity); //linearVelocity //OnCollisionEnter(collision);
                     }
                 }
 
 
                 contact.impulse = collision.impulse;
-                contact.RememberVelocities(c0);
+                //contact.relativeVelocity = collision.relativeVelocity; // RememberVelocities(c0);
             }
 
 
@@ -782,25 +782,27 @@ namespace PrecisionSurfaceEffects
             public List<ContactPoint> contactPoints1 = new List<ContactPoint>(DEF_C);
             public List<Vector3> localPositions0 = new List<Vector3>(DEF_C);
             public List<Vector3> localPositions1 = new List<Vector3>(DEF_C);
+            
+            //public Vector3 relativeVelocity; //previous
 
-            public Vector3 linearVelocity;
-            public Vector3 angularVelocity;
+            //public Vector3 linearVelocity;
+            //public Vector3 angularVelocity;
 
 
             //Methods
-            public void RememberVelocities(ContactPoint c)
-            {
-                var rb = c.thisCollider.attachedRigidbody;
-                if (rb == null)
-                {
-                    angularVelocity = linearVelocity = Vector3.zero;
-                }
-                else
-                {
-                    angularVelocity = rb.angularVelocity;
-                    linearVelocity = rb.velocity;
-                }
-            }
+            //public void RememberVelocities(ContactPoint c)
+            //{
+            //    var rb = c.thisCollider.attachedRigidbody;
+            //    if (rb == null)
+            //    {
+            //        angularVelocity = linearVelocity = Vector3.zero;
+            //    }
+            //    else
+            //    {
+            //        angularVelocity = rb.angularVelocity;
+            //        linearVelocity = rb.velocity;
+            //    }
+            //}
 
             public void Flip()
             {
@@ -917,7 +919,7 @@ namespace PrecisionSurfaceEffects
             contact.Update(c0.thisCollider.transform, contactPoints); //?
             contact.used = true;
             contact.impulse = collision.impulse;
-            contact.RememberVelocities(c0);
+            //contact.relativeVelocity = collision.relativeVelocity; // RememberVelocities(c0);
             contacts.Add(contact);
 
             bool stop = Stop(c0.otherCollider, false);
