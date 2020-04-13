@@ -43,6 +43,8 @@ namespace PrecisionSurfaceEffects
         public float impactCooldown = 0.1f;
         [Space(5)]
         public bool doSpeculativeImpacts;
+        public float maximumContactRelocationRate; //This probably only works for "Persistent Contact Manifold" Contacts Generation
+        public float maximumContactRotationRate;
         [Space(5)]
         public bool doImpactByForceChange = true;
         public float forceChangeToImpact = 10;

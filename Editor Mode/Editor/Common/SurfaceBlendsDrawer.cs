@@ -19,7 +19,8 @@ namespace PrecisionSurfaceEffects
             EditorGUI.BeginProperty(position, label, property);
 
             string name = property.FindPropertyRelative("groupName").stringValue;
-            label.text = label.text + " - " + name;
+            if(label.text != name)
+                label.text = label.text + " - " + name;
             EditorGUI.PropertyField(position, property, label, true);
 
             EditorGUI.EndProperty();

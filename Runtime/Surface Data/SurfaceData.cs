@@ -24,12 +24,12 @@ namespace PrecisionSurfaceEffects
 
         public SurfaceType[] surfaceTypes = new SurfaceType[1];
 
-        [Tooltip("If your game reuses materials you can easily use these")]
         [SerializeField]
-        internal MaterialBlendOverride[] materialBlendOverrides = new MaterialBlendOverride[] { new MaterialBlendOverride() };
+        [Tooltip("If your game reuses materials you can easily use these")]
+        internal MaterialBlendOverrides[] materialBlendOverrides = new MaterialBlendOverrides[0];
 
         [SerializeField]
-        internal TerrainBlends[] terrainBlends = new TerrainBlends[] { new TerrainBlends() };
+        internal TerrainBlends[] terrainBlends = new TerrainBlends[0];
 
 
         private readonly Dictionary<Material, SurfaceBlends.NormalizedBlends> materialBlendLookup = new Dictionary<Material, SurfaceBlends.NormalizedBlends>(); //for faster lookup
@@ -38,20 +38,33 @@ namespace PrecisionSurfaceEffects
 
 
 
-        //Datatypes
-        [System.Serializable]
-        internal class TerrainBlends : SurfaceBlends
+        //Methods
+        private void FillDictionary<T, TT>(GroupBlends<T, TT>[] blends, Dictionary<TT, SurfaceBlends.NormalizedBlends> dictionary) where T : BlendGroup<TT>, new()
         {
-            [Space(10)]
-            [Tooltip("Warning: these have to have different names, because it's the names which are compared")]
-            public Texture[] terrainAlbedos = new Texture[1];
-        }
+            dictionary.Clear();
+            for (int i = 0; i < blends.Length; i++)
+            {
+                var bs = blends[i];
 
-        [System.Serializable]
-        internal class MaterialBlendOverride : SurfaceBlends
-        {
-            [Space(10)]
-            public Material[] materials = new Material[1];
+                for (int ii = 0; ii < bs.groups.Length; ii++)
+                {
+                    var group = bs.groups[ii];
+
+                    var result = group.result = new SurfaceBlends.NormalizedBlends();
+                    group.SortNormalize();
+
+                    for (int iii = 0; iii < result.result.Count; iii++) //Bakes for performance (because these are intrinsically connected to this specific SurfaceData asset, so it is possible to do so)
+                        result.result[iii] = Settingsify(result.result[iii]);
+
+                    var keys = group.GetKeys;
+                    for (int iii = 0; iii < keys.Length; iii++)
+                    {
+                        var key = keys[iii];
+                        if (key != null)
+                            dictionary.Add(key, result);
+                    }
+                }
+            }
         }
 
 
@@ -69,39 +82,12 @@ namespace PrecisionSurfaceEffects
 
         private void Awake()
         {
-            //Material Lookup
-            materialBlendLookup.Clear();
-            for (int i = 0; i < materialBlendOverrides.Length; i++)
-            {
-                var mbo = materialBlendOverrides[i];
-                mbo.SortNormalize();
+            FillDictionary(materialBlendOverrides, materialBlendLookup);
 
-                for (int ii = 0; ii < mbo.materials.Length; ii++)
-                {
-                    var mat = mbo.materials[ii];
-                    if(mat != null)
-                        materialBlendLookup.Add(mat, mbo.result);
-                }
-            }
+            FillDictionary(terrainBlends, terrainAlbedoBlendLookup);
 
-            //Terrain Albedo Lookup
-            terrainAlbedoBlendLookup.Clear();
-            for (int i = 0; i < terrainBlends.Length; i++)
-            {
-                var tb = terrainBlends[i];
-                tb.SortNormalize();
 
-                for (int ii = 0; ii < tb.terrainAlbedos.Length; ii++)
-                {
-                    var tex = tb.terrainAlbedos[ii];
-                    if (tex != null)
-                        terrainAlbedoBlendLookup.Add(tex, tb.result);
-                }
-
-                for (int ii = 0; ii < tb.result.result.Count; ii++) //Bakes these for performance (because these are intrinsically connected to this specific SurfaceData asset, so it is possible to do so)
-                    tb.result.result[ii] = Settingsify(tb.result.result[ii]);
-            }
-
+            //Default Blend
             defaultBlend = new SurfaceBlends.NormalizedBlend()
             {
                 surfaceTypeID = defaultSurfaceType,
