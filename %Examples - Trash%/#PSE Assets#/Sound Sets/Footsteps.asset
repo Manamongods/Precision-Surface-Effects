@@ -80,10 +80,6 @@ MonoBehaviour:
       volumeMultiplier: 1
       pitchMultiplier: 1
       probabilityWeight: 1
-    - clip: {fileID: 8300000, guid: 7d1f874cf81685942aaba56ac1ba3f30, type: 3}
-      volumeMultiplier: 1
-      pitchMultiplier: 1
-      probabilityWeight: 1
     frictionSound:
       clip: {fileID: 0}
       volumeMultiplier: 1
@@ -91,14 +87,10 @@ MonoBehaviour:
   - name: Muddy
     volume: 1
     volumeVariation: 0.2
-    pitch: 2
+    pitch: 1
     pitchVariation: 0.2
     clipVariants:
     - clip: {fileID: 8300000, guid: dcc4509c8adee73419f1ac042705d3fa, type: 3}
-      volumeMultiplier: 1
-      pitchMultiplier: 1
-      probabilityWeight: 1
-    - clip: {fileID: 8300000, guid: 62ac9bf37e313514e81b24534d632d69, type: 3}
       volumeMultiplier: 1
       pitchMultiplier: 1
       probabilityWeight: 1
