@@ -477,6 +477,7 @@ namespace PrecisionSurfaceEffects
 
             //Caches
             var c0 = contactPoints[0];
+            var thisCollider = c0.thisCollider;
             var collider = collision.collider;
 
 
@@ -490,7 +491,7 @@ namespace PrecisionSurfaceEffects
             for (int i = 0; i < contacts.Count; i++)
             {
                 var c = contacts[i];
-                if (c.collider == collider)
+                if (c.otherCollider == collider && c.thisCollider == thisCollider)
                 {
                     contact = c;
                     break;
@@ -512,7 +513,7 @@ namespace PrecisionSurfaceEffects
                     contact.Flip();
                     var selfTransform = c0.thisCollider.transform;
                     var otherTransform = c0.otherCollider.transform;
-                    contact.Update(selfTransform, otherTransform, contactPoints);
+                    contact.Update(selfTransform, contactPoints); //otherTransform, 
 
                     float bestDistance = Mathf.Infinity;
 
@@ -534,7 +535,7 @@ namespace PrecisionSurfaceEffects
                             return;
                         }
 
-                        Vector3 locPos = contact.locals0[id].position;
+                        Vector3 locPos = contact.locals0[id]; //.position;
 
                         if (empties > 0)
                         {
@@ -558,7 +559,7 @@ namespace PrecisionSurfaceEffects
 
                             if (available)
                             {
-                                Vector3 prevLocPos = contact.locals1[i].position;
+                                Vector3 prevLocPos = contact.locals1[i]; //.position;
 
                                 float newDistance = (locPos - prevLocPos).sqrMagnitude; //Make this just magnitude?
 
@@ -804,20 +805,22 @@ namespace PrecisionSurfaceEffects
             //Fields
             public bool used;
 
-            public Collider collider;
+            public Collider thisCollider;
+            public Collider otherCollider;
+
             public Vector3 impulse;
 
             private const int DEF_C = 8;
             public List<ContactPoint> contactPoints0 = new List<ContactPoint>(DEF_C);
             public List<ContactPoint> contactPoints1 = new List<ContactPoint>(DEF_C);
-            public List<Local> locals0 = new List<Local>(DEF_C);
-            public List<Local> locals1 = new List<Local>(DEF_C);
+            public List<Vector3> locals0 = new List<Vector3>(DEF_C); //Local
+            public List<Vector3> locals1 = new List<Vector3>(DEF_C);
             
-            public struct Local
-            {
-                public Vector3 position; //, normal;
-                //public Vector3 otherPosition, otherNormal;
-            }
+            //public struct Local
+            //{
+            //    public Vector3 position; //, normal;
+            //    //public Vector3 otherPosition, otherNormal;
+            //}
 
             //public Vector3 relativeVelocity; //previous
 
@@ -851,7 +854,7 @@ namespace PrecisionSurfaceEffects
                 locals1 = temp2;
             }
 
-            public void Update(Transform t, Transform other, List<ContactPoint> ps)
+            public void Update(Transform t, List<ContactPoint> ps) //Transform other, 
             {
                 contactPoints0.Clear();
                 locals0.Clear();
@@ -863,14 +866,16 @@ namespace PrecisionSurfaceEffects
 
                     locals0.Add
                     (
-                        new Local()
-                        {
-                            position = t.InverseTransformPoint(p.point),
+                        t.InverseTransformPoint(p.point)
+
+                        //new Local()
+                        //{
+                        //    position = t.InverseTransformPoint(p.point),
                             //normal = t.InverseTransformDirection(p.normal),
 
                             //otherPosition = other.InverseTransformPoint(p.point),
                             //otherNormal = other.InverseTransformDirection(p.normal)
-                        }
+                        //}
                     );
                 }
             }
@@ -965,8 +970,9 @@ namespace PrecisionSurfaceEffects
             var c0 = contactPoints[0];
 
             var contact = GetContact();
-            contact.collider = c0.otherCollider;
-            contact.Update(c0.thisCollider.transform, c0.otherCollider.transform, contactPoints); //?
+            contact.thisCollider = c0.thisCollider;
+            contact.otherCollider = c0.otherCollider;
+            contact.Update(c0.thisCollider.transform, contactPoints); //? //c0.otherCollider.transform, 
             contact.used = true;
             contact.impulse = collision.impulse;
             //contact.relativeVelocity = collision.relativeVelocity; // RememberVelocities(c0);

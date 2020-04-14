@@ -78,6 +78,16 @@ PrefabInstance:
       propertyPath: countBy.curveMultiplier
       value: 15
       objectReference: {fileID: 0}
+    - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: slidingSpeedMultiplier
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: rollingSpeedMultiplier
+      value: 0.01
+      objectReference: {fileID: 0}
     - target: {fileID: 7670574646986875101, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}
       propertyPath: InitialModule.startRotationX.minMaxState
@@ -111,7 +121,7 @@ PrefabInstance:
     - target: {fileID: 8104508447486059129, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}
       propertyPath: m_Name
-      value: Stone Impact Particles Variant
+      value: Stone Particles
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d7001457c7180594a83ab93837359c5d, type: 3}

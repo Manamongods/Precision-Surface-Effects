@@ -77,6 +77,16 @@ PrefabInstance:
       propertyPath: countBySpeedRange.x
       value: -1
       objectReference: {fileID: 0}
+    - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: slidingSpeedMultiplier
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: rollingSpeedMultiplier
+      value: 0.02
+      objectReference: {fileID: 0}
     - target: {fileID: 7670574646986875101, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}
       propertyPath: InitialModule.startRotationX.minMaxState
