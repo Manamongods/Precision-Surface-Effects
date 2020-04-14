@@ -49,7 +49,7 @@ AudioSource:
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 129
+  Priority: 128
   DopplerLevel: 1
   MinDistance: 5
   MaxDistance: 500
@@ -303,7 +303,7 @@ AudioSource:
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 130
+  Priority: 128
   DopplerLevel: 1
   MinDistance: 5
   MaxDistance: 500
@@ -544,7 +544,7 @@ MonoBehaviour:
     volumeFaderBySpeedRange: {x: 0, y: 0.1}
     maxVolume: 0.5
     basePitch: 0.35
-    pitchBySpeed: 0.05
+    pitchBySpeed: 0.02
     maxForce: 10
     rollingAmount: 1
     slidingAmount: 1
@@ -777,7 +777,7 @@ AudioSource:
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 130
+  Priority: 128
   DopplerLevel: 1
   MinDistance: 5
   MaxDistance: 500

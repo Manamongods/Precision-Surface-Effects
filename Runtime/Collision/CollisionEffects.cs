@@ -508,31 +508,23 @@ namespace PrecisionSurfaceEffects
                 //Speculative Impacts
                 if (doSpeculativeImpacts)
                 {
-                    #region Finds Best IDs
-                    bestIDs.Clear();
-
                     contact.Flip();
                     var selfTransform = c0.thisCollider.transform;
-                    var otherTransform = c0.otherCollider.transform;
-                    contact.Update(selfTransform, contactPoints); //otherTransform, 
+                    contact.Update(selfTransform, contactPoints);
 
-
+                    #region Finds Best IDs
                     int currentCount = contact.contactPoints0.Count;
                     int previousCount = contact.contactPoints1.Count;
 
-                    if (previousCount == 0)
-                    {
-                        for (int i = 0; i < currentCount; i++)
-                            bestIDs.Add(-1);
-                    }
-                    else
+                    bestIDs.Clear();
+                    for (int i = 0; i < currentCount; i++)
+                        bestIDs.Add(-1);
+
+                    if (previousCount != 0)
                     {
                         currs.Clear();
                         for (int i = 0; i < currentCount; i++)
-                        {
                             currs.Add(i);
-                            bestIDs.Add(-1);
-                        }
                         prevs.Clear();
                         for (int i = 0; i < previousCount; i++)
                             prevs.Add(i);
@@ -595,8 +587,6 @@ namespace PrecisionSurfaceEffects
                             var id = bestIDs[i];
                             if (id == -1)
                             {
-                                //Frequently it seems PhysX has e.g. 2 contacts in one location, and then suddenly creates a new one in the same location.
-
                                 float minimumAngle = Mathf.Infinity;
                                 for (int ii = 0; ii < contactPoints.Count; ii++)
                                 {
@@ -604,28 +594,15 @@ namespace PrecisionSurfaceEffects
                                         minimumAngle = Mathf.Min(minimumAngle, Vector3.Angle(cp.normal, contactPoints[ii].normal));
                                 }
 
-                                if(minimumAngle > minimumAngleDifference)
+                                if(minimumAngle > minimumAngleDifference) //Frequently it seems PhysX has e.g. 2 contacts in one location, and then suddenly creates a new one in the same general location.
                                     speculativePoints.Add(cp);
                             }
                             else
                             {
                                 var prevCP = contact.contactPoints1[id];
                                 bool previouslyTouching = Touching(prevCP.separation); //If not previously touching (I'm basing this on the idea that contacts are created before the impact, which seems to be quite an accurate assumption most of the time)
-
-                                //var local = contact.locals0[i];
-                                //var prevLocal = contact.locals1[id];
-
-                                //var worldNormal = cp.normal;
-                                //float change = Vector3.Angle(worldNormal, otherTransform.TransformDirection(prevLocal.otherNormal));
-                                //change = Mathf.Min(change, Vector3.Angle(worldNormal, selfTransform.TransformDirection(prevLocal.normal)));
-                                //change = Mathf.Min(change, Vector3.Angle(local.otherNormal, prevLocal.otherNormal));
-                                //change = Mathf.Min(change, Vector3.Angle(local.normal, prevLocal.normal));
-                                //Debug.Log(change / Time.deltaTime);
-
-                                //bool properRotation = change / Time.deltaTime < maximumContactRotationRate;
-                                //bool properTranslation = Vector3.Distance(local.position, prevLocal.position) / Time.deltaTime < maximumContactRelocationRate;
-
-                                if (!previouslyTouching) // || !properTranslation || !properRotation)
+                                
+                                if (!previouslyTouching)
                                 {
                                     speculativePoints.Add(cp);
                                 }
@@ -659,7 +636,10 @@ namespace PrecisionSurfaceEffects
 
 
                 contact.impulse = collision.impulse;
-                //contact.relativeVelocity = collision.relativeVelocity; // RememberVelocities(c0);
+            }
+            else
+            {
+                AddContact(collision, c0);
             }
 
 
@@ -673,8 +653,7 @@ namespace PrecisionSurfaceEffects
             Calculate(contactPoints, out Vector3 center, out Vector3 normal, out float radius, out Vector3 vel0, out Vector3 vel1, out Vector3 cvel0, out Vector3 cvel1, out float mass0, out float mass1);
 
             float perpendicularSpeed = Vector3.ProjectOnPlane(vel1 - vel0, normal).magnitude;
-            float frictionImpulser = Mathf.Lerp(1, frictionSound.frictionNormalForceMultiplier, Mathf.Abs(Vector3.Dot(impulseNormal, normal))); //I'm not sure if this works //Debug.Log(perpendicularSpeed + "   " + (vel1 - vel0).magnitude + "    " + Vector3.Dot((vel0 - vel1).normalized, normal.normalized) + "    " + (vel0 - vel1));
-            //lerp unclapmed?
+            float frictionImpulser = Mathf.LerpUnclamped(1, frictionSound.frictionNormalForceMultiplier, Mathf.Abs(Vector3.Dot(impulseNormal, normal))); //I'm not sure if this works //Debug.Log(perpendicularSpeed + "   " + (vel1 - vel0).magnitude + "    " + Vector3.Dot((vel0 - vel1).normalized, normal.normalized) + "    " + (vel0 - vel1)); //Lerp
 
             var rollingVelocity = GetRollingVelocity(vel0, vel1, cvel0, cvel1);
 
@@ -687,6 +666,7 @@ namespace PrecisionSurfaceEffects
             frictionForce *= frictionSound.SpeedFader(frictionSpeed); //So that it is found the maximum with this in mind
 
 
+            //Vibration Sound
             if (doVibrationSound)
             {
                 vibrationSound.Add(frictionForce * vibrationSound.frictionForceMultiplier, frictionSpeed * vibrationSound.frictionSpeedMultiplier);
@@ -787,12 +767,21 @@ namespace PrecisionSurfaceEffects
             }
         }
 
+        private void AddContact(Collision collision, ContactPoint c0)
+        {
+            var contact = GetContact();
+            contact.thisCollider = c0.thisCollider;
+            contact.otherCollider = c0.otherCollider;
+            contact.Update(c0.thisCollider.transform, contactPoints);
+            contact.used = true;
+            contact.impulse = collision.impulse;
+            contacts.Add(contact);
+        }
+
 
 
         //Datatypes
         public enum ParticlesType { None, ImpactOnly, ImpactAndFriction }
-
-        public delegate void OnSurfaceCallback(Collision collision, SurfaceOutputs outputs);
 
         private class Contact
         {
@@ -810,33 +799,6 @@ namespace PrecisionSurfaceEffects
             public List<Vector3> locals0 = new List<Vector3>(DEF_C); //Local
             public List<Vector3> locals1 = new List<Vector3>(DEF_C);
             
-            //public struct Local
-            //{
-            //    public Vector3 position; //, normal;
-            //    //public Vector3 otherPosition, otherNormal;
-            //}
-
-            //public Vector3 relativeVelocity; //previous
-
-            //public Vector3 linearVelocity;
-            //public Vector3 angularVelocity;
-
-
-            //Methods
-            //public void RememberVelocities(ContactPoint c)
-            //{
-            //    var rb = c.thisCollider.attachedRigidbody;
-            //    if (rb == null)
-            //    {
-            //        angularVelocity = linearVelocity = Vector3.zero;
-            //    }
-            //    else
-            //    {
-            //        angularVelocity = rb.angularVelocity;
-            //        linearVelocity = rb.velocity;
-            //    }
-            //}
-
             public void Flip()
             {
                 var temp = contactPoints0;
@@ -848,30 +810,14 @@ namespace PrecisionSurfaceEffects
                 locals1 = temp2;
             }
 
-            public void Update(Transform t, List<ContactPoint> ps) //Transform other, 
+            public void Update(Transform t, List<ContactPoint> ps)
             {
                 contactPoints0.Clear();
                 locals0.Clear();
 
                 contactPoints0.AddRange(ps);
                 for (int i = 0; i < ps.Count; i++)
-                {
-                    var p = ps[i];
-
-                    locals0.Add
-                    (
-                        t.InverseTransformPoint(p.point)
-
-                        //new Local()
-                        //{
-                        //    position = t.InverseTransformPoint(p.point),
-                            //normal = t.InverseTransformDirection(p.normal),
-
-                            //otherPosition = other.InverseTransformPoint(p.point),
-                            //otherNormal = other.InverseTransformDirection(p.normal)
-                        //}
-                    );
-                }
+                    locals0.Add(t.InverseTransformPoint(ps[i].point));
             }
         }
 
@@ -963,14 +909,7 @@ namespace PrecisionSurfaceEffects
 
             var c0 = contactPoints[0];
 
-            var contact = GetContact();
-            contact.thisCollider = c0.thisCollider;
-            contact.otherCollider = c0.otherCollider;
-            contact.Update(c0.thisCollider.transform, contactPoints); //? //c0.otherCollider.transform, 
-            contact.used = true;
-            contact.impulse = collision.impulse;
-            //contact.relativeVelocity = collision.relativeVelocity; // RememberVelocities(c0);
-            contacts.Add(contact);
+            AddContact(collision, c0);
 
             bool stop = Stop(c0.otherCollider, false);
             OnOnCollisionEnter(stop, c0.otherCollider, contactPoints, collision.impulse, collision.relativeVelocity); //Has to send collision.relativeVelocity because the speed is probably already resolved
@@ -1098,8 +1037,78 @@ namespace PrecisionSurfaceEffects
 }
 
 /*
+        public delegate void OnSurfaceCallback(Collision collision, SurfaceOutputs outputs);
  * 
+            //public struct Local
+            //{
+            //    public Vector3 position; //, normal;
+            //    //public Vector3 otherPosition, otherNormal;
+            //}
+
+            //public Vector3 relativeVelocity; //previous
+
+            //public Vector3 linearVelocity;
+            //public Vector3 angularVelocity;
+
+
+            //Methods
+            //public void RememberVelocities(ContactPoint c)
+            //{
+            //    var rb = c.thisCollider.attachedRigidbody;
+            //    if (rb == null)
+            //    {
+            //        angularVelocity = linearVelocity = Vector3.zero;
+            //    }
+            //    else
+            //    {
+            //        angularVelocity = rb.angularVelocity;
+            //        linearVelocity = rb.velocity;
+            //    }
+            //}
+
+            public void Update(Transform t, List<ContactPoint> ps) //Transform other, 
+            {
+                contactPoints0.Clear();
+                locals0.Clear();
+
+                contactPoints0.AddRange(ps);
+                for (int i = 0; i < ps.Count; i++)
+                {
+                    var p = ps[i];
+
+                    locals0.Add
+                    (
+                        t.InverseTransformPoint(p.point)
+
+                        //new Local()
+                        //{
+                        //    position = t.InverseTransformPoint(p.point),
+                            //normal = t.InverseTransformDirection(p.normal),
+
+                            //otherPosition = other.InverseTransformPoint(p.point),
+                            //otherNormal = other.InverseTransformDirection(p.normal)
+                        //}
+                    );
+                }
+            }
  * 
+                                //var local = contact.locals0[i];
+                                //var prevLocal = contact.locals1[id];
+
+                                //var worldNormal = cp.normal;
+                                //float change = Vector3.Angle(worldNormal, otherTransform.TransformDirection(prevLocal.otherNormal));
+                                //change = Mathf.Min(change, Vector3.Angle(worldNormal, selfTransform.TransformDirection(prevLocal.normal)));
+                                //change = Mathf.Min(change, Vector3.Angle(local.otherNormal, prevLocal.otherNormal));
+                                //change = Mathf.Min(change, Vector3.Angle(local.normal, prevLocal.normal));
+                                //Debug.Log(change / Time.deltaTime);
+
+                                //bool properRotation = change / Time.deltaTime < maximumContactRotationRate;
+                                //bool properTranslation = Vector3.Distance(local.position, prevLocal.position) / Time.deltaTime < maximumContactRelocationRate;
+
+                                if (!previouslyTouching) // || !properTranslation || !properRotation)
+                                {
+                                    speculativePoints.Add(cp);
+                                }
  * 
  * 
  * 
