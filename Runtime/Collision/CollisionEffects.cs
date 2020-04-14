@@ -44,8 +44,9 @@ namespace PrecisionSurfaceEffects
         [Space(5)]
         public bool doSpeculativeImpacts;
         public float separationThresholdMultiplier = 1;
-        public float maximumContactRelocationRate; //This probably only works for "Persistent Contact Manifold" Contacts Generation
-        public float maximumContactRotationRate;
+        public float minimumAngleDifference = 30;
+        //public float maximumContactRelocationRate = 100; //This probably only works for "Persistent Contact Manifold" Contacts Generation
+        //public float maximumContactRotationRate = 180;
         [Space(5)]
         public bool doImpactByForceChange = true;
         public float forceChangeToImpact = 10;
@@ -394,8 +395,8 @@ namespace PrecisionSurfaceEffects
                 var c = availableContacts.Dequeue();
                 c.contactPoints0.Clear();
                 c.contactPoints1.Clear();
-                c.localPositions0.Clear();
-                c.localPositions1.Clear();
+                c.locals0.Clear();
+                c.locals1.Clear();
                 c.impulse = new Vector3(); //c.linearVelocity = Vector3.zero;
                 c.used = false;
                 return c;
@@ -509,7 +510,9 @@ namespace PrecisionSurfaceEffects
                     bestIDs.Clear();
 
                     contact.Flip();
-                    contact.Update(c0.thisCollider.transform, contactPoints);
+                    var selfTransform = c0.thisCollider.transform;
+                    var otherTransform = c0.otherCollider.transform;
+                    contact.Update(selfTransform, otherTransform, contactPoints);
 
                     float bestDistance = Mathf.Infinity;
 
@@ -531,7 +534,7 @@ namespace PrecisionSurfaceEffects
                             return;
                         }
 
-                        Vector3 locPos = contact.localPositions0[id];
+                        Vector3 locPos = contact.locals0[id].position;
 
                         if (empties > 0)
                         {
@@ -555,7 +558,7 @@ namespace PrecisionSurfaceEffects
 
                             if (available)
                             {
-                                Vector3 prevLocPos = contact.localPositions1[i];
+                                Vector3 prevLocPos = contact.locals1[i].position;
 
                                 float newDistance = (locPos - prevLocPos).sqrMagnitude; //Make this just magnitude?
 
@@ -597,13 +600,40 @@ namespace PrecisionSurfaceEffects
                             var id = bestIDs[i];
                             if (id == -1)
                             {
-                                //Not here, because frequently it seems PhysX has e.g. 2 contacts in one location, and then suddenly creates a new one in the same location.
-                                //speculativePoints.Add(cp);
+                                //Frequently it seems PhysX has e.g. 2 contacts in one location, and then suddenly creates a new one in the same location.
+
+                                float minimumAngle = Mathf.Infinity;
+                                for (int ii = 0; ii < contactPoints.Count; ii++)
+                                {
+                                    if(i != ii)
+                                        minimumAngle = Mathf.Min(minimumAngle, Vector3.Angle(contactPoints[i].normal, contactPoints[ii].normal));
+                                }
+
+                                if(minimumAngle > minimumAngleDifference)
+                                    speculativePoints.Add(cp);
                             }
                             else
                             {
-                                if (!Touching(contact.contactPoints1[id].separation)) //If not previously touching (I'm basing this on the idea that contacts are created before the impact, which seems to be quite an accurate assumption most of the time)
+                                var prevCP = contact.contactPoints1[id];
+                                bool previouslyTouching = Touching(prevCP.separation); //If not previously touching (I'm basing this on the idea that contacts are created before the impact, which seems to be quite an accurate assumption most of the time)
+
+                                //var local = contact.locals0[i];
+                                //var prevLocal = contact.locals1[id];
+
+                                //var worldNormal = cp.normal;
+                                //float change = Vector3.Angle(worldNormal, otherTransform.TransformDirection(prevLocal.otherNormal));
+                                //change = Mathf.Min(change, Vector3.Angle(worldNormal, selfTransform.TransformDirection(prevLocal.normal)));
+                                //change = Mathf.Min(change, Vector3.Angle(local.otherNormal, prevLocal.otherNormal));
+                                //change = Mathf.Min(change, Vector3.Angle(local.normal, prevLocal.normal));
+                                //Debug.Log(change / Time.deltaTime);
+
+                                //bool properRotation = change / Time.deltaTime < maximumContactRotationRate;
+                                //bool properTranslation = Vector3.Distance(local.position, prevLocal.position) / Time.deltaTime < maximumContactRelocationRate;
+
+                                if (!previouslyTouching) // || !properTranslation || !properRotation)
+                                {
                                     speculativePoints.Add(cp);
+                                }
                             }
                         }
                     }
@@ -780,9 +810,15 @@ namespace PrecisionSurfaceEffects
             private const int DEF_C = 8;
             public List<ContactPoint> contactPoints0 = new List<ContactPoint>(DEF_C);
             public List<ContactPoint> contactPoints1 = new List<ContactPoint>(DEF_C);
-            public List<Vector3> localPositions0 = new List<Vector3>(DEF_C);
-            public List<Vector3> localPositions1 = new List<Vector3>(DEF_C);
+            public List<Local> locals0 = new List<Local>(DEF_C);
+            public List<Local> locals1 = new List<Local>(DEF_C);
             
+            public struct Local
+            {
+                public Vector3 position; //, normal;
+                //public Vector3 otherPosition, otherNormal;
+            }
+
             //public Vector3 relativeVelocity; //previous
 
             //public Vector3 linearVelocity;
@@ -810,19 +846,33 @@ namespace PrecisionSurfaceEffects
                 contactPoints0 = contactPoints1;
                 contactPoints1 = temp;
 
-                var temp2 = localPositions0;
-                localPositions0 = localPositions1;
-                localPositions1 = temp2;
+                var temp2 = locals0;
+                locals0 = locals1;
+                locals1 = temp2;
             }
 
-            public void Update(Transform t, List<ContactPoint> ps)
+            public void Update(Transform t, Transform other, List<ContactPoint> ps)
             {
                 contactPoints0.Clear();
-                localPositions0.Clear();
+                locals0.Clear();
 
                 contactPoints0.AddRange(ps);
                 for (int i = 0; i < ps.Count; i++)
-                    localPositions0.Add(t.InverseTransformPoint(ps[i].point));
+                {
+                    var p = ps[i];
+
+                    locals0.Add
+                    (
+                        new Local()
+                        {
+                            position = t.InverseTransformPoint(p.point),
+                            //normal = t.InverseTransformDirection(p.normal),
+
+                            //otherPosition = other.InverseTransformPoint(p.point),
+                            //otherNormal = other.InverseTransformDirection(p.normal)
+                        }
+                    );
+                }
             }
         }
 
@@ -916,7 +966,7 @@ namespace PrecisionSurfaceEffects
 
             var contact = GetContact();
             contact.collider = c0.otherCollider;
-            contact.Update(c0.thisCollider.transform, contactPoints); //?
+            contact.Update(c0.thisCollider.transform, c0.otherCollider.transform, contactPoints); //?
             contact.used = true;
             contact.impulse = collision.impulse;
             //contact.relativeVelocity = collision.relativeVelocity; // RememberVelocities(c0);

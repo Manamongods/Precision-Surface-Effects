@@ -519,8 +519,9 @@ MonoBehaviour:
   impactCooldown: 0.05
   doSpeculativeImpacts: 1
   separationThresholdMultiplier: 1
-  maximumContactRelocationRate: 0
-  maximumContactRotationRate: 0
+  minimumAngleDifference: 15
+  maximumContactRelocationRate: 100000
+  maximumContactRotationRate: 720
   doImpactByForceChange: 0
   forceChangeToImpact: 30
   soundSet: {fileID: 11400000, guid: 80344998cfdc62548be42ca931b98cce, type: 2}
