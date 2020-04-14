@@ -65,43 +65,43 @@ namespace PrecisionSurfaceEffects
             [Min(0)]
             public float frictionSpeedMultiplier = 1;
 
-            internal float force;
+            internal float impulse; //albeit this is more of an impulse sum
             internal float weightedSpeed;
 
             private bool start;
 
 
             //Methods
-            public void Add(float force, float speed)
+            public void Add(float impulse, float speed)
             {
-                if (this.force == 0)
+                if (this.impulse == 0)
                     start = true;
 
-                this.force += force;
-                weightedSpeed += force * speed;
+                this.impulse += impulse;
+                weightedSpeed += impulse * speed;
             }
 
             public void Update(float totalVolumeMultiplier, float totalPitchMultiplier)
             {
-                float beforce = force;
+                float prevImpulse = impulse;
 
                 float multer = 1 / (1 + Time.deltaTime * exponentialDecay); //?????????
-                force *= multer;
-                force = Mathf.Max(0, force - Time.deltaTime * linearDecay);
-                force = Mathf.Min(force, maxForce);
+                impulse *= multer;
+                impulse = Mathf.Max(0, impulse - Time.deltaTime * linearDecay);
+                impulse = Mathf.Min(impulse, maxForce);
 
-                float pmulter = 0;
-                if (beforce != 0)
-                    pmulter = force / beforce;
-                weightedSpeed *= pmulter;
+                float speedMulter = 0;
+                if (prevImpulse != 0)
+                    speedMulter = impulse / prevImpulse;
+                weightedSpeed *= speedMulter;
 
 
-                currentVolume = Mathf.SmoothDamp(currentVolume, volumeByForce * force, ref volumeVelocity, smoothTime);
+                currentVolume = Mathf.SmoothDamp(currentVolume, volumeByForce * impulse, ref volumeVelocity, smoothTime);
                 audioSource.volume = Mathf.Min(totalVolumeMultiplier * currentVolume, maxVolume);
 
-                if (force > 0)
+                if (impulse > 0)
                 {
-                    float speed = weightedSpeed / force;
+                    float speed = weightedSpeed / impulse;
                     float targetPitch = basePitch + speed * pitchBySpeed;
 
                     if (start)

@@ -31,6 +31,31 @@ namespace PrecisionSurfaceEffects
         public Type[] types;
 
 
+        //Methods
+        public CollisionEffects GetCollisionEffects(Collider c)
+        {
+            for (int i = 0; i < types.Length; i++)
+            {
+                var t = types[i];
+
+                for (int ii = 0; ii < t.colliders.Length; ii++)
+                {
+                    if (t.colliders[ii] == c)
+                    {
+                        return t.collisionEffects;
+                    }
+                }
+            }
+
+            if (defaultType != -1)
+            {
+                return types[defaultType].collisionEffects;
+            }
+
+            return null;
+        }
+
+
         //Datatypes
         [System.Serializable]
         public class Type
@@ -70,54 +95,16 @@ namespace PrecisionSurfaceEffects
         {
             stayFrameBool = FrameBool();
 
-            var thisCollider = collision.GetContact(0).thisCollider;
-
-            for (int i = 0; i < types.Length; i++)
-            {
-                var t = types[i];
-
-                for (int ii = 0; ii < t.colliders.Length; ii++)
-                {
-                    if (t.colliders[ii] == thisCollider)
-                    {
-                        t.collisionEffects.OnCollisionEnter(collision);
-
-                        return;
-                    }
-                }
-            }
-
-            if(defaultType != -1)
-            {
-                types[defaultType].collisionEffects.OnCollisionEnter(collision);
-                return;
-            }
+            var ce = GetCollisionEffects(collision.GetContact(0).thisCollider);
+            if (ce != null) //use object compare?
+                ce.OnCollisionEnter(collision);
         }
 
         private void OnCollisionStay(Collision collision)
         {
-            var thisCollider = collision.GetContact(0).thisCollider;
-
-            for (int i = 0; i < types.Length; i++)
-            {
-                var t = types[i];
-
-                for (int ii = 0; ii < t.colliders.Length; ii++)
-                {
-                    if (t.colliders[ii] == thisCollider)
-                    {
-                        t.collisionEffects.OnOnCollisionStay(collision);
-
-                        return;
-                    }
-                }
-            }
-
-            if (defaultType != -1)
-            {
-                types[defaultType].collisionEffects.OnOnCollisionStay(collision);
-                return;
-            }
+            var ce = GetCollisionEffects(collision.GetContact(0).thisCollider);
+            if(ce != null)
+                ce.OnOnCollisionStay(collision);
         }
     }
 }

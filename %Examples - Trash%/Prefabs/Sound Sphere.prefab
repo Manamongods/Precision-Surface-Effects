@@ -561,13 +561,13 @@ MonoBehaviour:
     basePitch: 0.5
     pitchBySpeed: 0.01
     smoothTime: 0.005
-    maxForce: 10000
+    maxForce: 100
     maxVolume: 0.333333
     exponentialDecay: 3
     linearDecay: 1
     impactForceMultiplier: 10
     impactSpeedMultiplier: -0.2
-    frictionForceMultiplier: 0.1
+    frictionForceMultiplier: 5
     frictionSpeedMultiplier: 1
   particlesType: 2
   particleSet: {fileID: 11400000, guid: ba419fd3c5da39648b19eb10694ec9c9, type: 2}

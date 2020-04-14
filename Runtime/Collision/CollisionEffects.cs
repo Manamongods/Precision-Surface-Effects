@@ -128,11 +128,25 @@ namespace PrecisionSurfaceEffects
 
 
         //Methods
+        public static CollisionEffects GetCollisionEffects(Collider collider)
+        {
+            CollisionEffectsMaker maker;
+            if (collider.attachedRigidbody == null)
+                maker = collider.GetComponent<CollisionEffectsMaker>();
+            else
+                maker = collider.attachedRigidbody.GetComponent<CollisionEffectsMaker>();
+
+            if (maker is CollisionEffectsParent parent)
+                return parent.GetCollisionEffects(collider);
+            else
+                return maker as CollisionEffects;
+        }
+
         public void ResetSounds()
         {
             //?
 
-            vibrationSound.force = 0;
+            vibrationSound.impulse = 0;
             vibrationSound.weightedSpeed = 0;
 
             forceSum = 0;
@@ -408,6 +422,12 @@ namespace PrecisionSurfaceEffects
             }
         }
 
+        public void AddImpactVibration(float impulse, float speed)
+        {
+            if (doVibrationSound)
+                vibrationSound.Add(impulse * vibrationSound.impactForceMultiplier, speed * vibrationSound.impactSpeedMultiplier);
+        }
+
 
         private void DoParticles(SurfaceOutputs particleOutputs, float dt, Vector3 center, Vector3 normal, float radius, Vector3 vel0, Vector3 vel1, Vector3 cvel0, Vector3 cvel1, float mass0, float mass1, float impulse, float speed, bool isFriction, float rollingSpeed = 0)
         {
@@ -663,13 +683,14 @@ namespace PrecisionSurfaceEffects
             frictionSpeed *= soundSpeedMultiplier;
 
             var frictionForce = impulse / Time.deltaTime; //force = Mathf.Max(0, Mathf.Min(frictionSound.maxForce, force) - frictionSound.minForce);
-            frictionForce *= frictionSound.SpeedFader(frictionSpeed); //So that it is found the maximum with this in mind
+            float speedFader = frictionSound.SpeedFader(frictionSpeed); //So that it is found the maximum with this in mind
+            frictionForce *= speedFader;
 
 
             //Vibration Sound
             if (doVibrationSound)
             {
-                vibrationSound.Add(frictionForce * vibrationSound.frictionForceMultiplier, frictionSpeed * vibrationSound.frictionSpeedMultiplier);
+                vibrationSound.Add(impulse * speedFader * vibrationSound.frictionForceMultiplier, frictionSpeed * vibrationSound.frictionSpeedMultiplier);
 
                 if (stop)
                     return;
