@@ -102,8 +102,9 @@ namespace PrecisionSurfaceEffects
 
         private readonly List<Contact> contacts = new List<Contact>();
 
-        private readonly List<int> ids = new List<int>();
         private readonly List<int> bestIDs = new List<int>();
+        private readonly List<int> currs = new List<int>();
+        private readonly List<int> prevs = new List<int>();
 
         private static readonly ContactPoint[] dumbCPs = new ContactPoint[64];
         private static readonly List<ContactPoint> contactPoints = new List<ContactPoint>();
@@ -515,63 +516,56 @@ namespace PrecisionSurfaceEffects
                     var otherTransform = c0.otherCollider.transform;
                     contact.Update(selfTransform, contactPoints); //otherTransform, 
 
-                    float bestDistance = Mathf.Infinity;
-
 
                     int currentCount = contact.contactPoints0.Count;
                     int previousCount = contact.contactPoints1.Count;
 
-                    void Find(float distanceSum, int empties, int id) //int usedCount, 
+                    if (previousCount == 0)
                     {
-                        if (id == currentCount)
+                        for (int i = 0; i < currentCount; i++)
+                            bestIDs.Add(-1);
+                    }
+                    else
+                    {
+                        currs.Clear();
+                        for (int i = 0; i < currentCount; i++)
                         {
-                            if (distanceSum < bestDistance)
-                            {
-                                bestDistance = distanceSum;
-                                bestIDs.Clear();
-                                bestIDs.AddRange(ids);
-                            }
-
-                            return;
+                            currs.Add(i);
+                            bestIDs.Add(-1);
                         }
-
-                        Vector3 locPos = contact.locals0[id]; //.position;
-
-                        if (empties > 0)
-                        {
-                            ids.Add(-1);
-                            Find(distanceSum, empties - 1, id + 1);
-                            ids.RemoveAt(id);
-                        }
-
+                        prevs.Clear();
                         for (int i = 0; i < previousCount; i++)
-                        {
-                            bool available = true;
+                            prevs.Add(i);
 
-                            for (int ii = 0; ii < ids.Count; ii++)
+                        while(currs.Count > 0 && prevs.Count > 0)
+                        {
+                            float bestDist = Mathf.Infinity;
+                            int bestCurr = -1, bestPrev = -1;
+
+                            for (int i = 0; i < currs.Count; i++)
                             {
-                                if (ids[ii] == i)
+                                var currp = contact.locals0[currs[i]];
+
+                                for (int ii = 0; ii < prevs.Count; ii++)
                                 {
-                                    available = false;
-                                    break;
+                                    var prevp = contact.locals1[prevs[ii]];
+
+                                    var dist = (currp - prevp).sqrMagnitude;
+                                    if(dist < bestDist)
+                                    {
+                                        bestDist = dist;
+                                        bestCurr = i;
+                                        bestPrev = ii;
+                                    }
                                 }
                             }
 
-                            if (available)
-                            {
-                                Vector3 prevLocPos = contact.locals1[i]; //.position;
+                            bestIDs[currs[bestCurr]] = prevs[bestPrev];
 
-                                float newDistance = (locPos - prevLocPos).sqrMagnitude; //Make this just magnitude?
-
-                                ids.Add(i);
-                                Find(distanceSum + newDistance, empties, id + 1);
-                                ids.RemoveAt(id);
-                            }
+                            prevs.RemoveAt(bestPrev);
+                            currs.RemoveAt(bestCurr);
                         }
                     }
-
-                    ids.Clear();
-                    Find(0, currentCount - previousCount, 0);
                     #endregion
 
                     #region Does Speculative Contacts
@@ -606,8 +600,8 @@ namespace PrecisionSurfaceEffects
                                 float minimumAngle = Mathf.Infinity;
                                 for (int ii = 0; ii < contactPoints.Count; ii++)
                                 {
-                                    if(i != ii)
-                                        minimumAngle = Mathf.Min(minimumAngle, Vector3.Angle(contactPoints[i].normal, contactPoints[ii].normal));
+                                    if(ii != i && bestIDs[ii] != -1)
+                                        minimumAngle = Mathf.Min(minimumAngle, Vector3.Angle(cp.normal, contactPoints[ii].normal));
                                 }
 
                                 if(minimumAngle > minimumAngleDifference)
@@ -1104,6 +1098,71 @@ namespace PrecisionSurfaceEffects
 }
 
 /*
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+                   
+
+                    void Find(float distanceSum, int empties, int id) //int usedCount, 
+                    {
+                        if (id >= currentCount)
+                        {
+                            if (distanceSum < bestDistance) // && empties <= 0)
+                            {
+                                bestDistance = distanceSum;
+                                bestIDs.Clear();
+                                bestIDs.AddRange(ids);
+                            }
+
+                            return;
+                        }
+
+                        Vector3 locPos = contact.locals0[id]; //.position;
+
+                        if (empties > 0)
+                        {
+                            ids.Add(-1);
+                            Find(distanceSum, empties - 1, id + 1);
+                            ids.RemoveAt(id);
+                        }
+
+                        for (int i = 0; i < previousCount; i++)
+                        {
+                            bool available = true;
+
+                            for (int ii = 0; ii < ids.Count; ii++)
+                            {
+                                if (ids[ii] == i)
+                                {
+                                    available = false;
+                                    break;
+                                }
+                            }
+
+                            if (available)
+                            {
+                                Vector3 prevLocPos = contact.locals1[i]; //.position;
+
+                                float newDistance = (locPos - prevLocPos).sqrMagnitude; //Make this just magnitude?
+
+                                ids.Add(i);
+                                Find(distanceSum + newDistance, empties, id + 1);
+                                ids.RemoveAt(id);
+                            }
+                        }
+                    }
+
+                    ids.Clear();
+                    Find(0, currentCount - previousCount, 0);
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
                 //Can't consistently use CurrentRelativeVelocity(collision);, probably maybe because it's too late to get that speed (already resolved)
  * 
  *        
