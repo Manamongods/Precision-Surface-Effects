@@ -120,7 +120,7 @@ namespace PrecisionSurfaceEffects
             get
             {
                 bool wanted = particlesType == ParticlesType.ImpactAndFriction || doFrictionSound || doSpeculativeImpacts;
-                bool canReceiveCallbacks = collider != null && (collider.attachedRigidbody == null || rb != null); //This is (still) correct right?
+                bool canReceiveCallbacks = rb != null || (collider != null && collider.attachedRigidbody == null); //This is (still) correct right?
                 return wanted && canReceiveCallbacks;
             }
         }
