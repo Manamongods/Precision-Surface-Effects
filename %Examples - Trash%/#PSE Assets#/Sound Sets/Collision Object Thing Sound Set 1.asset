@@ -15,6 +15,8 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: b902d9bfcde7bee47b786803851a1b91, type: 2}
   surfaceTypeSounds:
   - name: None
+    testClips: 0
+    testFriction: 0
     volume: 1
     volumeVariation: 0.2
     pitch: 1
@@ -29,10 +31,12 @@ MonoBehaviour:
       volumeMultiplier: 1
       pitchMultiplier: 1
   - name: Grassy
-    volume: 1
+    testClips: 0
+    testFriction: 0
+    volume: 1.5
     volumeVariation: 0.2
     pitch: 1
-    pitchVariation: 0.2
+    pitchVariation: 0.3
     clipVariants:
     - clip: {fileID: 8300000, guid: 28b972ab0731b144cad1e6f11ddc62c7, type: 3}
       volumeMultiplier: 1
@@ -43,7 +47,9 @@ MonoBehaviour:
       volumeMultiplier: 1
       pitchMultiplier: 0.5
   - name: Rocky
-    volume: 1
+    testClips: 0
+    testFriction: 0
+    volume: 0.8
     volumeVariation: 0.2
     pitch: 1
     pitchVariation: 0.2
@@ -57,7 +63,9 @@ MonoBehaviour:
       volumeMultiplier: 4
       pitchMultiplier: 1.5
   - name: Wood
-    volume: 3
+    testClips: 0
+    testFriction: 0
+    volume: 1.8
     volumeVariation: 0.2
     pitch: 2
     pitchVariation: 0.2
@@ -71,7 +79,9 @@ MonoBehaviour:
       volumeMultiplier: 1
       pitchMultiplier: 1
   - name: Hollow Metal
-    volume: 1
+    testClips: 0
+    testFriction: 0
+    volume: 1.2
     volumeVariation: 0.2
     pitch: 1
     pitchVariation: 0.2
@@ -85,10 +95,12 @@ MonoBehaviour:
       volumeMultiplier: 4
       pitchMultiplier: 2
   - name: Muddy
-    volume: 1
+    testClips: 0
+    testFriction: 0
+    volume: 0.7
     volumeVariation: 0.2
     pitch: 1
-    pitchVariation: 0.2
+    pitchVariation: 0.4
     clipVariants:
     - clip: {fileID: 8300000, guid: dcc4509c8adee73419f1ac042705d3fa, type: 3}
       volumeMultiplier: 1
@@ -98,3 +110,4 @@ MonoBehaviour:
       clip: {fileID: 8300000, guid: 23d13f52b5a01964e82ea27791642175, type: 3}
       volumeMultiplier: 2
       pitchMultiplier: 0.25
+  testLoopVolumeMultiplier: 0.1

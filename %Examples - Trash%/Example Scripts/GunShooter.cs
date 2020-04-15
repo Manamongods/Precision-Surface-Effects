@@ -35,7 +35,6 @@ public class GunShooter : SurfaceEffectsBase
     public float speed = 100;
     public float impulse = 100;
     public float interval = 0.1f;
-    public bool addVibration = true;
     internal float previousTime;
 
 
@@ -56,18 +55,11 @@ public class GunShooter : SurfaceEffectsBase
             audioSources[i].transform.position = outputs.hitPosition;
         }
 
-        if (outputs.collider != null)
+        if (outputs.collider != null) //that is never possible right?
         {
             var rb = outputs.collider.attachedRigidbody;
             if (rb != null)
-                rb.AddForceAtPosition(-outputs.hitNormal * impulse, outputs.hitPosition, ForceMode.Impulse); //dir 
-
-            if (addVibration)
-            {
-                var ce = CollisionEffects.GetCollisionEffects(outputs.collider);
-                if (ce != null)
-                    ce.AddImpactVibration(impulse, speed);
-            }
+                rb.AddForceAtPosition(-outputs.hitNormal * impulse, outputs.hitPosition, ForceMode.Impulse); //dir
         }
     }
 

@@ -17,6 +17,10 @@ namespace PrecisionSurfaceEffects
         [Space(30)]
         public SurfaceTypeSounds[] surfaceTypeSounds = new SurfaceTypeSounds[] { new SurfaceTypeSounds() };
 
+#if UNITY_EDITOR
+        [Header("Testing")]
+        public float testLoopVolumeMultiplier = 1;
+#endif
 
         //Methods
         public void PlayOneShot(SurfaceOutput output, AudioSource audioSource, float volumeMultiplier = 1, float pitchMultiplier = 1)
@@ -32,7 +36,79 @@ namespace PrecisionSurfaceEffects
         private void OnValidate()
         {
             Resize(ref surfaceTypeSounds);
+
+            for (int i = 0; i < surfaceTypeSounds.Length; i++)
+            {
+                var sts = surfaceTypeSounds[i];
+
+                if (sts.testClips)
+                {
+                    sts.testClips = false;
+
+                    AssertSource(ref testClipSource, "Clips");
+                    sts.PlayOneShot(testClipSource);
+                }
+
+                if (sts.testFriction)
+                {
+                    sts.testFriction = false;
+
+                    if (sts.frictionSound.clip != null)
+                    {
+                        AssertSource(ref testLoopSource, "Loop");
+                        testLoopSource.loop = true;
+                        testLoopSource.clip = sts.frictionSound.clip;
+                        testLoopSource.pitch = sts.frictionSound.pitchMultiplier;
+                        testLoopVolume = sts.frictionSound.volumeMultiplier * testLoopVolumeMultiplier;
+                        testLoopSource.volume = testLoopVolume;
+                        testLoopSource.time = 0;
+                        testLoopSource.Play();
+
+                        testLoopTime = UnityEditor.EditorApplication.timeSinceStartup;
+
+                        UnityEditor.EditorApplication.update -= UpdateLoop;
+                        UnityEditor.EditorApplication.update += UpdateLoop;
+                    }
+                }
+            }
         }
+
+        private void UpdateLoop()
+        {
+            float multer = (float)(1 + (testLoopTime - UnityEditor.EditorApplication.timeSinceStartup) * 0.5f);
+            if (multer <= 0)
+            {
+                testLoopSource.Stop();
+                UnityEditor.EditorApplication.update -= UpdateLoop;
+            }
+            else
+            {
+                testLoopSource.volume = testLoopVolume * multer;
+            }
+        }
+
+        private void AssertSource(ref AudioSource source, string suffix)
+        {
+            var name = "PSE SoundSet Testing AudioSource " + suffix;
+
+            if (source == null)
+            {
+                source = GameObject.Find(name).GetComponent<AudioSource>();
+            }
+
+            if (source == null)
+            {
+                var g = new GameObject();
+                g.name = name;
+                g.hideFlags = HideFlags.HideAndDontSave;
+                source = g.AddComponent<AudioSource>();
+            }
+        }
+
+        private double testLoopTime;
+        private float testLoopVolume;
+        private AudioSource testClipSource;
+        private AudioSource testLoopSource;
 #endif
     }
 
@@ -40,6 +116,11 @@ namespace PrecisionSurfaceEffects
     public class SurfaceTypeSounds : SurfaceSetType
     {
         //Fields
+#if UNITY_EDITOR
+        [SerializeField]
+        internal bool testClips, testFriction;
+#endif
+
         [Header("Volume")]
         public float volume = 1;
         [Range(0, 1)]

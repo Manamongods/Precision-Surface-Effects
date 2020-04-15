@@ -33,6 +33,8 @@ namespace PrecisionSurfaceEffects
         public Vector3 hitPosition;
         public Vector3 hitNormal;
 
+        public VibrationSound vibrationSound;
+
         private static readonly SOSorter soSorter = new SOSorter();
 
 

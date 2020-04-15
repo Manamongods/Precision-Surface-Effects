@@ -10,7 +10,7 @@ public class SurfaceEffectsBaseEditor : Editor
     {
         var seb = target as SurfaceEffectsBase;
 
-        if(seb.soundSet.data != seb.particleSet.data)
+        if(seb.soundSet != null && seb.particleSet != null && seb.soundSet.data != seb.particleSet.data)
             EditorGUILayout.HelpBox("The ParticleSet's SurfaceData doesn't match the SoundSet's", MessageType.Error);
 
         base.OnInspectorGUI();

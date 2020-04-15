@@ -26,6 +26,7 @@ namespace PrecisionSurfaceEffects
         //Methods
         public SurfaceOutputs GetRHSurfaceTypes(RaycastHit rh, bool shareList = false)
         {
+            outputs.vibrationSound = null;
             outputs.Clear();
             outputs.hardness = 0;
             FillOutputs(rh);
@@ -87,6 +88,7 @@ namespace PrecisionSurfaceEffects
             outputs.collider = null;
             outputs.hitPosition = worldPosition;
             outputs.hitNormal = Vector3.zero;
+            outputs.vibrationSound = null;
         }
         private void FillOutputs(RaycastHit rh)
         {
@@ -177,6 +179,13 @@ namespace PrecisionSurfaceEffects
             //Markers
             var marker = collider.GetComponent<Marker>();
             bool anyMarkers = !object.Equals(marker, null); // != null;
+
+            if(anyMarkers)
+            {
+                //Vibration Sound Marker
+                if (marker.GetMarker(out VibrationMarker vibrationMarker))
+                    outputs.vibrationSound = vibrationMarker.vibrationSound;
+            }
 
             //MeshRenderers
             bool hasMR = Marker.GetMR(anyMarkers, marker, collider.gameObject, out MeshRenderer mr); //!mr.Equals(null))//mr != null) //var mr = ; //This is (I think) more performant // collider.GetComponent<MeshRenderer>();

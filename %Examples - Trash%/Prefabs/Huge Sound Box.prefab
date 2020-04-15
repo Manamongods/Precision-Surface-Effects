@@ -49,11 +49,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}
-      propertyPath: vibrationSound.maxForce
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
-        type: 3}
       propertyPath: totalPitchMultiplier
       value: 0.5
       objectReference: {fileID: 0}
@@ -76,16 +71,6 @@ PrefabInstance:
         type: 3}
       propertyPath: impactSound.maxVolume
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
-        type: 3}
-      propertyPath: vibrationSound.maxVolume
-      value: 0.3333
-      objectReference: {fileID: 0}
-    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
-        type: 3}
-      propertyPath: vibrationSound.impactForceMultiplier
-      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}
@@ -114,13 +99,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}
-      propertyPath: vibrationSound.volumeByForce
-      value: 0.001
+      propertyPath: soundScaling.forceMultiplier
+      value: 0.0002
       objectReference: {fileID: 0}
     - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}
-      propertyPath: vibrationSound.frictionForceMultiplier
-      value: 10
+      propertyPath: soundScaling.totalVolumeMultiplier
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 47305488334938371, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: soundScaling.totalPitchMultiplier
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 47305488334938374, guid: 09c62c7211d37d745a291c8767652fbc,
         type: 3}
@@ -206,6 +196,51 @@ PrefabInstance:
         type: 3}
       propertyPath: MinDistance
       value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7809509839826565320, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: vibrationSound.volumeByForce
+      value: 0.001
+      objectReference: {fileID: 0}
+    - target: {fileID: 7809509839826565320, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: vibrationSound.maxForce
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7809509839826565320, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: vibrationSound.impactForceMultiplier
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7809509839826565320, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: vibrationSound.frictionForceMultiplier
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7809509839826565320, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: scaling.forceMultiplier
+      value: 0.0002
+      objectReference: {fileID: 0}
+    - target: {fileID: 7809509839826565320, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: scaling.totalVolumeMultiplier
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7809509839826565320, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: scaling.totalPitchMultiplier
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7809509839826565320, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: contribution.impactForceMultiplier
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7809509839826565320, guid: 09c62c7211d37d745a291c8767652fbc,
+        type: 3}
+      propertyPath: contribution.frictionForceMultiplier
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 09c62c7211d37d745a291c8767652fbc, type: 3}

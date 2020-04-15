@@ -11,6 +11,26 @@ using UnityEngine;
 
 namespace PrecisionSurfaceEffects
 {
+    [System.Serializable]
+    public struct SoundScaling
+    {
+        public float speedMultiplier;
+        public float forceMultiplier;
+        public float totalVolumeMultiplier;
+        public float totalPitchMultiplier;
+
+        public static SoundScaling Default()
+        {
+            return new SoundScaling()
+            {
+                speedMultiplier = 1,
+                forceMultiplier = 1,
+                totalVolumeMultiplier = 1,
+                totalPitchMultiplier = 1,
+            };
+        }
+    }
+
     public sealed partial class CollisionEffects : CollisionEffectsMaker, IOnOnCollisionStay
     {
         //Constants
@@ -58,11 +78,8 @@ namespace PrecisionSurfaceEffects
 
         [Header("Scaling")]
         [Space(5)]
-        [Tooltip("To easily make the sound speed be local/relative")] //These 4 apply only to sounds, not particles
-        public float soundSpeedMultiplier = 1;
-        public float soundForceMultiplier = 1;
-        public float totalVolumeMultiplier = 0.3f;
-        public float totalPitchMultiplier = 1;
+        [Tooltip("To easily make the sound speed be local/relative")]
+        public SoundScaling soundScaling = SoundScaling.Default(); //These 4 apply only to sounds, not particles
 
         [Header("Impact Sound")]
         [Space(5)]
@@ -76,7 +93,8 @@ namespace PrecisionSurfaceEffects
         [Header("Vibration Sound")]
         [Space(5)]
         public bool doVibrationSound = true;
-        public VibrationSound vibrationSound = new VibrationSound();
+        public VibrationContribution vibrationContribution = new VibrationContribution() { impactSpeedMultiplier = 1 };
+        public VibrationSound vibrationSound;
 
         [SeperatorLine]
         [Header("Particles")]
@@ -145,9 +163,6 @@ namespace PrecisionSurfaceEffects
         public void ResetSounds()
         {
             //?
-
-            vibrationSound.impulse = 0;
-            vibrationSound.weightedSpeed = 0;
 
             forceSum = 0;
             weightedSpeed = 0;
@@ -422,10 +437,10 @@ namespace PrecisionSurfaceEffects
             }
         }
 
-        public void AddImpactVibration(float impulse, float speed)
+        public void AddImpactVibration(Vector3 position, float impulse, float speed)
         {
             if (doVibrationSound)
-                vibrationSound.Add(impulse * vibrationSound.impactForceMultiplier, speed * vibrationSound.impactSpeedMultiplier);
+                vibrationSound.AddImpact(position, impulse * vibrationContribution.impactForceMultiplier, speed * vibrationContribution.impactSpeedMultiplier);
         }
 
 
@@ -486,7 +501,7 @@ namespace PrecisionSurfaceEffects
             float absImpulse = impulse;
             if (impulse != 0)
                 impulseNormal /= impulse;
-            impulse *= soundForceMultiplier;
+            impulse *= soundScaling.forceMultiplier;
 
 
             //Gets Contact Points
@@ -503,7 +518,7 @@ namespace PrecisionSurfaceEffects
 
 
             bool stop = Stop(collision.collider, true);
-            if (stop && !doVibrationSound)
+            if (stop) // && !doVibrationSound)
                 return;
 
 
@@ -665,8 +680,7 @@ namespace PrecisionSurfaceEffects
 
             var doParticles = particlesType == ParticlesType.ImpactAndFriction;
             SurfaceOutputs soundOutputs = null, particleOutputs = null;
-            if(!stop)
-                GetSurfaceTypeOutputs(contactPoints[0], doFrictionSound, doParticles, out soundOutputs, out particleOutputs);
+            GetSurfaceTypeOutputs(contactPoints[0], true, doParticles, out soundOutputs, out particleOutputs); //if(!stop) //doFrictionSound
 
 
             //Calculation
@@ -680,7 +694,8 @@ namespace PrecisionSurfaceEffects
 
             float rollingSpeed = Vector3.ProjectOnPlane(rollingVelocity, normal).magnitude; //centerSpeed //The reason is because perpendicularSpeed is for slide sounds, and centerSpeed is for roll sounds. But they are both considered friction sounds here
             float frictionSpeed = perpendicularSpeed * frictionSound.slidingAmount + rollingSpeed * frictionSound.rollingAmount; //Mathf.Max();
-            frictionSpeed *= soundSpeedMultiplier;
+            float absFrictionSpeed = frictionSpeed;
+            frictionSpeed *= soundScaling.speedMultiplier;
 
             var frictionForce = impulse / Time.deltaTime; //force = Mathf.Max(0, Mathf.Min(frictionSound.maxForce, force) - frictionSound.minForce);
             float speedFader = frictionSound.SpeedFader(frictionSpeed); //So that it is found the maximum with this in mind
@@ -690,11 +705,14 @@ namespace PrecisionSurfaceEffects
             //Vibration Sound
             if (doVibrationSound)
             {
-                vibrationSound.Add(impulse * speedFader * vibrationSound.frictionForceMultiplier, frictionSpeed * vibrationSound.frictionSpeedMultiplier);
+                vibrationSound.AddFriction(center, absImpulse * speedFader * vibrationContribution.frictionForceMultiplier, absFrictionSpeed * vibrationContribution.frictionSpeedMultiplier);
 
-                if (stop)
-                    return;
+                //if (stop)
+                //    return;
             }
+
+            if (soundOutputs.vibrationSound != null)
+                soundOutputs.vibrationSound.AddFriction(center, absImpulse * speedFader, absFrictionSpeed);
 
 
             //Friction Sounds
@@ -713,33 +731,41 @@ namespace PrecisionSurfaceEffects
         {
             stop = stop || impactCooldownT > 0; //Impact cooldown is actually quite arbitrarily influenced by whether it is Stopped or not
 
-            if (!stop || doVibrationSound)
+            if (!stop) // || doVibrationSound)
             {
                 var absSpeed = relativeVelocity.magnitude;
-                var speed = soundSpeedMultiplier * absSpeed;
+                var speed = soundScaling.speedMultiplier * absSpeed;
                 float speedFade = impactSound.SpeedFader(speed);
 
                 var absImpulse = impulseVector.magnitude;
-                var impulse = soundForceMultiplier * absImpulse;
-                var vol = totalVolumeMultiplier * impactSound.Volume(impulse) * speedFade; //force //Here "force" is actually an impulse
+                var impulse = soundScaling.forceMultiplier * absImpulse;
+                var vol = soundScaling.totalVolumeMultiplier * impactSound.Volume(impulse) * speedFade; //force //Here "force" is actually an impulse
 
                 if (vol > 0.000000000001f)
                 {
-                    if (doVibrationSound)
-                    {
-                        vibrationSound.Add(impulse * vibrationSound.impactForceMultiplier * speedFade, speed * vibrationSound.impactSpeedMultiplier); //Remove speedFade?
-                    }
-
-                    if (stop)
-                        return;
-
                     impactCooldownT = impactCooldown;
 
                     bool doParticles = particlesType != ParticlesType.None;
                     GetSurfaceTypeOutputs(contactPoints[0], true, doParticles, out SurfaceOutputs soundOutputs, out SurfaceOutputs particleOutputs);
+                    bool doOtherVibrationSound = soundOutputs.vibrationSound != null;
+
+                    Vector3 center = default, normal = default;
+                    float radius = default;
+                    Vector3 vel0 = default, vel1 = default, cvel0 = default, cvel1 = default;
+                    float mass0 = default, mass1 = default;
+                    if (doParticles || doVibrationSound || doOtherVibrationSound)
+                    {
+                        Calculate(contactPoints, out center, out normal, out radius, out vel0, out vel1, out cvel0, out cvel1, out mass0, out mass1);
+                    }
+
+                    if (doVibrationSound)
+                        vibrationSound.AddImpact(center, absImpulse * vibrationContribution.impactForceMultiplier * speedFade, absSpeed * vibrationContribution.impactSpeedMultiplier); //Remove speedFade?
+
+                    if (doOtherVibrationSound)
+                        soundOutputs.vibrationSound.AddImpact(center, absImpulse * speedFade, absSpeed);
 
                     #region Impact Sound
-                    var pitch = totalPitchMultiplier * impactSound.Pitch(speed);
+                    var pitch = soundScaling.totalPitchMultiplier * impactSound.Pitch(speed);
 
                     int maxc = impactSound.audioSources.Length;
                     soundOutputs.Downshift(maxc, impactSound.minimumTypeWeight);
@@ -764,14 +790,6 @@ namespace PrecisionSurfaceEffects
                         float approximateCollisionDuration = GetApproximateImpactDuration(particles.selfHardness, soundOutputs.hardness);
 
                         particleOutputs.Downshift(MAX_PARTICLE_TYPE_COUNT, particles.minimumTypeWeight);
-
-                        Calculate
-                        (
-                            contactPoints,
-                            out Vector3 center, out Vector3 normal, out float radius, 
-                            out Vector3 vel0, out Vector3 vel1, out Vector3 cvel0, out Vector3 cvel1, 
-                            out float mass0, out float mass1
-                        );
 
                         DoParticles
                         (
@@ -869,9 +887,6 @@ namespace PrecisionSurfaceEffects
 
             for (int i = 0; i < frictionSound.audioSources.Length; i++)
                 frictionSound.audioSources[i].Pause();
-
-            if (doVibrationSound)
-                vibrationSound.audioSource.Pause();
         }
 
 #if UNITY_EDITOR
@@ -885,12 +900,6 @@ namespace PrecisionSurfaceEffects
 
             impactSound.Validate(false);
             frictionSound.Validate(true);
-
-            if (doVibrationSound)
-            {
-                vibrationSound.audioSource.loop = true;
-                vibrationSound.audioSource.playOnAwake = false;
-            }
         }
 #endif
 
@@ -938,14 +947,9 @@ namespace PrecisionSurfaceEffects
 
         private void Update()
         {
-            impactCooldownT -= Time.deltaTime;
+            impactCooldownT -= Time.deltaTime; //I could use Time.time
 
-            if(doVibrationSound)
-            {
-                vibrationSound.Update(totalVolumeMultiplier, totalPitchMultiplier);
-            }
-
-            if (doFrictionSound)
+            if (doFrictionSound) //Turn this into a coroutine?
             {
                 //Downshifts and reroutes
                 if (!downShifted)
@@ -1038,8 +1042,8 @@ namespace PrecisionSurfaceEffects
                     currentFrictionDebug = currentFrictionDebug + st.name + " V: " + output.weight + " P: " + output.pitchMultiplier + "\n";
 #endif
 
-                    var vm = totalVolumeMultiplier * output.volumeMultiplier;
-                    var pm = totalPitchMultiplier * output.pitchMultiplier;
+                    var vm = soundScaling.totalVolumeMultiplier * output.volumeMultiplier;
+                    var pm = soundScaling.totalPitchMultiplier * output.pitchMultiplier;
                     source.Update(frictionSound, vm, pm, forceSum * output.weight, speed);
                 }
 
@@ -1049,7 +1053,7 @@ namespace PrecisionSurfaceEffects
                     var source = frictionSound.sources[i];
                     if (!source.given)
                     {
-                        source.Update(frictionSound, totalVolumeMultiplier, totalPitchMultiplier, 0, 0);
+                        source.Update(frictionSound, soundScaling.totalVolumeMultiplier, soundScaling.totalPitchMultiplier, 0, 0);
                     }
                 }
             }

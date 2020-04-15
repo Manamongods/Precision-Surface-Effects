@@ -19,6 +19,11 @@ namespace PrecisionSurfaceEffects
         public Color defaultColor = Color.white;
         public float volumeMultiplier = 1;
         public float pitchMultiplier = 1;
+
+        [Header("Custom User Data")]
+        public Object[] userObjects = new Object[0];
+        [System.NonSerialized]
+        public object userData;
     }
 
     [CreateAssetMenu(menuName = "Precision Surface Effects/Surface Type")]
@@ -29,6 +34,11 @@ namespace PrecisionSurfaceEffects
 
         [Space(30)]
         public SubType[] subTypes = new SubType[1] { new SubType() };
+
+        [Header("Custom User Data")] 
+        public Object[] defaultUserObjects = new Object[0];
+        [System.NonSerialized]
+        public object defaultUserData;
 
         [System.Serializable]
         public class SubType

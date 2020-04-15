@@ -14,6 +14,7 @@ public class SurfaceEffectsBase : MonoBehaviour
     public float volumeByImpulse = 1;
     public float basePitch = 1;
     public float pitchBySpeed;
+    public bool applyVibration = true;
 
     [Header("Particles")]
     [Space(20)]
@@ -35,6 +36,8 @@ public class SurfaceEffectsBase : MonoBehaviour
     //Methods
     public SurfaceOutputs Play(AudioSource[] audioSources, Vector3 pos, Vector3 dir, float impulse, float speed)
     {
+        dir.Normalize();
+
         var outputs = soundSet.data.GetRaycastSurfaceTypes(pos, dir, shareList: true);
         outputs.Downshift(audioSources.Length, minimumWeight);
 
@@ -49,6 +52,12 @@ public class SurfaceEffectsBase : MonoBehaviour
                 output.otherParticleMultipliers *= otherParticleMultipliers;
                 particleSet.PlayParticles(outputs, output, selfColor, impulse, speed * dir, mass, radius: particleRadius, deltaTime: particleDeltaTime); //-speed * outputs.hitNormal
             }
+        }
+
+        if (applyVibration)
+        {
+            if (outputs.vibrationSound != null)
+                outputs.vibrationSound.AddImpact(outputs.hitPosition, impulse, speed);
         }
 
         return outputs;
