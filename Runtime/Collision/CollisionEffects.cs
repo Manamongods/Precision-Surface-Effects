@@ -35,9 +35,8 @@ namespace PrecisionSurfaceEffects
     {
         //Constants
         public static float EXTRA_SEARCH_THICKNESS = 0.01f;
-        public static int MAX_PARTICLE_TYPE_COUNT = 10;
-        public static float IMPACT_DURATION_CONSTANT = .1f;
-        public static bool CLAMP_FINAL_ONE_SHOT_VOLUME = false; //true;
+        public static int MAX_PARTICLE_TYPE_COUNT = 5;
+        public static float IMPACT_DURATION_CONSTANT = 0.1f;
         public static float AUDIBLE_THRESHOLD = 0.00001f; //this is important especially because SmoothDamp never reaches the target
         public static float TOUCHING_SEPARATION_THRESHOLD = 0.01f;
 
@@ -60,15 +59,19 @@ namespace PrecisionSurfaceEffects
         [Header("Impacts")]
         [Space(30)]
         [Min(0.0001f)]
+        [Tooltip("Prevents multiple impacts in short succession")]
         public float impactCooldown = 0.1f;
         [Space(5)]
+        [Tooltip("Quite successfully finds impacts that are created during OnCollisionStay")]
         public bool doSpeculativeImpacts;
+        [Tooltip("The precision bias for touching or not. You might need to make this smaller if your object is smaller, or bigger if your object is bigger")]
         public float separationThresholdMultiplier = 1;
-        public float minimumAngleDifference = 30;
-        //public float maximumContactRelocationRate = 100; //This probably only works for "Persistent Contact Manifold" Contacts Generation
-        //public float maximumContactRotationRate = 180;
+        [Tooltip("A new ContactPoint's normal will need to be at least this many degrees different than another ContactPoint's, for it to be considered an impact")]
+        public float minimumAngleDifference = 15;
         [Space(5)]
+        [Tooltip("A simpler and much worse version of doSpeculativeImpacts, more performant though (I believe). Very reliant on gravity scale/the forces involved")]
         public bool doImpactByForceChange = true;
+        [Tooltip("The immediate force change required to be considered a new impact")]
         public float forceChangeToImpact = 10;
 
         [SeperatorLine]
@@ -103,6 +106,9 @@ namespace PrecisionSurfaceEffects
         public SurfaceParticleSet particleSet;
         public Particles particles = new Particles();
 
+
+
+        //Private Fields
         [SerializeField][HideInInspector]
         private Rigidbody rb;
         [SerializeField][HideInInspector]
@@ -119,16 +125,15 @@ namespace PrecisionSurfaceEffects
         private bool downShifted;
 
         private readonly List<Contact> contacts = new List<Contact>();
+        private static readonly Queue<Contact> availableContacts = new Queue<Contact>();
 
         private readonly List<int> bestIDs = new List<int>();
         private readonly List<int> currs = new List<int>();
         private readonly List<int> prevs = new List<int>();
 
-        private static readonly ContactPoint[] dumbCPs = new ContactPoint[64];
+        private static readonly ContactPoint[] dumbCPs = new ContactPoint[64]; //Because getting the contact points using a list will have unity always populating the list to 64 elements, basically: there is no point in using a list...
         private static readonly List<ContactPoint> contactPoints = new List<ContactPoint>();
         private static readonly List<ContactPoint> speculativePoints = new List<ContactPoint>();
-
-        private static readonly Queue<Contact> availableContacts = new Queue<Contact>();
 
 
 
@@ -781,8 +786,6 @@ namespace PrecisionSurfaceEffects
                         var output = soundOutputs[i];
                         var st = soundSet.surfaceTypeSounds[output.surfaceTypeID];
                         var voll = vol * output.weight * output.volumeMultiplier;
-                        if (CLAMP_FINAL_ONE_SHOT_VOLUME)
-                            voll = Mathf.Min(voll, 1);
                         st.PlayOneShot(impactSound.audioSources[i], voll, pitch * output.pitchMultiplier);
                     }
                     #endregion
@@ -827,7 +830,6 @@ namespace PrecisionSurfaceEffects
 
         private class Contact
         {
-            //Fields
             public bool used;
 
             public Collider thisCollider;
@@ -838,7 +840,7 @@ namespace PrecisionSurfaceEffects
             private const int DEF_C = 8;
             public List<ContactPoint> contactPoints0 = new List<ContactPoint>(DEF_C);
             public List<ContactPoint> contactPoints1 = new List<ContactPoint>(DEF_C);
-            public List<Vector3> locals0 = new List<Vector3>(DEF_C); //Local
+            public List<Vector3> locals0 = new List<Vector3>(DEF_C);
             public List<Vector3> locals1 = new List<Vector3>(DEF_C);
             
             public void Flip()
@@ -1066,6 +1068,9 @@ namespace PrecisionSurfaceEffects
 }
 
 /*
+ *         //public float maximumContactRelocationRate = 100; //This probably only works for "Persistent Contact Manifold" Contacts Generation
+        //public float maximumContactRotationRate = 180;
+
         public delegate void OnSurfaceCallback(Collision collision, SurfaceOutputs outputs);
  * 
             //public struct Local

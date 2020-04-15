@@ -118,6 +118,11 @@ namespace PrecisionSurfaceEffects
     [System.Serializable]
     public class SurfaceTypeSounds : SurfaceSetType
     {
+        //Constants
+        public static bool CLAMP_FINAL_ONE_SHOT_VOLUME = false;
+
+
+
         //Fields
 #if UNITY_EDITOR
         [SerializeField]
@@ -164,6 +169,9 @@ namespace PrecisionSurfaceEffects
         public void PlayOneShot(AudioSource audioSource, float volumeMultiplier = 1, float pitchMultiplier = 1)
         {
             var c = GetRandomClip(out float volume, out float pitch);
+
+            if (CLAMP_FINAL_ONE_SHOT_VOLUME)
+                volume = Mathf.Min(volume, 1);
 
             if (c != null)
             {

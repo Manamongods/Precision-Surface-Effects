@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using PrecisionSurfaceEffects;
 
-//You use PlayFootSound(int id) as an animation event
-
 public class RaycastFeet : CastFeet
 {
     //Fields

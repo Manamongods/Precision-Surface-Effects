@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using PrecisionSurfaceEffects;
 
-//You use PlayFootSound(int id) as an animation event
-
 //You should scale the radius by transform.lossyScale if you want to be able to shrink the character
 
 public class SphereCastFeet : CastFeet
