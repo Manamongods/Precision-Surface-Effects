@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: def384a3044af2a429563ae488ff544e, type: 3}
+  m_Name: Player Overrides
+  m_EditorClassIdentifier: 
+  overrides:
+  - autoHeader: Metal ball Particle Set
+    particleSet: {fileID: 11400000, guid: ba419fd3c5da39648b19eb10694ec9c9, type: 2}
+    particles:
+    - particles: {fileID: 8336940682812909097, guid: 6c0b603aff361be44b3271be0f1a4d0f,
+        type: 3}
+      selfMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      otherMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      originType: 0
+  - autoHeader: Soft ball Particle Set
+    particleSet: {fileID: 11400000, guid: cadcb87f0792e944d899ccbe7bdd05b6, type: 2}
+    particles: []
+  - autoHeader: Bullet Particle Set
+    particleSet: {fileID: 11400000, guid: 62a6441a19f2db644bda9edf40c5b1b4, type: 2}
+    particles:
+    - particles: {fileID: 8336940682812909097, guid: 6c0b603aff361be44b3271be0f1a4d0f,
+        type: 3}
+      selfMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      otherMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      originType: 0

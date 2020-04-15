@@ -26,9 +26,7 @@ namespace PrecisionSurfaceEffects
         //Methods
         public SurfaceOutputs GetRHSurfaceTypes(RaycastHit rh, bool shareList = false)
         {
-            outputs.vibrationSound = null;
-            outputs.Clear();
-            outputs.hardness = 0;
+            PrepareOutputs(rh.point);
             FillOutputs(rh);
             AddSurfaceTypes(rh.collider, rh.point, triangleIndex: rh.triangleIndex);
             return GetList(shareList);
@@ -348,21 +346,26 @@ namespace PrecisionSurfaceEffects
         private void AddSingleOutput(int stID, SurfaceType st, SurfaceType.SubType subType)
         {
             outputs.hardness = st.hardnessMultiplier;
-            outputs.Add
-            (
-                new SurfaceOutput()
-                {
-                    surfaceTypeID = stID,
-                    weight = 1,
-                    volumeMultiplier = subType.settings.volumeMultiplier,
-                    pitchMultiplier = subType.settings.pitchMultiplier,
-                    particleOverrides = null,
-                    color = st.defaultColorTint * subType.settings.defaultColor,
-                    selfParticleMultipliers = ParticleMultipliers.Default(),
-                    otherParticleMultipliers = ParticleMultipliers.Default(),
-                }
-            );
+
+            var so = new SurfaceOutput()
+            {
+                surfaceTypeID = stID,
+                weight = 1,
+                volumeMultiplier = subType.settings.volumeMultiplier,
+                pitchMultiplier = subType.settings.pitchMultiplier,
+                particleOverrides = null,
+                color = st.defaultColorTint * subType.settings.defaultColor,
+                selfParticleMultipliers = ParticleMultipliers.Default(),
+                otherParticleMultipliers = ParticleMultipliers.Default(),
+            };
+
+            outputs.Add(so);
         }
+
+        //private void AddUserData(ref SurfaceOutput so, SurfaceType st, SurfaceType.SubType subtype)
+        //{
+        //    so.userData = subtype.
+        //}
 
         private SurfaceBlends.NormalizedBlend Settingsify(SurfaceBlends.NormalizedBlend blendResult)
         {

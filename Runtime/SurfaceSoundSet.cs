@@ -20,6 +20,7 @@ namespace PrecisionSurfaceEffects
 #if UNITY_EDITOR
         [Header("Testing")]
         public float testLoopVolumeMultiplier = 1;
+        public float testClipVolumeMultiplier = 1;
 #endif
 
         //Methods
@@ -46,7 +47,7 @@ namespace PrecisionSurfaceEffects
                     sts.testClips = false;
 
                     AssertSource(ref testClipSource, "Clips");
-                    sts.PlayOneShot(testClipSource);
+                    sts.PlayOneShot(testClipSource, testClipVolumeMultiplier);
                 }
 
                 if (sts.testFriction)

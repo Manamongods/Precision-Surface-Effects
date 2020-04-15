@@ -55,12 +55,12 @@ MonoBehaviour:
     pitchVariation: 0.2
     clipVariants:
     - clip: {fileID: 8300000, guid: 6898ead3978f3f24abde360099bc5ad2, type: 3}
-      volumeMultiplier: 1
+      volumeMultiplier: 1.75
       pitchMultiplier: 1
       probabilityWeight: 1
     frictionSound:
       clip: {fileID: 8300000, guid: 9a532385e5f2c8b4fbd8a76c22fa5862, type: 3}
-      volumeMultiplier: 4
+      volumeMultiplier: 1
       pitchMultiplier: 1.5
   - name: Wood
     testClips: 0
@@ -76,7 +76,7 @@ MonoBehaviour:
       probabilityWeight: 1
     frictionSound:
       clip: {fileID: 8300000, guid: dc3b059c7c4ee6f4c9ddc7802e1df77a, type: 3}
-      volumeMultiplier: 1
+      volumeMultiplier: 0.8
       pitchMultiplier: 1
   - name: Hollow Metal
     testClips: 0
@@ -92,7 +92,7 @@ MonoBehaviour:
       probabilityWeight: 1
     frictionSound:
       clip: {fileID: 8300000, guid: 9a532385e5f2c8b4fbd8a76c22fa5862, type: 3}
-      volumeMultiplier: 4
+      volumeMultiplier: 2
       pitchMultiplier: 2
   - name: Muddy
     testClips: 0
@@ -107,7 +107,8 @@ MonoBehaviour:
       pitchMultiplier: 1
       probabilityWeight: 1
     frictionSound:
-      clip: {fileID: 8300000, guid: 23d13f52b5a01964e82ea27791642175, type: 3}
-      volumeMultiplier: 2
-      pitchMultiplier: 0.25
+      clip: {fileID: 8300000, guid: f1db2f10b6499424aad6e76532a790b1, type: 3}
+      volumeMultiplier: 1
+      pitchMultiplier: 1.2
   testLoopVolumeMultiplier: 0.1
+  testClipVolumeMultiplier: 1

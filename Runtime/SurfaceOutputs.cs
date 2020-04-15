@@ -22,6 +22,9 @@ namespace PrecisionSurfaceEffects
 
         public ParticleMultipliers selfParticleMultipliers;
         public ParticleMultipliers otherParticleMultipliers;
+
+        //public Object[] userObjects;
+        //public object userData;
     }
 
     public class SurfaceOutputs : List<SurfaceOutput>

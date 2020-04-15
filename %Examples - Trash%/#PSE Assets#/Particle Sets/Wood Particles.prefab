@@ -87,6 +87,16 @@ PrefabInstance:
       propertyPath: rollingSpeedMultiplier
       value: 0.02
       objectReference: {fileID: 0}
+    - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: scalerByForce.constant
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1168232926187352515, guid: d7001457c7180594a83ab93837359c5d,
+        type: 3}
+      propertyPath: countByInverseScaleExponent
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7670574646986875101, guid: d7001457c7180594a83ab93837359c5d,
         type: 3}
       propertyPath: InitialModule.startRotationX.minMaxState

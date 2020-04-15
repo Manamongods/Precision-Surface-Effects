@@ -522,159 +522,162 @@ namespace PrecisionSurfaceEffects
                 return;
 
 
-            #region Finds Contact
-            Contact contact = null;
-            for (int i = 0; i < contacts.Count; i++)
+            if (doSpeculativeImpacts || doImpactByForceChange)
             {
-                var c = contacts[i];
-                if (c.otherCollider == collider && c.thisCollider == thisCollider)
+                #region Finds Contact
+                Contact contact = null;
+                for (int i = 0; i < contacts.Count; i++)
                 {
-                    contact = c;
-                    break;
-                }
-            }
-            #endregion
-
-            if (contact != null) //!stop && 
-            {
-                contact.used = true;
-
-
-                //Speculative Impacts
-                if (doSpeculativeImpacts)
-                {
-                    contact.Flip();
-                    var selfTransform = c0.thisCollider.transform;
-                    contact.Update(selfTransform, contactPoints);
-
-                    #region Finds Best IDs
-                    int currentCount = contact.contactPoints0.Count;
-                    int previousCount = contact.contactPoints1.Count;
-
-                    bestIDs.Clear();
-                    for (int i = 0; i < currentCount; i++)
-                        bestIDs.Add(-1);
-
-                    if (previousCount != 0)
+                    var c = contacts[i];
+                    if (c.otherCollider == collider && c.thisCollider == thisCollider)
                     {
-                        currs.Clear();
+                        contact = c;
+                        break;
+                    }
+                }
+                #endregion
+
+                if (contact != null) //!stop && 
+                {
+                    contact.used = true;
+
+
+                    //Speculative Impacts
+                    if (doSpeculativeImpacts)
+                    {
+                        contact.Flip();
+                        var selfTransform = c0.thisCollider.transform;
+                        contact.Update(selfTransform, contactPoints);
+
+                        #region Finds Best IDs
+                        int currentCount = contact.contactPoints0.Count;
+                        int previousCount = contact.contactPoints1.Count;
+
+                        bestIDs.Clear();
                         for (int i = 0; i < currentCount; i++)
-                            currs.Add(i);
-                        prevs.Clear();
-                        for (int i = 0; i < previousCount; i++)
-                            prevs.Add(i);
+                            bestIDs.Add(-1);
 
-                        while(currs.Count > 0 && prevs.Count > 0)
+                        if (previousCount != 0)
                         {
-                            float bestDist = Mathf.Infinity;
-                            int bestCurr = -1, bestPrev = -1;
+                            currs.Clear();
+                            for (int i = 0; i < currentCount; i++)
+                                currs.Add(i);
+                            prevs.Clear();
+                            for (int i = 0; i < previousCount; i++)
+                                prevs.Add(i);
 
-                            for (int i = 0; i < currs.Count; i++)
+                            while (currs.Count > 0 && prevs.Count > 0)
                             {
-                                var currp = contact.locals0[currs[i]];
+                                float bestDist = Mathf.Infinity;
+                                int bestCurr = -1, bestPrev = -1;
 
-                                for (int ii = 0; ii < prevs.Count; ii++)
+                                for (int i = 0; i < currs.Count; i++)
                                 {
-                                    var prevp = contact.locals1[prevs[ii]];
+                                    var currp = contact.locals0[currs[i]];
 
-                                    var dist = (currp - prevp).sqrMagnitude;
-                                    if(dist < bestDist)
+                                    for (int ii = 0; ii < prevs.Count; ii++)
                                     {
-                                        bestDist = dist;
-                                        bestCurr = i;
-                                        bestPrev = ii;
+                                        var prevp = contact.locals1[prevs[ii]];
+
+                                        var dist = (currp - prevp).sqrMagnitude;
+                                        if (dist < bestDist)
+                                        {
+                                            bestDist = dist;
+                                            bestCurr = i;
+                                            bestPrev = ii;
+                                        }
+                                    }
+                                }
+
+                                bestIDs[currs[bestCurr]] = prevs[bestPrev];
+
+                                prevs.RemoveAt(bestPrev);
+                                currs.RemoveAt(bestCurr);
+                            }
+                        }
+                        #endregion
+
+                        #region Does Speculative Contacts
+                        var col = collision.collider;
+
+                        bool Touching(float separation)
+                        {
+                            return separation <= TOUCHING_SEPARATION_THRESHOLD * separationThresholdMultiplier;
+                        }
+
+                        speculativePoints.Clear();
+                        for (int i = 0; i < bestIDs.Count; i++)
+                        {
+                            var cp = contactPoints[i];
+
+#if UNITY_EDITOR
+                            if (bestIDs[i] != -1)
+                                Debug.DrawLine(cp.point, contact.contactPoints1[bestIDs[i]].point, Color.magenta); //Draws to the guessed previous location
+#endif
+
+                            if (Touching(cp.separation))
+                            {
+#if UNITY_EDITOR
+                                Debug.DrawRay(cp.point, Vector3.right, Color.green); //Draws a green sideways ray if the point is currently touching
+#endif
+
+                                var id = bestIDs[i];
+                                if (id == -1)
+                                {
+                                    float minimumAngle = Mathf.Infinity;
+                                    for (int ii = 0; ii < contactPoints.Count; ii++)
+                                    {
+                                        if (ii != i && bestIDs[ii] != -1)
+                                            minimumAngle = Mathf.Min(minimumAngle, Vector3.Angle(cp.normal, contactPoints[ii].normal));
+                                    }
+
+                                    if (minimumAngle > minimumAngleDifference) //Frequently it seems PhysX has e.g. 2 contacts in one location, and then suddenly creates a new one in the same general location.
+                                        speculativePoints.Add(cp);
+                                }
+                                else
+                                {
+                                    var prevCP = contact.contactPoints1[id];
+                                    bool previouslyTouching = Touching(prevCP.separation); //If not previously touching (I'm basing this on the idea that contacts are created before the impact, which seems to be quite an accurate assumption most of the time)
+
+                                    if (!previouslyTouching)
+                                    {
+                                        speculativePoints.Add(cp);
                                     }
                                 }
                             }
-
-                            bestIDs[currs[bestCurr]] = prevs[bestPrev];
-
-                            prevs.RemoveAt(bestPrev);
-                            currs.RemoveAt(bestCurr);
                         }
-                    }
-                    #endregion
 
-                    #region Does Speculative Contacts
-                    var col = collision.collider;
-
-                    bool Touching(float separation)
-                    {
-                        return separation <= TOUCHING_SEPARATION_THRESHOLD * separationThresholdMultiplier;
-                    }
-
-                    speculativePoints.Clear();
-                    for (int i = 0; i < bestIDs.Count; i++)
-                    {
-                        var cp = contactPoints[i];
-
-#if UNITY_EDITOR
-                        if (bestIDs[i] != -1)
-                            Debug.DrawLine(cp.point, contact.contactPoints1[bestIDs[i]].point, Color.magenta); //Draws to the guessed previous location
-#endif
-
-                        if (Touching(cp.separation))
+                        if (speculativePoints.Count > 0)
                         {
 #if UNITY_EDITOR
-                            Debug.DrawRay(cp.point, Vector3.right, Color.green); //Draws a green sideways ray if the point is currently touching
+                            for (int i = 0; i < speculativePoints.Count; i++)
+                                Debug.DrawRay(speculativePoints[i].point, Vector3.up * 100); //Draws a white ray upward if a new impact is created there
 #endif
 
-                            var id = bestIDs[i];
-                            if (id == -1)
-                            {
-                                float minimumAngle = Mathf.Infinity;
-                                for (int ii = 0; ii < contactPoints.Count; ii++)
-                                {
-                                    if(ii != i && bestIDs[ii] != -1)
-                                        minimumAngle = Mathf.Min(minimumAngle, Vector3.Angle(cp.normal, contactPoints[ii].normal));
-                                }
+                            OnOnCollisionEnter(stop, collider, speculativePoints, collision.impulse - contact.impulse, collision.relativeVelocity); //linearVelocity //TODO: find point velocity //Unfortunately the velocity is NOT point velocity
+                        }
+                        #endregion
+                    }
 
-                                if(minimumAngle > minimumAngleDifference) //Frequently it seems PhysX has e.g. 2 contacts in one location, and then suddenly creates a new one in the same general location.
-                                    speculativePoints.Add(cp);
-                            }
-                            else
-                            {
-                                var prevCP = contact.contactPoints1[id];
-                                bool previouslyTouching = Touching(prevCP.separation); //If not previously touching (I'm basing this on the idea that contacts are created before the impact, which seems to be quite an accurate assumption most of the time)
-                                
-                                if (!previouslyTouching)
-                                {
-                                    speculativePoints.Add(cp);
-                                }
-                            }
+
+                    //Impact by Force Change
+                    if (doImpactByForceChange)
+                    {
+                        var change = collision.impulse - contact.impulse;
+
+                        if (change.magnitude / Time.deltaTime >= forceChangeToImpact) //(imp.magnitude - contact.impulse)
+                        {
+                            OnOnCollisionEnter(stop, collider, contactPoints, change, collision.relativeVelocity); //linearVelocity //OnCollisionEnter(collision);
                         }
                     }
 
-                    if (speculativePoints.Count > 0)
-                    {
-#if UNITY_EDITOR
-                        for (int i = 0; i < speculativePoints.Count; i++)
-                            Debug.DrawRay(speculativePoints[i].point, Vector3.up * 100); //Draws a white ray upward if a new impact is created there
-#endif
 
-                        OnOnCollisionEnter(stop, collider, speculativePoints, collision.impulse - contact.impulse, collision.relativeVelocity); //linearVelocity //TODO: find point velocity //Unfortunately the velocity is NOT point velocity
-                    }
-                    #endregion
+                    contact.impulse = collision.impulse;
                 }
-
-
-                //Impact by Force Change
-                if (doImpactByForceChange)
+                else
                 {
-                    var change = collision.impulse - contact.impulse;
-
-                    if (change.magnitude / Time.deltaTime >= forceChangeToImpact) //(imp.magnitude - contact.impulse)
-                    {
-                        OnOnCollisionEnter(stop, collider, contactPoints, change, collision.relativeVelocity); //linearVelocity //OnCollisionEnter(collision);
-                    }
+                    AddContact(collision, c0);
                 }
-
-
-                contact.impulse = collision.impulse;
-            }
-            else
-            {
-                AddContact(collision, c0);
             }
 
 
@@ -939,7 +942,8 @@ namespace PrecisionSurfaceEffects
 
             var c0 = contactPoints[0];
 
-            AddContact(collision, c0);
+            if(doSpeculativeImpacts || doImpactByForceChange)
+                AddContact(collision, c0);
 
             bool stop = Stop(c0.otherCollider, false);
             OnOnCollisionEnter(stop, c0.otherCollider, contactPoints, collision.impulse, collision.relativeVelocity); //Has to send collision.relativeVelocity because the speed is probably already resolved
