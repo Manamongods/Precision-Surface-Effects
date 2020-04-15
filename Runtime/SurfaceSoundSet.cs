@@ -93,7 +93,9 @@ namespace PrecisionSurfaceEffects
 
             if (source == null)
             {
-                source = GameObject.Find(name).GetComponent<AudioSource>();
+                var g = GameObject.Find(name);
+                if(g != null)
+                    source = g.GetComponent<AudioSource>();
             }
 
             if (source == null)
