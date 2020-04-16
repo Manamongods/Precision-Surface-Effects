@@ -7,6 +7,7 @@ namespace PrecisionSurfaceEffects
 {
     [EditorOnly]
     [RequireComponent(typeof(VibrationSound))]
+    [AddComponentMenu("PSE/Helpers/Collision-Effects Vibration Scaling")]
     public class CEVibrationScaling : MonoBehaviour
     {
         public CollisionEffects collisionEffects;

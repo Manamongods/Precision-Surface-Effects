@@ -28,6 +28,7 @@ namespace PrecisionSurfaceEffects
 
     [RequireComponent(typeof(MeshRenderer), typeof(MeshFilter), typeof(MeshCollider))]
     [DisallowMultipleComponent]
+    [AddComponentMenu("PSE/Surface Markers/Surface Blend-Map Marker", -1000)]
     public sealed class SurfaceBlendMapMarker : Marker
     {
         //Fields

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using PrecisionSurfaceEffects;
 
+[AddComponentMenu("PSE/Footsteps/Raycast Feet", 1000)]
 public class RaycastFeet : CastFeet
 {
     //Fields

@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace PrecisionSurfaceEffects
 {
+    [AddComponentMenu("PSE/Vibration/Basic Vibration-Sound", -1000)]
     public class BasicVibrationSound : VibrationSound
     {
         //Fields

@@ -8,6 +8,7 @@ using UnityEngine;
 namespace PrecisionSurfaceEffects
 {
     [DisallowMultipleComponent]
+    [AddComponentMenu("PSE/Surface Markers/Surface Type Marker", -1000)]
     public class SurfaceTypeMarker : SingleMarker
     {
         //Fields

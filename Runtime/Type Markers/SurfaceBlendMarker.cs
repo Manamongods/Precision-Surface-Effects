@@ -13,6 +13,7 @@ namespace PrecisionSurfaceEffects
     public abstract class SingleMarker : Marker { }
 
     [RequireComponent(typeof(Collider))]
+    [AddComponentMenu("PSE/Surface Markers/Surface Blend Marker", -1000)]
     public sealed class SurfaceBlendMarker : SingleMarker
     {
         [SerializeField]

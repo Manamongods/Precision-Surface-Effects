@@ -31,6 +31,7 @@ namespace PrecisionSurfaceEffects
         }
     }
 
+    [AddComponentMenu("PSE/Collision/Collision-Effects", 1000)]
     public sealed partial class CollisionEffects : CollisionEffectsMaker, IOnOnCollisionStay
     {
         //Constants

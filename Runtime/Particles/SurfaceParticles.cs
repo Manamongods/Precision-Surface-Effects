@@ -39,6 +39,7 @@ namespace PrecisionSurfaceEffects
     }
 
     [RequireComponent(typeof(ParticleSystem))]
+    [AddComponentMenu("PSE/Surface Particles")]
     public class SurfaceParticles : MonoBehaviour
     {
         //Fields

@@ -9,6 +9,7 @@ using UnityEngine;
 using PrecisionSurfaceEffects;
 
 [ExecuteInEditMode]
+[AddComponentMenu("")]
 public class ArraycastTester : MonoBehaviour
 {
     //Fields

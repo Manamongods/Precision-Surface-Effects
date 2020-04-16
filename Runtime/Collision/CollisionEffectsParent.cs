@@ -8,7 +8,7 @@ using UnityEngine;
 namespace PrecisionSurfaceEffects
 {
     [DisallowMultipleComponent]
-    public class CollisionEffectsMaker : MonoBehaviour
+    public abstract class CollisionEffectsMaker : MonoBehaviour
     {
         //Fields
         [Tooltip("If bigger than a colliding CollisionEffects, it will play instead of it")]
@@ -24,6 +24,7 @@ namespace PrecisionSurfaceEffects
         }
     }
 
+    [AddComponentMenu("PSE/Collision/Collision-Effects Parent", 1000)]
     public class CollisionEffectsParent : CollisionEffectsMaker
     {
         //Fields

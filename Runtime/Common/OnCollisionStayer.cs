@@ -8,6 +8,7 @@ public interface IOnOnCollisionStay
 }
 
 [DisallowMultipleComponent]
+[AddComponentMenu("")]
 public sealed class OnCollisionStayer : MonoBehaviour
 {
     //Fields

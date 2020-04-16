@@ -18,6 +18,7 @@ namespace PrecisionSurfaceEffects
         public SurfaceBlends blends = new SurfaceBlends();
     }
 
+    [AddComponentMenu("PSE/Surface Markers/Surface Blend-Overrides Marker", -1000)]
     public sealed class SurfaceBlendOverridesMarker : OverridesMarker<BlendOverride>
     {
         protected override void Refresh(BlendOverride sm)
