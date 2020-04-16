@@ -1,4 +1,4 @@
-Shader "Example/Particle"
+Shader "Example/Texture Scaling Particles"
 {
     Properties 
     {
