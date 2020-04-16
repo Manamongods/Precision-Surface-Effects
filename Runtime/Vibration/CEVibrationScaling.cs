@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace PrecisionSurfaceEffects
 {
+    [EditorOnly]
     [RequireComponent(typeof(VibrationSound))]
     public class CEVibrationScaling : MonoBehaviour
     {

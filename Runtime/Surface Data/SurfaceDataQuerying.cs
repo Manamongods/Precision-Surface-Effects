@@ -193,7 +193,7 @@ namespace PrecisionSurfaceEffects
                 if (triangleIndex != -1 && collider is MeshCollider mc && !mc.convex)
                 {
                     var mesh = Marker.GetMF(anyMarkers, marker, collider.gameObject).sharedMesh; //could use the marker to find this faster
-                    int subMeshID = Utility.GetSubmesh(mesh, triangleIndex);
+                    int subMeshID = anyMarkers ? Utility.GetSubmesh(marker.submeshes, triangleIndex) : Utility.GetSubmesh(mesh, triangleIndex);
 
                     SurfaceBlends.NormalizedBlends blendResults = null;
                     if (anyMarkers)
@@ -215,12 +215,18 @@ namespace PrecisionSurfaceEffects
                                 blendResults = o.blends.result;
                     }
 
-                    if (blendResults == null)
+                    List<Material> GetMaterials()
                     {
-                        //Gets Materials
+                        if (anyMarkers)
+                            return marker.sharedMaterials; //If it has a marker, it doesn't need to spend time copying the list every time
                         materials.Clear();
                         mr.GetSharedMaterials(materials);
+                        return materials;
+                    }
 
+                    if (blendResults == null)
+                    {
+                        List<Material> materials = GetMaterials();
                         if(materialBlendLookup.TryGetValue(materials[subMeshID], out SurfaceBlends.NormalizedBlends value))
                             blendResults = value;
                     }
@@ -232,9 +238,7 @@ namespace PrecisionSurfaceEffects
                     }
                     else
                     {
-                        //Gets Materials
-                        materials.Clear();
-                        mr.GetSharedMaterials(materials);
+                        List<Material> materials = GetMaterials();
 
                         //Adds based on keywords
                         if (TryGetStringSurfaceType(materials[subMeshID].name, out int stID, out SurfaceType st, out SurfaceType.SubType subType, false))

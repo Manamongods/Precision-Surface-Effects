@@ -107,7 +107,7 @@ MonoBehaviour:
       pitchMultiplier: 1
       probabilityWeight: 1
     frictionSound:
-      clip: {fileID: 8300000, guid: f1db2f10b6499424aad6e76532a790b1, type: 3}
+      clip: {fileID: 8300000, guid: b5d4c8093b7634e43a41d69dcef93563, type: 3}
       volumeMultiplier: 1
       pitchMultiplier: 1.2
   testLoopVolumeMultiplier: 0.1

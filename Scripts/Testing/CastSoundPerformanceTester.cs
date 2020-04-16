@@ -3,7 +3,6 @@
 //Copyright (c) 2020 Steffen Vetne
 /////////////////////////////////////////////////////////
 
-#if UNITY_EDITOR
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,6 +23,7 @@ public class CastSoundPerformanceTester : MonoBehaviour
     [Space(30)]
     public SurfaceSoundSet soundSet;
 
+    public bool reuseRaycastHit;
     public int times = 1000;
     public int smoothFrames = 100;
 
@@ -52,13 +52,30 @@ public class CastSoundPerformanceTester : MonoBehaviour
         System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         sw.Start();
 
-        for (int i = 0; i < times; i++)
+        if (reuseRaycastHit)
         {
-            SurfaceOutputs outputs = soundSet.data.GetRaycastSurfaceTypes(pos, downDir, shareList: true);
-            outputs.Downshift(maxOutputCount, minWeight);
+            if (!Physics.Raycast(pos, downDir, out RaycastHit rh, Mathf.Infinity))
+                return;
 
-            for (int ii = 0; ii < outputs.Count; ii++)
-                clip = soundSet.surfaceTypeSounds[outputs[ii].surfaceTypeID].GetRandomClip(out volume, out pitch);
+            for (int i = 0; i < times; i++)
+            {
+                SurfaceOutputs outputs = soundSet.data.GetRHSurfaceTypes(rh, shareList: true);
+                outputs.Downshift(maxOutputCount, minWeight);
+
+                for (int ii = 0; ii < outputs.Count; ii++)
+                    clip = soundSet.surfaceTypeSounds[outputs[ii].surfaceTypeID].GetRandomClip(out volume, out pitch);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < times; i++)
+            {
+                SurfaceOutputs outputs = soundSet.data.GetRaycastSurfaceTypes(pos, downDir, shareList: true);
+                outputs.Downshift(maxOutputCount, minWeight);
+
+                for (int ii = 0; ii < outputs.Count; ii++)
+                    clip = soundSet.surfaceTypeSounds[outputs[ii].surfaceTypeID].GetRandomClip(out volume, out pitch);
+            }
         }
 
         sw.Stop();
@@ -73,7 +90,6 @@ public class CastSoundPerformanceTester : MonoBehaviour
             sum += elapses[i];
         sum /= smoothFrames;
 
-        this.text.text = times + " Iterations: \n\n" + time.ToString("00.00") + " MS\n\n" + sum.ToString("00.00") + " MS";
+        this.text.text = times + (reuseRaycastHit ? " Reused RH " : "") + " Iterations: \n\n" + time.ToString("00.00") + " MS\n\n" + sum.ToString("00.00") + " MS";
     }
 }
-#endif

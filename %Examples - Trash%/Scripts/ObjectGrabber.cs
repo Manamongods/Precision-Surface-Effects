@@ -10,6 +10,8 @@ public class ObjectGrabber : MonoBehaviour
     public KeyCode[] keycodes;
     public float acceleration = 20;
 
+    public float scrollSpeed = 0.2f;
+
     private Collider c;
     private Rigidbody rb;
     private Vector3 colliderPoint;
@@ -20,6 +22,8 @@ public class ObjectGrabber : MonoBehaviour
     //Lifecycle
     private void Update()
     {
+        cameraPoint *= Mathf.Max(0.001f, 1 + Input.GetAxisRaw("Mouse ScrollWheel") * scrollSpeed);
+
         bool any = false;
         for (int i = 0; i < keycodes.Length; i++)
         {

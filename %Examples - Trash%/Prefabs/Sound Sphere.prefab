@@ -428,7 +428,7 @@ MonoBehaviour:
     - {fileID: 7768311542087541603}
     - {fileID: 8229951337275091168}
     minimumTypeWeight: 0.1
-    volumeByForce: 0.05
+    volumeByForce: 0.02
     volumeFaderBySpeedRange: {x: 0, y: 0.1}
     maxVolume: 0.5
     basePitch: 0.35
@@ -446,7 +446,7 @@ MonoBehaviour:
   vibrationContribution:
     impactForceMultiplier: 1
     impactSpeedMultiplier: 1
-    frictionForceMultiplier: 1
+    frictionForceMultiplier: 0.25
     frictionSpeedMultiplier: 1
   vibrationSound: {fileID: 506221707120706664}
   particlesType: 2

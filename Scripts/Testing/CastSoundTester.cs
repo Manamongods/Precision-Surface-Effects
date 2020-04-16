@@ -3,7 +3,6 @@
 //Copyright (c) 2020 Steffen Vetne
 /////////////////////////////////////////////////////////
 
-#if UNITY_EDITOR
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -122,4 +121,3 @@ public class CastSoundTester : MonoBehaviour
 * 
         
 */
-#endif

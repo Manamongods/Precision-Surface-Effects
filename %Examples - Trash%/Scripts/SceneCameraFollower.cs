@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[EditorOnly]
 [ExecuteInEditMode]
 public class SceneCameraFollower : MonoBehaviour
 {

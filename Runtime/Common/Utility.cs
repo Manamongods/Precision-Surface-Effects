@@ -64,6 +64,22 @@ namespace PrecisionSurfaceEffects
 
             throw new System.Exception("Is this even possible?");
         }
+        public static int GetSubmesh(List<UnityEngine.Rendering.SubMeshDescriptor> submeshes, int raycastHitTriangleIndex)
+        {
+            var triIndex = raycastHitTriangleIndex * 3;
+
+            for (int submeshID = submeshes.Count - 1; submeshID >= 0; submeshID--)
+            {
+                int start = submeshes[submeshID].indexStart;
+
+                if (triIndex >= start)
+                {
+                    return submeshID;
+                }
+            }
+
+            throw new System.Exception("Is this even possible?");
+        }
 
 
         public static void Fill<T>(GameObject g, ref T[] children) where T : Component

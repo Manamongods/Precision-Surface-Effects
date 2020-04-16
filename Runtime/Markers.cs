@@ -22,6 +22,11 @@ namespace PrecisionSurfaceEffects
         [HideInInspector]
         public MeshFilter meshFilter;
 
+        [HideInInspector]
+        public List<Material> sharedMaterials = new List<Material>();
+
+        public readonly List<UnityEngine.Rendering.SubMeshDescriptor> submeshes = new List<UnityEngine.Rendering.SubMeshDescriptor>();
+
 
         //Methods
         public static bool GetMR(bool anyMarkers, Marker marker, GameObject gameObject, out MeshRenderer mr)
@@ -65,6 +70,24 @@ namespace PrecisionSurfaceEffects
             meshFilter = GetComponent<MeshFilter>();
             meshRenderer = GetComponent<MeshRenderer>();
             hasMR = meshRenderer != null;
+            sharedMaterials.Clear();
+            if(hasMR)
+            {
+                sharedMaterials.AddRange(meshRenderer.sharedMaterials);
+                //sharedMesh = meshFilter.sharedMesh;
+            }
+        }
+        public void RefreshSubmeshes()
+        {
+            if (hasMR)
+            {
+                var m = meshFilter.sharedMesh;
+
+                submeshes.Clear();
+                var c = m.subMeshCount;
+                for (int i = 0; i < c; i++)
+                    submeshes.Add(m.GetSubMesh(i));
+            }
         }
 
 
@@ -73,8 +96,15 @@ namespace PrecisionSurfaceEffects
         protected virtual void OnValidate()
         {
             Refresh();
+
+            RefreshSubmeshes(); //For editor mode
         }
 #endif
+
+        private void Awake()
+        {
+            RefreshSubmeshes();
+        }
     }
 
     public abstract class MarkerOverride
@@ -139,3 +169,8 @@ namespace PrecisionSurfaceEffects
 #endif
     }
 }
+
+/*
+ *         //[HideInInspector]
+        //public Mesh sharedMesh;
+*/

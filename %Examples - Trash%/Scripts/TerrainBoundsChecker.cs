@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[EditorOnly]
 public class TerrainBoundsChecker : MonoBehaviour
 {
     private void OnDrawGizmosSelected()

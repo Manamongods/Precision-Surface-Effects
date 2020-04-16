@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using PrecisionSurfaceEffects;
 
+[EditorOnly]
 [RequireComponent(typeof(SurfaceBlendMarker), typeof(CollisionEffects))]
 public class SurfaceObject : MonoBehaviour
 {
