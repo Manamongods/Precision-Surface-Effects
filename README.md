@@ -1,4 +1,5 @@
 WARNING: It is in beta
+Wiki is somewhat outdated
 
 # Precision Surface Effects
 
@@ -10,7 +11,7 @@ Uses: https://github.com/cfoulston/Unity-Reorderable-List for some reorderabilit
 
 It's possible that you'll need to import this into an empty project if you want to try the Example Scene, as the free assets I've taken from MicroSplat and Unity's Standard Assets might conflict if you already have them in your project.
 
-This is designed for smooth transitions and sort of automatic (albeit imperfect) support for any situation, without using cutoff points, without thresholds. It's not physically accurate, or very performant (e.g. it uses multiple audio sources for crossfading blending), but it is quite easily made extensible for a large variety of situations if you put in some initial effort. The settings probably seem esoteric, especially for the CollisionEffects component, but the example scene has been set up properly (semi properly; it's priority is showcasing features, not best practices) and you can probably learn using it, but otherwise I have filled the Wiki with what I could. Just tell me if there is an area I haven't thought of that is missing support.
+This is designed for smooth transitions and sort of automatic (albeit imperfect) support for any situation, without using cutoff points, without thresholds. It's not physically accurate, or very performant (e.g. it uses multiple audio sources for crossfading blending), but it is quite easily made extensible for a large variety of situations if you put in some initial effort. The settings probably seem esoteric, especially for the CollisionEffects component, but the example scene has been set up properly (semi properly; its priority is showcasing features, not best practices) and you can probably learn using it, but otherwise I have filled the Wiki with what I could. Just tell me if there is an area I haven't thought of that is missing support.
 
 More information can be found here: 
 
