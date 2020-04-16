@@ -218,8 +218,10 @@ namespace PrecisionSurfaceEffects
         }
 #endif
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+
             var mf = GetComponent<MeshFilter>();
             var m = mf.sharedMesh;
 

@@ -101,7 +101,7 @@ namespace PrecisionSurfaceEffects
         }
 #endif
 
-        private void Awake()
+        protected virtual void Awake()
         {
             RefreshSubmeshes();
         }
