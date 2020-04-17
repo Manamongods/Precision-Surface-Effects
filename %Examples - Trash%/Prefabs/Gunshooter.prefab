@@ -152,7 +152,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8919730822491214856}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 604.59, y: 613.96826, z: 228.87932}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 8919730822881971122}
@@ -178,16 +178,23 @@ MonoBehaviour:
   volumeByImpulse: 0.01
   basePitch: 2
   pitchBySpeed: 0
+  applyVibration: 1
   particleSet: {fileID: 11400000, guid: 62a6441a19f2db644bda9edf40c5b1b4, type: 2}
   particleRadius: 0
-  particleCountMultiplier: 1
-  particleSizeMultiplier: 2
+  selfParticleMultipliers:
+    countMultiplier: 1
+    sizeMultiplier: 1
+  otherParticleMultipliers:
+    countMultiplier: 1
+    sizeMultiplier: 1
   particleDeltaTime: 0.25
+  selfColor: {r: 1, g: 1, b: 1, a: 1}
   mass: 1
   layerMask:
     serializedVersion: 2
     m_Bits: 4294967295
   maxDistance: Infinity
+  keycodes: 7200000043010000
   audioSources:
   - {fileID: 8919730822881971121}
   - {fileID: 8919730823614379308}

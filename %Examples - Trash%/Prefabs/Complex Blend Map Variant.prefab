@@ -28,6 +28,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   markerFamily:
   - {fileID: 240894984}
+  meshRenderer: {fileID: 2853244683759111578}
+  hasMR: 1
+  meshFilter: {fileID: 8404925849726366051}
+  sharedMaterials:
+  - {fileID: 2100000, guid: 8ec6edb974c32314382f3727b1beea6b, type: 2}
   lastSampledColors: []
   blendMaps:
   - weight: 1
@@ -45,11 +50,31 @@ MonoBehaviour:
         hardnessMultiplier: 1
         volumeMultiplier: 1
         pitchMultiplier: 1
-        particleSizeMultiplier: 1
-        particleCountMultiplier: 1
+        selfParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
+        otherParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
         color: {r: 0.4339623, g: 0.31673, b: 0.2065504, a: 1}
         particleOverrides: {fileID: 0}
         normalizedWeight: 1
+      result:
+        result:
+        - lowerReference: wood
+          surfaceTypeID: 0
+          normalizedWeight: 1
+          hardness: 1
+          volume: 1
+          pitch: 1
+          color: {r: 0.4339623, g: 0.31673, b: 0.2065504, a: 1}
+          particleOverrides: {fileID: 0}
+          selfParticleMultipliers:
+            countMultiplier: 1
+            sizeMultiplier: 1
+          otherParticleMultipliers:
+            countMultiplier: 1
+            sizeMultiplier: 1
       colorMap: {fileID: 0}
     g:
       groupName: Metal
@@ -59,11 +84,31 @@ MonoBehaviour:
         hardnessMultiplier: 1
         volumeMultiplier: 1
         pitchMultiplier: 1
-        particleSizeMultiplier: 1
-        particleCountMultiplier: 1
+        selfParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
+        otherParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
         color: {r: 1, g: 1, b: 1, a: 1}
         particleOverrides: {fileID: 0}
         normalizedWeight: 1
+      result:
+        result:
+        - lowerReference: steel
+          surfaceTypeID: 0
+          normalizedWeight: 1
+          hardness: 1
+          volume: 1
+          pitch: 1
+          color: {r: 1, g: 1, b: 1, a: 1}
+          particleOverrides: {fileID: 0}
+          selfParticleMultipliers:
+            countMultiplier: 1
+            sizeMultiplier: 1
+          otherParticleMultipliers:
+            countMultiplier: 1
+            sizeMultiplier: 1
       colorMap: {fileID: 0}
     b:
       groupName: Stone
@@ -73,11 +118,31 @@ MonoBehaviour:
         hardnessMultiplier: 1
         volumeMultiplier: 1
         pitchMultiplier: 1
-        particleSizeMultiplier: 1
-        particleCountMultiplier: 1
+        selfParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
+        otherParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
         color: {r: 0.4811321, g: 0.4811321, b: 0.4811321, a: 1}
         particleOverrides: {fileID: 0}
         normalizedWeight: 1
+      result:
+        result:
+        - lowerReference: stone
+          surfaceTypeID: 0
+          normalizedWeight: 1
+          hardness: 1
+          volume: 1
+          pitch: 1
+          color: {r: 0.4811321, g: 0.4811321, b: 0.4811321, a: 1}
+          particleOverrides: {fileID: 0}
+          selfParticleMultipliers:
+            countMultiplier: 1
+            sizeMultiplier: 1
+          otherParticleMultipliers:
+            countMultiplier: 1
+            sizeMultiplier: 1
       colorMap: {fileID: 0}
     a:
       groupName: Grass
@@ -87,11 +152,31 @@ MonoBehaviour:
         hardnessMultiplier: 1
         volumeMultiplier: 1
         pitchMultiplier: 1
-        particleSizeMultiplier: 1
-        particleCountMultiplier: 1
+        selfParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
+        otherParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
         color: {r: 0.23488578, g: 0.5471698, b: 0.17267944, a: 1}
         particleOverrides: {fileID: 0}
         normalizedWeight: 1
+      result:
+        result:
+        - lowerReference: grass
+          surfaceTypeID: 0
+          normalizedWeight: 1
+          hardness: 1
+          volume: 1
+          pitch: 1
+          color: {r: 0.23488578, g: 0.5471698, b: 0.17267944, a: 1}
+          particleOverrides: {fileID: 0}
+          selfParticleMultipliers:
+            countMultiplier: 1
+            sizeMultiplier: 1
+          otherParticleMultipliers:
+            countMultiplier: 1
+            sizeMultiplier: 1
       colorMap: {fileID: 0}
   - weight: 1
     subMaterials:
@@ -103,28 +188,54 @@ MonoBehaviour:
     r:
       groupName: Magenta - Null/None
       blends: []
+      result:
+        result: []
       colorMap: {fileID: 0}
     g:
-      groupName: Marshy swampy muddy muck
+      groupName: Yellow muck
       blends:
       - reference: Mud
         weight: 1
         hardnessMultiplier: 1
         volumeMultiplier: 1
         pitchMultiplier: 1
-        particleSizeMultiplier: 1
-        particleCountMultiplier: 1
+        selfParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
+        otherParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
         color: {r: 1, g: 0.9168164, b: 0.15520924, a: 1}
         particleOverrides: {fileID: 0}
         normalizedWeight: 1
+      result:
+        result:
+        - lowerReference: mud
+          surfaceTypeID: 0
+          normalizedWeight: 1
+          hardness: 1
+          volume: 1
+          pitch: 1
+          color: {r: 1, g: 0.9168164, b: 0.15520924, a: 1}
+          particleOverrides: {fileID: 0}
+          selfParticleMultipliers:
+            countMultiplier: 1
+            sizeMultiplier: 1
+          otherParticleMultipliers:
+            countMultiplier: 1
+            sizeMultiplier: 1
       colorMap: {fileID: 0}
     b:
       groupName: 
       blends: []
+      result:
+        result: []
       colorMap: {fileID: 0}
     a:
       groupName: 
       blends: []
+      result:
+        result: []
       colorMap: {fileID: 0}
 --- !u!1001 &5514088157553270863
 PrefabInstance:
@@ -136,37 +247,37 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 587
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 418
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 430
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.66247356
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.24724261
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.2472426
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.66247344
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
         type: 3}
@@ -176,7 +287,7 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: -90
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
         type: 3}
@@ -186,7 +297,7 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 40.932
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: ecd1de837c7ec004690062ce0b97a92a,
         type: 3}
@@ -223,6 +334,18 @@ PrefabInstance:
 --- !u!1 &4585813275243575622 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: ecd1de837c7ec004690062ce0b97a92a,
+    type: 3}
+  m_PrefabInstance: {fileID: 5514088157553270863}
+  m_PrefabAsset: {fileID: 0}
+--- !u!33 &8404925849726366051 stripped
+MeshFilter:
+  m_CorrespondingSourceObject: {fileID: -5178661895559278292, guid: ecd1de837c7ec004690062ce0b97a92a,
+    type: 3}
+  m_PrefabInstance: {fileID: 5514088157553270863}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &2853244683759111578 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -1504981713932161579, guid: ecd1de837c7ec004690062ce0b97a92a,
     type: 3}
   m_PrefabInstance: {fileID: 5514088157553270863}
   m_PrefabAsset: {fileID: 0}

@@ -4,6 +4,7 @@
 /////////////////////////////////////////////////////////
 
 #define USE_DICTIONARY_SEARCH
+//#undef UNITY_EDITOR 
 
 using System.Collections;
 using System.Collections.Generic;

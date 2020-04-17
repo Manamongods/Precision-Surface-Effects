@@ -45,6 +45,11 @@ public class CastSoundPerformanceTester : MonoBehaviour
             enabled = false;
     }
 
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawRay(transform.position, -transform.up * 100);
+    }
+
     private void Update()
     {
         var pos = transform.position;

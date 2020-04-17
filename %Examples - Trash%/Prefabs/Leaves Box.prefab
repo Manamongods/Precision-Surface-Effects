@@ -28,7 +28,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7430399481824380230}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 567, y: 376.6, z: 198.7}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 18.807364, y: 18.807364, z: 18.807364}
   m_Children: []
   m_Father: {fileID: 0}
@@ -57,7 +57,6 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -82,7 +81,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &7430399481824380225
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -113,6 +111,8 @@ MonoBehaviour:
   meshRenderer: {fileID: 7430399481824380224}
   hasMR: 1
   meshFilter: {fileID: 7430399481824380227}
+  sharedMaterials:
+  - {fileID: 2100000, guid: 48a31eaf194541a46a1a14f0fbfd3bb0, type: 2}
   blends:
     groupName: 
     blends:
@@ -121,8 +121,12 @@ MonoBehaviour:
       hardnessMultiplier: 1
       volumeMultiplier: 1
       pitchMultiplier: 1
-      particleSizeMultiplier: 1
-      particleCountMultiplier: 1
+      selfParticleMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
+      otherParticleMultipliers:
+        countMultiplier: 1
+        sizeMultiplier: 1
       color: {r: 0, g: 1, b: 0.08054185, a: 1}
       particleOverrides: {fileID: 11400000, guid: df556864e33ba2644865847ee72628d3,
         type: 2}
@@ -138,5 +142,9 @@ MonoBehaviour:
         color: {r: 0, g: 1, b: 0.08054185, a: 1}
         particleOverrides: {fileID: 11400000, guid: df556864e33ba2644865847ee72628d3,
           type: 2}
-        particleSize: 1
-        particleCount: 1
+        selfParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1
+        otherParticleMultipliers:
+          countMultiplier: 1
+          sizeMultiplier: 1

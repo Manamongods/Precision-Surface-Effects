@@ -514,6 +514,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &2735987591390863037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5492177621210612906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1777d86ceb1901747af6d95dead5e3e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collisionEffects: {fileID: 2428953931281557236}
 --- !u!1 &6745671090334979558
 GameObject:
   m_ObjectHideFlags: 0
@@ -713,8 +726,19 @@ PrefabInstance:
       propertyPath: m_Name
       value: Basic Vibration Sound
       objectReference: {fileID: 0}
+    - target: {fileID: 8028369368948926874, guid: 37c73a05b77961f41bd97d461fd20ccc,
+        type: 3}
+      propertyPath: scaling.forceMultiplier
+      value: 0.01
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 37c73a05b77961f41bd97d461fd20ccc, type: 3}
+--- !u!1 &5492177621210612906 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7282250049817013476, guid: 37c73a05b77961f41bd97d461fd20ccc,
+    type: 3}
+  m_PrefabInstance: {fileID: 2970015810253367374}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2001925647165168747 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3674894828261618725, guid: 37c73a05b77961f41bd97d461fd20ccc,
@@ -727,7 +751,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 2970015810253367374}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 5492177621210612906}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7b0714e853438ff4a9f2f0c07f862806, type: 3}
