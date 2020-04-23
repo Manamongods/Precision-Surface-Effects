@@ -2,9 +2,7 @@ WARNING: It is in beta
 
 Wiki is somewhat outdated
 
-[![VIDEO LINK](https://www.youtube.com/watch?v=95HQabdCR-4
-/0.jpg)](https://www.youtube.com/watch?v=95HQabdCR-4
- "Video")
+[![VIDEO LINK](https://www.youtube.com/watch?v=95HQabdCR-4/0.jpg)](https://www.youtube.com/watch?v=95HQabdCR-4 "Video")
 
 # Precision Surface Effects
 
